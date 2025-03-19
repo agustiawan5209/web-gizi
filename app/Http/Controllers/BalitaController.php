@@ -42,7 +42,7 @@ class BalitaController extends Controller
     public function store(StoreBalitaRequest $request)
     {
         $balita = Balita::create($request->all());
-        return redirect()->route('balita.index')->with('success','Balita berhasil ditambahkan!!');
+        return redirect()->route('admin.balita.index')->with('success','Balita berhasil ditambahkan!!');
     }
 
     /**
@@ -72,7 +72,7 @@ class BalitaController extends Controller
     public function update(UpdateBalitaRequest $request, Balita $balita)
     {
         $balita->update($request->all());
-        return redirect()->route('balita.index')->with('success','Balita berhasil diupdate!!');
+        return redirect()->route('admin.balita.index')->with('success','Balita berhasil diupdate!!');
     }
 
     /**
@@ -81,6 +81,6 @@ class BalitaController extends Controller
     public function destroy(Balita $balita)
     {
         $balita->delete();
-        return redirect()->route('balita.index')->with('success','Balita berhasil dihapus!!');
+        return redirect()->route('admin.balita.index')->with('success','Balita berhasil dihapus!!');
     }
 }

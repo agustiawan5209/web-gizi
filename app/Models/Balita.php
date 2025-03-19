@@ -15,6 +15,7 @@ class Balita extends Model
         'tempat_lahir',
         'tanggal_lahir',
         'jenis_kelamin',
+        'orang_tua_id',
     ];
 
 

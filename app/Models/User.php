@@ -46,4 +46,8 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function balita(){
+        return $this->hasMany(Balita::class, 'orang_tua_id','id');
+    }
 }

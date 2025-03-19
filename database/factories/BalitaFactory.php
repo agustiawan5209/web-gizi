@@ -17,7 +17,11 @@ class BalitaFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'nama' => $this->faker->name,
+            'tempat_lahir' => $this->faker->address(),
+            'tgl_lahir' => $this->faker->date('Y-m-d'),
+            'jenis_kelamin' => $this->faker->randomElements(['Laki-laki', 'Perempuan']),
+            'orang_tua_id' => $this->faker->randomElement(['1', '2'])
         ];
     }
 }
