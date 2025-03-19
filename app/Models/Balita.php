@@ -34,59 +34,63 @@ class Balita extends Model
         return $this->belongsTo(User::class, 'orang_tua_id');
     }
 
+
     /**
-     * Scope a query to only include balita with a specific name.
+     * Scope a query to search by name.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string|null  $name
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param  string  $name
+     * @return void
      */
-
-    public function scopeSearchByName($query, $name)
+    public function scopeSearchByName($query, $name): void
     {
-        return $query->when($name, function ($query, $name) {
-            return $query->where('nama', 'like', '%' . $name . '%');
+        $query->when($name, function ($query, $name) {
+            $query->where('nama', 'like', '%' . $name . '%');
         });
     }
+
+
     /**
-     * Scope a query to only include balita with a specific tempat lahir.
+     * Scope a query to search by place of birth.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @param  string|null  $tempat_lahir
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return void
      */
 
-    public function scopeSearchByTempatLahir($query, $tempat_lahir)
+    public function scopeSearchByTempatLahir($query, $tempat_lahir): void
     {
-        return $query->when($tempat_lahir, function ($query, $tempat_lahir) {
-            return $query->where('tempat_lahir', 'like', '%' . $tempat_lahir . '%');
-        });
-    }
-    /**
-     * Scope a query to only include balita of given tanggal lahir.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string  $tgl_lahir
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeSearchByTglLahir($query, $tgl_lahir)
-    {
-        return $query->when($tgl_lahir, function ($query, $tgl_lahir) {
-            return $query->whereDate('tgl_lahir', $tgl_lahir);
+        $query->when($tempat_lahir, function ($query, $tempat_lahir) {
+            $query->where('tempat_lahir', 'like', '%' . $tempat_lahir . '%');
         });
     }
 
     /**
-     * Scope a query to only include balita of given jenis_kelamin.
+     * Scope a query to search by date of birth.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string  $jenis_kelamin
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param  string|null  $tgl_lahir
+     * @return void
      */
-    public function scopeSearchByJenkel($query, $jenis_kelamin)
+    public function scopeSearchByTglLahir($query, $tgl_lahir): void
     {
-        return $query->when($jenis_kelamin, function ($query, $jenis_kelamin) {
-            return $query->where('jenis_kelamin', 'like', '%' . $jenis_kelamin . '%');
+        $query->when($tgl_lahir, function ($query, $tgl_lahir) {
+            $query->whereDate('tgl_lahir', $tgl_lahir);
+        });
+    }
+
+
+    /**
+     * Scope a query to search by gender.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string|null  $jenis_kelamin
+     * @return void
+     */
+    public function scopeSearchByJenkel($query, $jenis_kelamin): void
+    {
+        $query->when($jenis_kelamin, function ($query, $jenis_kelamin) {
+            $query->where('jenis_kelamin', 'like', '%' . $jenis_kelamin . '%');
         });
     }
 }
