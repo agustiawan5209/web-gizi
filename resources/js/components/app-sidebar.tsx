@@ -14,8 +14,8 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Attribut',
-        href: '/dashboard',
+        title: 'orangtua',
+        href: '/admin/orangtua/',
         icon: Folder,
     },
 ];
