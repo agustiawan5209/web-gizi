@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AttributController;
 use App\Http\Controllers\BalitaController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DatasetController;
 use App\Http\Controllers\PemeriksaanController;
 use Illuminate\Support\Facades\Route;
@@ -12,16 +13,14 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
 
 
-Route::prefix('admin')->as('admin.')->group(function () {
+Route::prefix('admin')->as('admin.')->middleware(['auth', 'verified'])->group(function () {
     Route::prefix('balita')->as('balita.')->group(function () {
         Route::controller(BalitaController::class)->group(function () {
             Route::get('/', 'index')->name('index');
