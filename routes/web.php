@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BalitaController;
+use App\Http\Controllers\DatasetController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -29,6 +30,29 @@ Route::prefix('admin')->as('admin.')->group(function () {
             Route::post('/store', 'store')->name('store');
             Route::put('/update/{balita}', 'update')->name('update');
             Route::delete('/destroy/{balita}', 'destroy')->name('destroy');
+        });
+    });
+
+
+    // Routes for managing datasets
+    Route::prefix('dataset')->as('dataset.')->group(function () {
+        // Dataset controller
+        Route::controller(DatasetController::class)->group(function () {
+            // Show all datasets
+            Route::get('/', 'index')->name('index');
+            // Create a dataset
+            Route::get('/create', 'create')->name('create');
+            // Edit a dataset
+            Route::get('/edit/{dataset}', 'edit')->name('edit');
+            // Show a dataset
+            Route::get('/show/{dataset}', 'show')->name('show');
+
+            // Store a dataset
+            Route::post('/store', 'store')->name('store');
+            // Update a dataset
+            Route::put('/update/{dataset}', 'update')->name('update');
+            // Delete a dataset
+            Route::delete('/destroy/{dataset}', 'destroy')->name('destroy');
         });
     });
 });
