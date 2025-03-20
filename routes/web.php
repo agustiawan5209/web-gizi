@@ -4,6 +4,7 @@ use App\Http\Controllers\AttributController;
 use App\Http\Controllers\BalitaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DatasetController;
+use App\Http\Controllers\OrangTuaController;
 use App\Http\Controllers\PemeriksaanController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -21,6 +22,30 @@ require __DIR__.'/auth.php';
 
 
 Route::prefix('admin')->as('admin.')->middleware(['auth', 'verified'])->group(function () {
+
+     // Routes for managing orangtuas
+     Route::prefix('orangtua')->as('orangtua.')->group(function () {
+        // Dataset controller
+        Route::controller(OrangTuaController::class)->group(function () {
+            // Show all orangtuas
+            Route::get('/', 'index')->name('index');
+            // Create a orangtua
+            Route::get('/create', 'create')->name('create');
+            // Edit a orangtua
+            Route::get('/edit/{user}', 'edit')->name('edit');
+            // Show a orangtua
+            Route::get('/show/{user}', 'show')->name('show');
+
+            // Store a orangtua
+            Route::post('/store', 'store')->name('store');
+            // Update a orangtua
+            Route::put('/update/{user}', 'update')->name('update');
+            // Delete a orangtua
+            Route::delete('/destroy/{user}', 'destroy')->name('destroy');
+        });
+    });
+
+
     Route::prefix('balita')->as('balita.')->group(function () {
         Route::controller(BalitaController::class)->group(function () {
             Route::get('/', 'index')->name('index');

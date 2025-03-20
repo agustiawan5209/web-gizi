@@ -5,13 +5,6 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Dashboard',
-        href: '/dashboard',
-    },
-];
-
 
 
 export interface DashboardProps {
@@ -22,7 +15,12 @@ export interface DashboardProps {
 }
 
 export default function Dashboard({ orangtuacount, balitacount, datasetcount, pemeriksaancount }: DashboardProps) {
-
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: 'Dashboard',
+            href: '/dashboard',
+        },
+    ];
     const LineChartData = {
         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
         datasets: [
