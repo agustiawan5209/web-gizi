@@ -13,10 +13,10 @@ class DashboardController extends Controller
 {
     public function index(Request $request){
         return Inertia::render('dashboard', [
-            'orangtuacount'=> User::role('orangtua')->get()->count(),
-            'balita'=> Balita::all()->count(),
-            'pemeriksaan'=> Pemeriksaan::all()->count(),
-            'dataset'=> Dataset::all()->count(),
+            'orangtuacount'=> User::all()->count(),
+            'balitacount'=> Balita::all()->count(),
+            'pemeriksaancount'=> Pemeriksaan::all()->count(),
+            'datasetcount'=> Dataset::all()->count(),
         ]);
     }
 }
