@@ -36,7 +36,22 @@ class OrangTuaController extends Controller
      */
     public function create()
     {
-        return Inertia::render('admin/orangtua/create', []);
+        return Inertia::render('admin/orangtua/create', [
+            'breadcrumb'=> [
+                [
+                    'title'=> 'dashboard',
+                    'href'=> '/dashboard',
+                ],
+                [
+                    'title'=> 'dataorangtua',
+                    'href'=> '/admin/orangtua/',
+                ],
+                [
+                    'title'=> 'tambah data',
+                    'href'=> '/admin/orangtua/create',
+                ],
+            ],
+        ]);
     }
 
     /**

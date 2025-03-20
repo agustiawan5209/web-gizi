@@ -99,13 +99,13 @@ function TableAction({className, show, edit,delete : destroy, ...props}: TableAc
         {...props}
       >
        <div className="flex gap-1">
-      {show &&  <Button type="submit" size={'xs'} className="mt-4 w-16 bg-blue-400 hover:bg-blue-500" tabIndex={4}>
+      {show &&  <Button type="submit" size={'xs'} className="w-8 md:w-16 bg-blue-400 hover:bg-blue-500" tabIndex={4}>
                        <LucideEye/>
                     </Button>}
-      {edit &&  <Button type="submit" variant={"destructive"} size={'xs'} className="mt-4 w-16 bg-green-400 hover:bg-green-500" tabIndex={4}>
+      {edit &&  <Button type="submit" variant={"destructive"} size={'xs'} className="w-8 md:w-16 bg-green-400 hover:bg-green-500" tabIndex={4}>
                        <PenBox/>
                     </Button>}
-      { destroy &&  <Button type="submit" variant={"destructive"} size={'xs'} className="mt-4 w-16" tabIndex={4}>
+      { destroy &&  <Button type="submit" variant={"destructive"} size={'xs'} className="w-8 md:w-16" tabIndex={4}>
                        <Trash2/>
                     </Button>}
         </div>
