@@ -17,7 +17,17 @@ class OrangTuaController extends Controller
     public function index(Request $request)
     {
         return Inertia::render('admin/orangtua/index', [
-            'user'=> User::role('orangtua')->paginate($request->per_page ?? 100),
+            'orangtua'=> User::paginate($request->per_page ?? 100),
+            'breadcrumb'=> [
+                [
+                    'title'=> 'dashboard',
+                    'href'=> '/dashboard',
+                ],
+                [
+                    'title'=> 'dataorangtua',
+                    'href'=> '/admin/orangtua/',
+                ],
+            ],
         ]);
     }
 
