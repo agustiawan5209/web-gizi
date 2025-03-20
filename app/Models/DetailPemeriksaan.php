@@ -9,13 +9,13 @@ class DetailPemeriksaan extends Model
     protected $table = "detail_pemeriksaans";
 
     protected $fillable = [
-        'balita_id',
+        'id_pemeriksaan',
         'attribut_id',
         'nilai',
     ];
 
-    public function balita(){
-        return $this->hasOne(Balita::class,'id', 'balita_id');
+    public function pemeriksaan(){
+        return $this->hasOne(Pemeriksaan::class,'id', 'pemeriksaan_id');
     }
     public function attribut(){
         return $this->hasOne(Attribut::class,'id', 'attribut_id');

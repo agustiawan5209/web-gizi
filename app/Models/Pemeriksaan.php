@@ -18,13 +18,17 @@ class Pemeriksaan extends Model
         "label",
     ];
 
+    protected $casts = [
+        'data_balita'=> 'json',
+    ];
+
     public function balita()
     {
         return $this->belongsTo(Balita::class);
     }
 
     public function detailpemeriksaan(){
-        return $this->hasMany(DetailPemeriksaan::class, 'balita_id', 'id');
+        return $this->hasMany(DetailPemeriksaan::class, 'pemeriksaan_id', 'id');
 
     }
 
