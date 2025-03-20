@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\AttributController;
 use App\Http\Controllers\BalitaController;
 use App\Http\Controllers\DatasetController;
+use App\Http\Controllers\PemeriksaanController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -34,6 +36,29 @@ Route::prefix('admin')->as('admin.')->group(function () {
     });
 
 
+    // Routes for managing attributs
+    Route::prefix('attribut')->as('attribut.')->group(function () {
+        // Dataset controller
+        Route::controller(AttributController::class)->group(function () {
+            // Show all attributs
+            Route::get('/', 'index')->name('index');
+            // Create a attribut
+            Route::get('/create', 'create')->name('create');
+            // Edit a attribut
+            Route::get('/edit/{attribut}', 'edit')->name('edit');
+            // Show a attribut
+            Route::get('/show/{attribut}', 'show')->name('show');
+
+            // Store a attribut
+            Route::post('/store', 'store')->name('store');
+            // Update a attribut
+            Route::put('/update/{attribut}', 'update')->name('update');
+            // Delete a attribut
+            Route::delete('/destroy/{attribut}', 'destroy')->name('destroy');
+        });
+    });
+
+
     // Routes for managing datasets
     Route::prefix('dataset')->as('dataset.')->group(function () {
         // Dataset controller
@@ -55,4 +80,29 @@ Route::prefix('admin')->as('admin.')->group(function () {
             Route::delete('/destroy/{dataset}', 'destroy')->name('destroy');
         });
     });
+
+
+    // Routes for managing pemeriksaans
+    Route::prefix('pemeriksaan')->as('pemeriksaan.')->group(function () {
+        // Dataset controller
+        Route::controller(PemeriksaanController::class)->group(function () {
+            // Show all pemeriksaans
+            Route::get('/', 'index')->name('index');
+            // Create a pemeriksaan
+            Route::get('/create', 'create')->name('create');
+            // Edit a pemeriksaan
+            Route::get('/edit/{pemeriksaan}', 'edit')->name('edit');
+            // Show a pemeriksaan
+            Route::get('/show/{pemeriksaan}', 'show')->name('show');
+
+            // Store a pemeriksaan
+            Route::post('/store', 'store')->name('store');
+            // Update a pemeriksaan
+            Route::put('/update/{pemeriksaan}', 'update')->name('update');
+            // Delete a pemeriksaan
+            Route::delete('/destroy/{pemeriksaan}', 'destroy')->name('destroy');
+        });
+    });
+
+
 });
