@@ -11,7 +11,7 @@ class UpdateDatasetRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class UpdateDatasetRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'attribut'=> 'required|array',
+            'attribut.*'=> 'required|integer',
+            'label'=> 'required|string|max:50',
         ];
     }
 }
