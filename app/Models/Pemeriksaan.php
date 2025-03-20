@@ -29,9 +29,12 @@ class Pemeriksaan extends Model
 
     public function detailpemeriksaan(){
         return $this->hasMany(DetailPemeriksaan::class, 'pemeriksaan_id', 'id');
-
     }
 
+    public function polamakan()
+    {
+        return $this->hasOne(PolaMakan::class,'pemeriksaan_id', 'id');
+    }
     /**
      * Scope a query to search by balita.
      *
