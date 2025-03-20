@@ -52,27 +52,27 @@ export default function Dashboard({ orangtuacount, balitacount, datasetcount, pe
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 dark:bg-elevation-1">
                 <div className="grid auto-rows-min gap-4 md:grid-cols-4">
-                    <Card className="border-sidebar-border/70 dark:border-sidebar-border relative overflow-hidden rounded-xl border bg-gradient-to-br from-blue-400 to-blue-500">
+                    <Card className="border-sidebar-border/70 dark:border-sidebar-border relative overflow-hidden rounded-xl border bg-gradient-to-br from-blue-400 to-blue-500 dark:from-blue-600 dark:to-blue-800">
                         <CardHeader className="px-4 pt-1 pb-0 text-center">
                             <CardTitle className="text-xl text-white">Data Orang Tua</CardTitle>
                             <CardDescription className="text-white">{orangtuacount}</CardDescription>
                         </CardHeader>
                     </Card>
-                    <Card className="border-sidebar-border/70 dark:border-sidebar-border relative overflow-hidden rounded-xl border bg-gradient-to-br from-blue-400 to-blue-500">
+                    <Card className="border-sidebar-border/70 dark:border-sidebar-border relative overflow-hidden rounded-xl border bg-gradient-to-br from-blue-400 to-blue-500 dark:from-blue-600 dark:to-blue-800">
                         <CardHeader className="px-4 pt-1 pb-0 text-center">
                             <CardTitle className="text-xl text-white">Data Balita</CardTitle>
                             <CardDescription className="text-white">{balitacount}</CardDescription>
                         </CardHeader>
                     </Card>
-                    <Card className="border-sidebar-border/70 dark:border-sidebar-border relative overflow-hidden rounded-xl border bg-gradient-to-br from-blue-400 to-blue-500">
+                    <Card className="border-sidebar-border/70 dark:border-sidebar-border relative overflow-hidden rounded-xl border bg-gradient-to-br from-blue-400 to-blue-500 dark:from-blue-600 dark:to-blue-800">
                         <CardHeader className="px-4 pt-1 pb-0 text-center">
                             <CardTitle className="text-xl text-white">Jumlah Dataset</CardTitle>
                             <CardDescription className="text-white">{datasetcount}</CardDescription>
                         </CardHeader>
                     </Card>
-                    <Card className="border-sidebar-border/70 dark:border-sidebar-border relative overflow-hidden rounded-xl border bg-gradient-to-br from-blue-400 to-blue-500">
+                    <Card className="border-sidebar-border/70 dark:border-sidebar-border relative overflow-hidden rounded-xl border bg-gradient-to-br from-blue-400 to-blue-500 dark:from-blue-600 dark:to-blue-800">
                         <CardHeader className="px-4 pt-1 pb-0 text-center">
                             <CardTitle className="text-xl text-white">Data Pemeriksaan</CardTitle>
                             <CardDescription className="text-white">{pemeriksaancount}</CardDescription>
@@ -81,10 +81,10 @@ export default function Dashboard({ orangtuacount, balitacount, datasetcount, pe
                 </div>
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
                     <div className="grid h-full grid-cols-1 gap-4 align-middle md:grid-cols-4">
-                        <div className="w-full p-4 col-span-full md:col-span-3">
+                        <div className="w-full p-4 col-span-full md:col-span-3 dark:bg-white">
                             <LineChart data={LineChartData} title="Jumlah Pemeriksaan" />
                         </div>
-                        <div className="max-h-72 w-full p-4 col-span-full md:col-span-1">
+                        <div className="max-h-72 w-full p-4 col-span-full md:col-span-1 dark:bg-white">
                             <DoughnutChart data={DoughnutChartData} title='Jumlah Orang tua dan balita' />
                         </div>
                     </div>
