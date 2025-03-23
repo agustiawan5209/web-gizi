@@ -78,11 +78,11 @@ export default function Dashboard({ orangtuacount, balitacount, datasetcount, pe
                     </Card>
                 </div>
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
-                    <div className="grid h-full grid-cols-1 gap-4 align-middle md:grid-cols-4">
-                        <div className="w-full p-4 col-span-full md:col-span-3 dark:bg-white">
+                    <div className="grid h-full grid-cols-1 gap-4 align-middle md:grid-cols-12">
+                        <div className="w-full p-4 col-span-full md:col-span-7 dark:bg-white">
                             <LineChart data={LineChartData} title="Jumlah Pemeriksaan" />
                         </div>
-                        <div className="max-h-72 w-full p-4 col-span-full md:col-span-1 dark:bg-white">
+                        <div className="max-h-full w-full p-4 col-span-full md:col-span-4 dark:bg-white">
                             <DoughnutChart data={DoughnutChartData} title='Jumlah Orang tua dan balita' />
                         </div>
                     </div>

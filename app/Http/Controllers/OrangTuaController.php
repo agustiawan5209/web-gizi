@@ -17,7 +17,7 @@ class OrangTuaController extends Controller
     public function index(Request $request)
     {
         return Inertia::render('admin/orangtua/index', [
-            'orangtua'=> User::paginate($request->per_page ?? 100),
+            'orangtua'=> User::paginate($request->per_page ?? 10),
             'breadcrumb'=> [
                 [
                     'title'=> 'dashboard',
@@ -62,7 +62,7 @@ class OrangTuaController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required'],
         ]);
 
         $user = User::create([
@@ -70,8 +70,6 @@ class OrangTuaController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
-
-        event(new Registered($user));
 
         $user->assignRole('orangtua');
 
@@ -85,6 +83,20 @@ class OrangTuaController extends Controller
     {
         return Inertia::render('admin/orangtua/show', [
             'orangtua'=> $user,
+            'breadcrumb'=> [
+                [
+                    'title'=> 'dashboard',
+                    'href'=> '/dashboard',
+                ],
+                [
+                    'title'=> 'dataorangtua',
+                    'href'=> '/admin/orangtua/',
+                ],
+                [
+                    'title'=> 'Detail data',
+                    'href'=> '/admin/orangtua/show',
+                ],
+            ],
         ]);
     }
 
@@ -95,6 +107,20 @@ class OrangTuaController extends Controller
     {
         return Inertia::render('admin/orangtua/edit', [
             'orangtua'=> $user,
+            'breadcrumb'=> [
+                [
+                    'title'=> 'dashboard',
+                    'href'=> '/dashboard',
+                ],
+                [
+                    'title'=> 'dataorangtua',
+                    'href'=> '/admin/orangtua/',
+                ],
+                [
+                    'title'=> 'Edit data',
+                    'href'=> '/admin/orangtua/edit',
+                ],
+            ],
         ]);
     }
 
@@ -105,15 +131,20 @@ class OrangTuaController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class.',email,'.$user->id,
+            'password' => ['nullable'],
         ]);
 
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
         ]);
+
+        if ($request->password) {
+            $user->update([
+                'password' => Hash::make($request->password),
+            ]);
+        }
 
         return to_route('admin.orangtua.index')->with('success', 'Data orang tua berhasil diupdate!!');
     }

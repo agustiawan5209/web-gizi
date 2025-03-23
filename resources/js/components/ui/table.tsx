@@ -1,12 +1,16 @@
 import * as React from "react"
 import { Button } from '@/components/ui/button';
 import { LucideEye, PenBox, Trash2 } from 'lucide-react';
-
+import {Link} from '@inertiajs/react'
 import { cn } from "@/lib/utils"
+import DeleteItem from "../delete-item";
 interface TableActionProps extends React.ComponentProps<"td"> {
     show?: string;
     edit?: string;
     delete?: string;
+    id? :string;
+    title?: string;
+    url? : string;
   }
 
 function Table({ className, ...props }: React.ComponentProps<"table">) {
@@ -14,7 +18,7 @@ function Table({ className, ...props }: React.ComponentProps<"table">) {
     <table
       data-slot="table"
       className={cn(
-        "min-w-full bg-white dark:bg-gray-800",
+        "min-w-full p-0 bg-white dark:bg-gray-800",
         className
       )}
       {...props}
@@ -88,7 +92,7 @@ function TableColumn({ className, ...props }: React.ComponentProps<"td">) {
     )
   }
 
-function TableAction({className, show, edit,delete : destroy, ...props}: TableActionProps){
+function TableAction({className, show, edit,delete : destroy, id, title, url, ...props}: TableActionProps){
     return (
         <td
         data-slot="table-column-action"
@@ -99,15 +103,14 @@ function TableAction({className, show, edit,delete : destroy, ...props}: TableAc
         {...props}
       >
        <div className="flex gap-1">
-      {show &&  <Button type="submit" size={'xs'} className="w-8 md:w-16 bg-blue-400 hover:bg-blue-500" tabIndex={4}>
+      {show &&   <Link href={show}><Button type="submit" size={'xs'} className="w-8 md:w-16 bg-blue-400 hover:bg-blue-500" tabIndex={4}>
                        <LucideEye/>
-                    </Button>}
-      {edit &&  <Button type="submit" variant={"destructive"} size={'xs'} className="w-8 md:w-16 bg-green-400 hover:bg-green-500" tabIndex={4}>
+                    </Button></Link>}
+      {edit &&  <Link href={edit}><Button type="submit" variant={"destructive"} size={'xs'} className="w-8 md:w-16 bg-green-400 hover:bg-green-500" tabIndex={4}>
                        <PenBox/>
-                    </Button>}
-      { destroy &&  <Button type="submit" variant={"destructive"} size={'xs'} className="w-8 md:w-16" tabIndex={4}>
-                       <Trash2/>
-                    </Button>}
+                    </Button></Link>}
+      { (destroy && id && title && url)  &&
+      <DeleteItem id={id} title={title} url={url} />}
         </div>
       </td>
     )
