@@ -3,7 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Table, TableAction, TableBody, TableColumn, TableHead, TableRow, TableTh } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
 export interface OrangtuaProps {
     orangtua?: {
         current_page: number;
@@ -25,14 +26,42 @@ export interface OrangtuaProps {
         }[];
     };
     breadcrumb?: { title: string; href: string }[];
+    filter: {
+        search: string;
+        per_page: string;
+    };
 }
 
-export default function OrangtuaIndex({ orangtua, breadcrumb }: OrangtuaProps) {
+type GetForm = {
+    q : string;
+    // per_page: string;
+};
+
+export default function OrangtuaIndex({ orangtua, breadcrumb, filter }: OrangtuaProps) {
     const breadcrumbs: BreadcrumbItem[] = breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : [];
 
     const onPageChange = (pageNumber: any) => {
         console.log(`Page changed to ${pageNumber}`);
     };
+
+    const { data, setData, get, processing, errors, reset } = useForm<GetForm>({
+        q: '',
+        // per_page: '',
+    });
+
+    const [search, setSearch] = useState(filter?.search ?? '');
+
+    useEffect(() => {
+        setData('q', search)
+
+        if(search){
+            get(route('admin.orangtua.index'), {
+                preserveState: true,
+                preserveScroll: true,
+                onSuccess: () => {},
+            });
+        }
+    }, [search]);
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Orangtua" />
@@ -51,7 +80,9 @@ export default function OrangtuaIndex({ orangtua, breadcrumb }: OrangtuaProps) {
                             <input
                                 type="search"
                                 id="search"
-                                className="dark:bg-elevation-2 border-input-border ring-input-ring focus:ring-primary flex-1 rounded-md border bg-white p-2 text-xs ring-1 outline-none focus:ring-2 md:text-sm dark:text-white dark:placeholder:text-white/70 placeholder:text-xs"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                className="dark:bg-elevation-2 border-input-border ring-input-ring focus:ring-primary flex-1 rounded-md border bg-white p-2 text-xs ring-1 outline-none placeholder:text-xs focus:ring-2 md:text-sm dark:text-white dark:placeholder:text-white/70"
                                 placeholder="Cari berdasarkan nama atau email"
                             />
                             <Button variant="outline" className="flex items-center gap-2 text-xs">
@@ -89,9 +120,9 @@ export default function OrangtuaIndex({ orangtua, breadcrumb }: OrangtuaProps) {
                             </TableBody>
                         </Table>
 
-                       <div className='border-x-2 border-b-2  p-2'>
-                       <PaginationTable links={orangtua?.links ?? []} />
-                       </div>
+                        <div className="border-x-2 border-b-2 p-2">
+                            <PaginationTable links={orangtua?.links ?? []} />
+                        </div>
                     </div>
                 </div>
             </div>

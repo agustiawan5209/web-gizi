@@ -3,10 +3,11 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
@@ -49,5 +50,14 @@ class User extends Authenticatable
 
     public function balita(){
         return $this->hasMany(Balita::class, 'orang_tua_id','id');
+    }
+
+
+    public function scopeFilterBySearch(Builder $query, ?string $name): Builder
+    {
+        if(!$name) return $query;
+       return $query->when($name ?? null, function ($query, $name) {
+           return $query->where('name','like', "%{$name}%");
+       });
     }
 }
