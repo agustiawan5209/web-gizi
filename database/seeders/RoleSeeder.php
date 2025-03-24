@@ -90,7 +90,8 @@ class RoleSeeder extends Seeder
 
         $user->assignRole($admin);
 
-        User::factory()->count(30)->create();
+       $data_pengguna = User::factory()->count(30)->create();
 
+        $data_pengguna->assignRole($orangtua);
     }
 }

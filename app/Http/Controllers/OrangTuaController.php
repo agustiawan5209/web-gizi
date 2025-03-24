@@ -16,18 +16,48 @@ class OrangTuaController extends Controller
      */
     public function index(Request $request)
     {
+        $query = User::query();
+        $query->withoutRole('admin');
+        if ($request->filled('q')) {
+            $query->filterBySearch($request->input('q', ''));
+        }
+
+        if ($request->filled('order_by')) {
+            $orderBy = $request->input('order_by');
+            if (in_array($orderBy, ['asc', 'desc'])) {
+                $query->orderBy('created_at', $orderBy);
+            } else if(in_array($orderBy, ['A-Z', 'Z-A'])) {
+                if($orderBy == 'A-Z') {
+                    $query->orderBy('name', 'asc');
+                }else {
+                    $query->orderBy('name', 'desc');
+                }
+            }else {
+                // Handle invalid order_by value
+                return redirect()->back()->withErrors(['order_by' => 'Invalid order_by value']);
+            }
+        }
+
+        try {
+            $users = $query->paginate($request->input('per_page', 10));
+        } catch (\Exception $e) {
+            // Handle pagination error
+            return redirect()->back()->withErrors(['pagination' => 'Pagination failed: ' . $e->getMessage()]);
+        }
+
         return Inertia::render('admin/orangtua/index', [
-            'orangtua'=> User::filterBySearch($request->q)->paginate($request->per_page ?? 10),
-            'breadcrumb'=> [
+            'orangtua' => $users,
+            'breadcrumb' => [
                 [
-                    'title'=> 'dashboard',
-                    'href'=> '/dashboard',
+                    'title' => 'dashboard',
+                    'href' => '/dashboard',
                 ],
                 [
-                    'title'=> 'dataorangtua',
-                    'href'=> '/admin/orangtua/',
+                    'title' => 'dataorangtua',
+                    'href' => '/admin/orangtua/',
                 ],
             ],
+            'filter' => $request->only('q'),
         ]);
     }
 

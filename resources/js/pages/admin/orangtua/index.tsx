@@ -1,10 +1,11 @@
 import PaginationTable from '@/components/pagination-table';
 import { Button } from '@/components/ui/button';
-import { Table, TableAction, TableBody, TableColumn, TableHead, TableRow, TableTh } from '@/components/ui/table';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Table, TableAction, TableBody, TableColumn, TableContainer, TableHead, TableRow, TableTh } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
+import { FormEventHandler, useEffect, useState } from 'react';
 export interface OrangtuaProps {
     orangtua?: {
         current_page: number;
@@ -27,102 +28,171 @@ export interface OrangtuaProps {
     };
     breadcrumb?: { title: string; href: string }[];
     filter: {
-        search: string;
+        q: string;
         per_page: string;
+        order_by: string;
     };
 }
 
 type GetForm = {
-    q : string;
+    // q : string;
     // per_page: string;
 };
 
 export default function OrangtuaIndex({ orangtua, breadcrumb, filter }: OrangtuaProps) {
     const breadcrumbs: BreadcrumbItem[] = breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : [];
 
-    const onPageChange = (pageNumber: any) => {
-        console.log(`Page changed to ${pageNumber}`);
-    };
-
     const { data, setData, get, processing, errors, reset } = useForm<GetForm>({
-        q: '',
+        // q: '',
         // per_page: '',
     });
 
-    const [search, setSearch] = useState(filter?.search ?? '');
+    /** START SEARCH */
+    // store search query in state
+    const [search, setSearch] = useState(filter?.q ?? '');
 
-    useEffect(() => {
-        setData('q', search)
-
-        if(search){
-            get(route('admin.orangtua.index'), {
+    const submitSearch: FormEventHandler = (e) => {
+        e.preventDefault();
+        // clean search query
+        const cleanedSearch = search.trim();
+        if (cleanedSearch.length > 0) {
+            // if search query is not empty, make request to server
+            get(route('admin.orangtua.index', { q: cleanedSearch }), {
                 preserveState: true,
                 preserveScroll: true,
                 onSuccess: () => {},
             });
         }
-    }, [search]);
+    };
+
+    // clear search query when form is submitted
+    const clearSearch: FormEventHandler = (e) => {
+        e.preventDefault();
+        setSearch('');
+        reset();
+        // make request to server when search query is cleared
+        get(route('admin.orangtua.index'), {
+            preserveState: true,
+            preserveScroll: true,
+            onSuccess: () => {},
+        });
+    };
+    /** END SEARCH */
+
+    /** Start Order BY (ASC, DESC) */
+    const [orderBy, setOrderBy] = useState(filter?.order_by ?? '');
+
+    useEffect(() => {
+        // clean search query
+        const cleanedOrderBy = orderBy.trim();
+        if (cleanedOrderBy.length > 0) {
+            // if search query is not empty, make request to server
+            get(route('admin.orangtua.index', { order_by: cleanedOrderBy }), {
+                preserveState: true,
+                preserveScroll: true,
+                onSuccess: () => {},
+            });
+        }
+    }, [orderBy]);
+    /** END Order BY */
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Orangtua" />
             <div className="dark:bg-elevation-1 flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
-                    <div className="flex w-full flex-1 flex-col items-center gap-7 px-4 py-2 md:flex-row">
-                        <Link href={route('admin.orangtua.create')} className="col-span-1 cursor-pointer">
-                            <Button variant="default" className="flex cursor-pointer items-center gap-2 bg-blue-500 hover:bg-blue-600">
-                                Tambah Data
-                            </Button>
-                        </Link>
-                        <div className="col-span-2 flex items-center gap-2">
-                            <label htmlFor="search" className="sr-only">
-                                Cari
-                            </label>
-                            <input
-                                type="search"
-                                id="search"
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                                className="dark:bg-elevation-2 border-input-border ring-input-ring focus:ring-primary flex-1 rounded-md border bg-white p-2 text-xs ring-1 outline-none placeholder:text-xs focus:ring-2 md:text-sm dark:text-white dark:placeholder:text-white/70"
-                                placeholder="Cari berdasarkan nama atau email"
-                            />
-                            <Button variant="outline" className="flex items-center gap-2 text-xs">
-                                Filter
-                            </Button>
+                    <div className="flex w-full flex-1 flex-row items-end justify-end gap-7 px-4 py-2 md:items-center md:justify-between">
+                        <div className="flex w-full flex-1 flex-col gap-7 px-4 py-2 md:flex-row md:items-center">
+                            <Link href={route('admin.orangtua.create')} className="col-span-1 cursor-pointer">
+                                <Button variant="default" className="flex cursor-pointer items-center gap-2 bg-blue-500 hover:bg-blue-600">
+                                    Tambah Data
+                                </Button>
+                            </Link>
+                            <div className="col-span-2 flex items-center gap-2">
+                                <label htmlFor="search" className="sr-only">
+                                    Cari
+                                </label>
+                                <input
+                                    type="text"
+                                    id="search"
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    className="dark:bg-elevation-2 border-input-border ring-input-ring focus:ring-primary flex-1 rounded-md border bg-white p-2 text-xs ring-1 outline-none placeholder:text-xs focus:ring-2 md:text-sm dark:text-white dark:placeholder:text-white/70"
+                                    placeholder="Cari berdasarkan nama atau email"
+                                />
+                                <Button variant="outline" type="button" onClick={submitSearch} className="flex items-center gap-2 text-xs">
+                                    Cari
+                                </Button>
+                                <Button variant="outline" type="button" onClick={clearSearch} className="flex border-red-500 items-center gap-2 text-xs">
+                                    Clear
+                                </Button>
+                            </div>
+                        </div>
+                        <div className="col-span-1 px-4 py-2">
+                            <Select defaultValue="" value={orderBy} onValueChange={(e) => setOrderBy(e)}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Tampilan Status" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectItem value="A-Z">A-Z</SelectItem>
+                                        <SelectItem value="Z-A">Z-A</SelectItem>
+                                        <SelectItem value="asc">Terbaru</SelectItem>
+                                        <SelectItem value="desc">Terlama</SelectItem>
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
                         </div>
                     </div>
-                    <div className="min-w-full overflow-x-auto">
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableTh className="w-10">No.</TableTh>
-                                    <TableTh>Nama</TableTh>
-                                    <TableTh>Email</TableTh>
-                                    <TableTh>Aksi</TableTh>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {orangtua?.data.length &&
-                                    orangtua.data.map((item: any, index: number) => (
-                                        <TableRow key={index}>
-                                            <TableColumn>{index + 1 + (orangtua?.current_page - 1) * orangtua?.per_page}</TableColumn>
-                                            <TableColumn> {item.name} </TableColumn>
-                                            <TableColumn> {item.email} </TableColumn>
-                                            <TableAction
-                                                className="w-32"
-                                                edit={route('admin.orangtua.edit', { user: item.id })}
-                                                delete="delete"
-                                                url={route('admin.orangtua.destroy', { user: item.id })}
-                                                title={item.name}
-                                                id={item.id}
-                                            />
-                                        </TableRow>
-                                    ))}
-                            </TableBody>
-                        </Table>
+                    <div className="w-full min-w-full">
+                        <TableContainer className="relative">
+                            <Table className="w-full">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableTh className="w-10">No.</TableTh>
+                                        <TableTh>Nama</TableTh>
+                                        <TableTh>Email</TableTh>
+                                        <TableTh>Aksi</TableTh>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody className={processing ? 'opacity-50' : ''}>
+                                    {(orangtua?.data ?? []).length > 0 &&
+                                        orangtua?.data.map((item: any, index: number) => (
+                                            <TableRow key={index}>
+                                                <TableColumn>{index + 1 + (orangtua?.current_page - 1) * orangtua?.per_page}</TableColumn>
+                                                <TableColumn> {item.name} </TableColumn>
+                                                <TableColumn> {item.email} </TableColumn>
+                                                <TableAction
+                                                    className="w-32"
+                                                    edit={route('admin.orangtua.edit', { user: item.id })}
+                                                    delete="delete"
+                                                    url={route('admin.orangtua.destroy', { user: item.id })}
+                                                    title={item.name}
+                                                    id={item.id}
+                                                />
+                                            </TableRow>
+                                        ))}
+                                </TableBody>
+                            </Table>
 
-                        <div className="border-x-2 border-b-2 p-2">
-                            <PaginationTable links={orangtua?.links ?? []} />
-                        </div>
+                            <div className="flex justify-between gap-7 border-x-2 border-b-2 p-2">
+                                <div className="px-4 py-2">
+                                    <Select defaultValue="10">
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Jumlah Data" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                <SelectItem value="10">10</SelectItem>
+                                                <SelectItem value="20">20</SelectItem>
+                                                <SelectItem value="50">50</SelectItem>
+                                                <SelectItem value="100">1000</SelectItem>
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <PaginationTable links={orangtua?.links ?? []} data={filter} />
+                            </div>
+                        </TableContainer>
                     </div>
                 </div>
             </div>

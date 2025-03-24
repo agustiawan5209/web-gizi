@@ -21,15 +21,22 @@ function FlashMessage() {
         }
     }, [flash]);
 
+    const clearMessage = () => {
+        setClassAlert('');
+        setMessageAlert('');
+    }
     return (
         messageAlert && (
-            <Alert variant="default" className={classAlert}>
-                <AlertTitle>Informasi!</AlertTitle>
-                <AlertDescription className='text-gray-800'>{messageAlert}.</AlertDescription>
-            </Alert>
+            <div className="px-4 py-2">
+                <Alert variant="default" className={classAlert}>
+                    <AlertTitle>Informasi!</AlertTitle>
+                    <AlertDescription className="text-gray-800">{messageAlert}.</AlertDescription>
+
+                    <button type='button' onClick={clearMessage} className=' absolute text-xl px-3 cursor-pointer top-0 right-0'>x</button>
+                </Alert>
+            </div>
         )
     );
 }
 
 export default FlashMessage;
-

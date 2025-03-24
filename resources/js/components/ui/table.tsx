@@ -13,6 +13,21 @@ interface TableActionProps extends React.ComponentProps<"td"> {
     url? : string;
   }
 
+function TableContainer({
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<'div'>) {
+  return (
+    <div
+      data-slot="table-container"
+      className={cn(
+        'overflow-x-auto',
+        className
+      )}
+      {...props}
+    />
+  )
+}
 function Table({ className, ...props }: React.ComponentProps<"table">) {
   return (
     <table
@@ -115,4 +130,4 @@ function TableAction({className, show, edit,delete : destroy, id, title, url, ..
       </td>
     )
 }
-export {Table, TableHead, TableBody, TableRow, TableTh, TableColumn, TableAction}
+export {Table, TableContainer, TableHead, TableBody, TableRow, TableTh, TableColumn, TableAction}

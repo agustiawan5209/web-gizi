@@ -9,15 +9,18 @@ interface PaginationLink {
 
 interface PaginationProps {
   links: PaginationLink[];
+  data: any;
 }
 
-const PaginationTable: React.FC<PaginationProps> = ({ links }) => {
+const PaginationTable: React.FC<PaginationProps> = ({ links,data }) => {
+    console.log(data)
   return (
     <div className="flex items-center justify-center space-x-1">
       {links.map((link, index) => (
         <Link
           key={index}
           href={link.url ?? ""}
+          data={data}
           dangerouslySetInnerHTML={{ __html: link.label }}
           className={`px-3 py-1 border rounded text-sm ${
             link.active
