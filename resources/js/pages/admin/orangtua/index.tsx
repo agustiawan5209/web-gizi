@@ -175,7 +175,8 @@ export default function OrangtuaIndex({ orangtua, breadcrumb, filter }: Orangtua
                             </Table>
 
                             <div className="flex justify-between gap-7 border-x-2 border-b-2 p-2">
-                                <div className="px-4 py-2">
+                            <div className="px-4 py-2 flex gap-7 items-center">
+                                    <div>
                                     <Select defaultValue="10">
                                         <SelectTrigger>
                                             <SelectValue placeholder="Jumlah Data" />
@@ -189,6 +190,8 @@ export default function OrangtuaIndex({ orangtua, breadcrumb, filter }: Orangtua
                                             </SelectGroup>
                                         </SelectContent>
                                     </Select>
+                                    </div>
+                                   <div className='text-xs text-gray-600'> halaman {orangtua?.from} ke {orangtua?.to} dari {orangtua?.total} total</div>
                                 </div>
                                 <PaginationTable links={orangtua?.links ?? []} data={filter} />
                             </div>
