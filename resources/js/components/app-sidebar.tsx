@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { LucideHome, Folder, LayoutGrid } from 'lucide-react';
+import { LucideHome, Folder, LayoutGrid, BookUser } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -22,6 +22,11 @@ const mainNavItems: NavItem[] = [
         title: 'Attribut',
         href: '/admin/attribut/',
         icon: LayoutGrid,
+    },
+    {
+        title: 'Balita',
+        href: '/admin/balita/',
+        icon: BookUser,
     },
 ];
 

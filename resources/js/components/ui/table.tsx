@@ -86,7 +86,7 @@ function TableTh({ className, ...props }: React.ComponentProps<"th">) {
     <th
       data-slot="table-row-head"
       className={cn(
-        "px-6 py-3 text-left text-xs border-x-2 font-medium text-gray-500 dark:text-white uppercase tracking-wider",
+        "px-6 py-3 text-left text-xs border-x-2 font-medium text-gray-500 dark:text-white capitalize tracking-wider",
         className
       )}
       {...props}

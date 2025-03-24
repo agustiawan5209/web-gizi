@@ -181,7 +181,7 @@ export default function AttributIndex({ attribut, breadcrumb, filter }: Attribut
                                     <TableRow>
                                         <TableTh className="w-10">No.</TableTh>
                                         <TableTh>Nama</TableTh>
-                                        <TableTh>Email</TableTh>
+                                        <TableTh>Keterangan</TableTh>
                                         <TableTh>Aksi</TableTh>
                                     </TableRow>
                                 </TableHead>
