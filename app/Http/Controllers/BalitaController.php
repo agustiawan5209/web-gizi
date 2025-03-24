@@ -16,13 +16,51 @@ class BalitaController extends Controller
      */
     public function index(Request $request)
     {
-        return Inertia::render("admin/balita/index", [
-            'balitas' => Balita::with(['orang_tua'])
-            ->searchByName($request->nama)
-            ->searchByTempatLahir($request->tempatLahir)
-            ->searchByTglLahir($request->tgl_lahir)
-            ->searchByJenkel($request->jenkel)
-            ->paginate($request->per_page ?? 10),
+        $query = Balita::query();
+
+        if ($request->filled('q')) {
+            $query->filterByNama($request->input('q', ''));
+        }
+
+        if ($request->filled('order_by')) {
+            $orderBy = $request->input('order_by');
+            if (in_array($orderBy, ['asc', 'desc'])) {
+                $query->orderBy('created_at', $orderBy);
+            } else if(in_array($orderBy, ['A-Z', 'Z-A'])) {
+                if($orderBy == 'A-Z') {
+                    $query->orderBy('name', 'asc');
+                }else {
+                    $query->orderBy('name', 'desc');
+                }
+            }else if(in_array($orderBy, ['Laki-laki','Perempuan'])){
+                $query->searchByJenkel($orderBy);
+            }
+            else {
+                // Handle invalid order_by value
+                return redirect()->back()->withErrors(['order_by' => 'Invalid order_by value']);
+            }
+        }
+
+        try {
+            $balita = $query->paginate($request->input('per_page', 10));
+        } catch (\Exception $e) {
+            // Handle pagination error
+            return redirect()->back()->withErrors(['pagination' => 'Pagination failed: ' . $e->getMessage()]);
+        }
+
+        return Inertia::render('admin/balita/index', [
+            'balita' => $balita,
+            'breadcrumb' => [
+                [
+                    'title' => 'dashboard',
+                    'href' => '/dashboard',
+                ],
+                [
+                    'title' => 'data balita',
+                    'href' => '/admin/balita/',
+                ],
+            ],
+            'filter' => $request->only('q'),
         ]);
     }
 
@@ -33,6 +71,20 @@ class BalitaController extends Controller
     {
     return Inertia::render('admin/balita/create', [
         'orang_tua' => User::role('orangtua')->get(),
+        'breadcrumb' => [
+            [
+                'title' => 'dashboard',
+                'href' => '/dashboard',
+            ],
+            [
+                'title' => 'data balita',
+                'href' => '/admin/balita/',
+            ],
+            [
+                'title' => 'tambah balita',
+                'href' => '/admin/balita/create',
+            ],
+        ],
     ]);
     }
 
@@ -51,7 +103,21 @@ class BalitaController extends Controller
     public function show(Balita $balita)
     {
         return Inertia::render('admin/balita/show', [
-            'balita'=> $balita
+            'balita'=> $balita,
+            'breadcrumb' => [
+                [
+                    'title' => 'dashboard',
+                    'href' => '/dashboard',
+                ],
+                [
+                    'title' => 'data balita',
+                    'href' => '/admin/balita/',
+                ],
+                [
+                    'title' => 'detail balita',
+                    'href' => '/admin/balita/show',
+                ],
+            ],
         ]);
     }
 
@@ -63,6 +129,20 @@ class BalitaController extends Controller
         return Inertia::render('admin/balita/edit', [
             'balita'=> $balita,
             'orang_tua' => User::role('orangtua')->get(),
+            'breadcrumb' => [
+                [
+                    'title' => 'dashboard',
+                    'href' => '/dashboard',
+                ],
+                [
+                    'title' => 'data balita',
+                    'href' => '/admin/balita/',
+                ],
+                [
+                    'title' => 'edit balita',
+                    'href' => '/admin/balita/edit',
+                ],
+            ],
         ]);
     }
 
