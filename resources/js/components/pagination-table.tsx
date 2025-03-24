@@ -13,7 +13,6 @@ interface PaginationProps {
 }
 
 const PaginationTable: React.FC<PaginationProps> = ({ links,data }) => {
-    console.log(data)
   return (
     <div className="flex items-center justify-center space-x-1">
       {links.map((link, index) => (

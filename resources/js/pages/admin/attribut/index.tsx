@@ -35,8 +35,9 @@ export interface AttributProps {
 }
 
 type GetForm = {
-    // q : string;
-    // per_page: string;
+    q?: string;
+    per_page?: string;
+    order_by?: string;
 };
 
 export default function AttributIndex({ attribut, breadcrumb, filter }: AttributProps) {
@@ -45,9 +46,9 @@ export default function AttributIndex({ attribut, breadcrumb, filter }: Attribut
     const { data, setData, get, processing, errors, reset } = useForm<GetForm>({
         // q: '',
         // per_page: '',
+        // order_by: '',
     });
 
-    console.log(attribut)
     /** START SEARCH */
     // store search query in state
     const [search, setSearch] = useState(filter?.q ?? '');
@@ -58,7 +59,7 @@ export default function AttributIndex({ attribut, breadcrumb, filter }: Attribut
         const cleanedSearch = search.trim();
         if (cleanedSearch.length > 0) {
             // if search query is not empty, make request to server
-            get(route('admin.attribut.index', { q: cleanedSearch }), {
+            get(route('admin.attribut.index', { q: cleanedSearch, per_page: filter?.per_page, order_by: filter?.order_by }), {
                 preserveState: true,
                 preserveScroll: true,
                 onSuccess: () => {},
@@ -88,7 +89,7 @@ export default function AttributIndex({ attribut, breadcrumb, filter }: Attribut
         const cleanedOrderBy = orderBy.trim();
         if (cleanedOrderBy.length > 0) {
             // if search query is not empty, make request to server
-            get(route('admin.attribut.index', { order_by: cleanedOrderBy }), {
+            get(route('admin.attribut.index', { order_by: cleanedOrderBy, per_page: filter?.per_page, q: filter?.q }), {
                 preserveState: true,
                 preserveScroll: true,
                 onSuccess: () => {},
@@ -96,6 +97,30 @@ export default function AttributIndex({ attribut, breadcrumb, filter }: Attribut
         }
     }, [orderBy]);
     /** END Order BY */
+
+    /** Start Request Per_page */
+    const [perPage, setPerPage] = useState(filter?.per_page ?? 10); // Default value lebih baik angka
+
+    const submitPerPage: FormEventHandler = (e) => {
+        e.preventDefault();
+        const cleanedPerPage = perPage.toString().trim();
+        const numericPerPage = parseInt(cleanedPerPage);
+
+        // Validasi nilai per_page
+        if (!isNaN(numericPerPage) && numericPerPage > 0) {
+            get(
+                route('admin.attribut.index', {
+                    per_page: numericPerPage,
+                }),
+                {
+                    preserveState: true,
+                    preserveScroll: true,
+                    replace: true, // Hindari penumpukan history
+                },
+            );
+        }
+    };
+    /** END Request Per_page */
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Attribut" />
@@ -118,12 +143,17 @@ export default function AttributIndex({ attribut, breadcrumb, filter }: Attribut
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
                                     className="dark:bg-elevation-2 border-input-border ring-input-ring focus:ring-primary flex-1 rounded-md border bg-white p-2 text-xs ring-1 outline-none placeholder:text-xs focus:ring-2 md:text-sm dark:text-white dark:placeholder:text-white/70"
-                                    placeholder="Cari berdasarkan nama atau email"
+                                    placeholder="Cari berdasarkan nama atau keterangan"
                                 />
                                 <Button variant="outline" type="button" onClick={submitSearch} className="flex items-center gap-2 text-xs">
                                     Cari
                                 </Button>
-                                <Button variant="outline" type="button" onClick={clearSearch} className="flex border-red-500 items-center gap-2 text-xs">
+                                <Button
+                                    variant="outline"
+                                    type="button"
+                                    onClick={clearSearch}
+                                    className="flex items-center gap-2 border-red-500 text-xs"
+                                >
                                     Clear
                                 </Button>
                             </div>
@@ -151,7 +181,7 @@ export default function AttributIndex({ attribut, breadcrumb, filter }: Attribut
                                     <TableRow>
                                         <TableTh className="w-10">No.</TableTh>
                                         <TableTh>Nama</TableTh>
-                                        <TableTh>keterangan</TableTh>
+                                        <TableTh>Email</TableTh>
                                         <TableTh>Aksi</TableTh>
                                     </TableRow>
                                 </TableHead>
@@ -176,23 +206,29 @@ export default function AttributIndex({ attribut, breadcrumb, filter }: Attribut
                             </Table>
 
                             <div className="flex justify-between gap-7 border-x-2 border-b-2 p-2">
-                                <div className="px-4 py-2 flex gap-7 items-center">
-                                    <div>
-                                    <Select defaultValue="10">
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Jumlah Data" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectGroup>
-                                                <SelectItem value="10">10</SelectItem>
-                                                <SelectItem value="20">20</SelectItem>
-                                                <SelectItem value="50">50</SelectItem>
-                                                <SelectItem value="100">1000</SelectItem>
-                                            </SelectGroup>
-                                        </SelectContent>
-                                    </Select>
+                                <div className="flex items-center gap-7 px-4 py-2">
+                                    <div className='flex flex-row gap-2'>
+                                        <Select defaultValue="10" value={perPage} onValueChange={(e) => setPerPage(e.toString())}>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Jumlah Data" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    <SelectItem value="10">10</SelectItem>
+                                                    <SelectItem value="20">20</SelectItem>
+                                                    <SelectItem value="50">50</SelectItem>
+                                                    <SelectItem value="100">100</SelectItem>
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
+                                        <Button variant="outline" type="button" onClick={submitPerPage} className="flex items-center gap-2 text-xs">
+                                            Tampilkan
+                                        </Button>
                                     </div>
-                                   <div className='text-xs text-gray-600'> Tampilkan {attribut?.from} ke {attribut?.to} dari {attribut?.total} total</div>
+                                    <div className="text-xs text-gray-600">
+                                        {' '}
+                                        halaman {attribut?.from} ke {attribut?.to} dari {attribut?.total} total
+                                    </div>
                                 </div>
                                 <PaginationTable links={attribut?.links ?? []} data={filter} />
                             </div>

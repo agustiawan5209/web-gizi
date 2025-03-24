@@ -57,7 +57,7 @@ class OrangTuaController extends Controller
                     'href' => '/admin/orangtua/',
                 ],
             ],
-            'filter' => $request->only('q'),
+            'filter' => $request->only('q', 'per_page', 'order_by'),
         ]);
     }
 
