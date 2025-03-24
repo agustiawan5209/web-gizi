@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-export interface OrangtuaCreaterops {
+export interface AttributCreaterops {
     breadcrumb?: { title: string; href: string }[];
 }
 type CreateForm = {
@@ -16,7 +16,7 @@ type CreateForm = {
     keterangan: string;
 };
 
-export default function OrangtuaCreate({ breadcrumb }: OrangtuaCreaterops) {
+export default function AttributCreate({ breadcrumb }: AttributCreaterops) {
     const breadcrumbs: BreadcrumbItem[] = breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : [];
     const { data, setData, post, processing, progress, errors, reset } = useForm<Required<CreateForm>>({
         nama: '',

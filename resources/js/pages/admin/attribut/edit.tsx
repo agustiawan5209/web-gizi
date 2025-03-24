@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-export interface OrangtuaUpdaterops {
+export interface AttributUpdaterops {
     attribut: {
         id: number;
         nama: string;
@@ -21,7 +21,7 @@ type UpdateForm = {
     keterangan: string;
 };
 
-export default function OrangtuaUpdate({ attribut, breadcrumb }: OrangtuaUpdaterops) {
+export default function AttributUpdate({ attribut, breadcrumb }: AttributUpdaterops) {
     const breadcrumbs: BreadcrumbItem[] = breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : [];
     const { data, setData, put, processing, progress, errors, reset } = useForm<Required<UpdateForm>>({
         nama: attribut.nama,
