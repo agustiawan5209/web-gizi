@@ -1,5 +1,6 @@
 import PaginationTable from '@/components/pagination-table';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableAction, TableBody, TableColumn, TableContainer, TableHead, TableRow, TableTh } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
@@ -137,12 +138,11 @@ export default function OrangtuaIndex({ orangtua, breadcrumb, filter }: Orangtua
                                 <label htmlFor="search" className="sr-only">
                                     Cari
                                 </label>
-                                <input
+                                <Input
                                     type="text"
                                     id="search"
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
-                                    className="dark:bg-elevation-2 border-input-border ring-input-ring focus:ring-primary flex-1 rounded-md border bg-white p-2 text-xs ring-1 outline-none placeholder:text-xs focus:ring-2 md:text-sm dark:text-white dark:placeholder:text-white/70"
                                     placeholder="Cari berdasarkan nama atau email"
                                 />
                                 <Button variant="outline" type="button" onClick={submitSearch} className="flex items-center gap-2 text-xs">
