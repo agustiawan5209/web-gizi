@@ -1,6 +1,6 @@
 import PaginationTable from '@/components/pagination-table';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableAction, TableBody, TableColumn, TableContainer, TableHead, TableRow, TableTh } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
@@ -165,11 +165,19 @@ export default function BalitaIndex({ balita, breadcrumb, filter }: BalitaProps)
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectGroup>
+                                        <SelectLabel>Urutkan</SelectLabel>
                                         <SelectItem value="A-Z">A-Z</SelectItem>
                                         <SelectItem value="Z-A">Z-A</SelectItem>
                                         <SelectItem value="asc">Terbaru</SelectItem>
                                         <SelectItem value="desc">Terlama</SelectItem>
                                     </SelectGroup>
+                                    <SelectSeparator />
+                                    <SelectGroup>
+                                        <SelectLabel>Jenis Kelamin</SelectLabel>
+                                        <SelectItem value="Laki-Laki">Laki-Laki</SelectItem>
+                                        <SelectItem value="Perempuan">Perempuan</SelectItem>
+                                    </SelectGroup>
+                                    <SelectSeparator />
                                 </SelectContent>
                             </Select>
                         </div>
