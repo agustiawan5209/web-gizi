@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('pemeriksaan_id')->constrained('pemeriksaans')->onDelete('cascade');
             $table->foreignId('attribut_id')->constrained('attributs')->onDelete('cascade');
-            $table->integer('nilai');
+            $table->string('nilai', 30);
             $table->timestamps();
         });
     }

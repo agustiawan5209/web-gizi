@@ -15,7 +15,7 @@ class AttributSeeder extends Seeder
     {
         $attributs = array(
             array(
-                "nama" => "Usia Balita",
+                "nama" => "Usia Balita (bulan)",
                 "keterangan" => "Attribut",
                 "created_at" => "2025-03-24 12:09:09",
                 "updated_at" => "2025-03-24 12:09:09",
@@ -27,25 +27,25 @@ class AttributSeeder extends Seeder
                 "updated_at" => "2025-03-24 12:09:28",
             ),
             array(
-                "nama" => "Tinggi Badan",
+                "nama" => "Tinggi Badan (CM)",
                 "keterangan" => "Attribut",
                 "created_at" => "2025-03-24 12:09:37",
                 "updated_at" => "2025-03-24 12:09:37",
             ),
             array(
-                "nama" => "Berat Badan",
+                "nama" => "Berat Badan (KG)",
                 "keterangan" => "Attribut",
                 "created_at" => "2025-03-24 12:09:47",
                 "updated_at" => "2025-03-24 12:09:47",
             ),
             array(
-                "nama" => "Lingkar Kepala",
+                "nama" => "Lingkar Kepala (CM)",
                 "keterangan" => "Attribut",
                 "created_at" => "2025-03-24 12:09:56",
                 "updated_at" => "2025-03-24 12:09:56",
             ),
             array(
-                "nama" => "Lingkar Lengan",
+                "nama" => "Lingkar Lengan (CM)",
                 "keterangan" => "Attribut",
                 "created_at" => "2025-03-24 12:10:08",
                 "updated_at" => "2025-03-24 12:10:08",

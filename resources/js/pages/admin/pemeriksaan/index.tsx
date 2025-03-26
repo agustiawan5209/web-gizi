@@ -207,11 +207,11 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter }: Pe
                                                 <TableColumn> {item.balita.tempat_lahir}/ {item.tanggal_lahir} </TableColumn>
                                                 <TableAction
                                                     className="w-32"
-                                                    edit={route('admin.pemeriksaan.edit', { pemeriksaan: item.id })}
                                                     delete="delete"
                                                     url={route('admin.pemeriksaan.destroy', { pemeriksaan: item.id })}
                                                     title={item.tgl_pemeriksaan}
                                                     id={item.id}
+                                                    show={route('admin.pemeriksaan.show', {pemeriksaan: item.id})}
                                                 />
                                             </TableRow>
                                         ))}

@@ -106,20 +106,32 @@ class PemeriksaanController extends Controller
     public function store(StorePemeriksaanRequest $request)
     {
        try{
-        $balita = Balita::create($request->all());
-        $attribut = $request->attribut;
+        $balita = Balita::create($request->except('attribut', 'tanggal_pemeriksaan'));
+
+        $attribut = $request->input('attribut');
 
         $pemeriksaan = Pemeriksaan::create([
             'balita_id' => $balita->id,
-            'data_pemeriksaan' => json_encode($attribut),
+            'data_balita'=> json_encode($balita),
+            'data_pemeriksaan'=> json_encode($attribut),
             'tgl_pemeriksaan' => $request->input('tanggal_pemeriksaan'),
             'label' => 'GIZI??',
         ]);
-        for ($i = 0; $i < count($attribut); $i++) {
+
+        foreach ($attribut as $item) {
             DetailPemeriksaan::create([
                 'pemeriksaan_id' => $pemeriksaan->id,
-                'attribut_id' => $attribut[$i]['attribut_id'],
-                'nilai' => $attribut[$i]['nilai'],
+                'attribut_id' => $item['attribut_id'],
+                'nilai' => $item['nilai'],
+            ]);
+        }
+
+        $jenkelAttribut = Attribut::where('nama', 'like', '%jenis kelamin%')->first();
+        if ($jenkelAttribut) {
+            DetailPemeriksaan::create([
+                'pemeriksaan_id' => $pemeriksaan->id,
+                'attribut_id' => $jenkelAttribut->id,
+                'nilai' => $balita->jenis_kelamin,
             ]);
         }
 
@@ -158,8 +170,12 @@ class PemeriksaanController extends Controller
      */
     public function show(Pemeriksaan $pemeriksaan)
     {
+        $pemeriksaan->load(['balita', 'balita.orangtua', 'detailpemeriksaan', 'detailpemeriksaan.attribut']);
         return Inertia::render('admin/pemeriksaan/show', [
             'pemeriksaan' => $pemeriksaan,
+            'balita' => $pemeriksaan->balita,
+            'orangTua' => $pemeriksaan->balita->orangtua,
+            'detail' => $pemeriksaan->detailpemeriksaan,
             'breadcrumb' => [
                 [
                     'title' => 'dashboard',
