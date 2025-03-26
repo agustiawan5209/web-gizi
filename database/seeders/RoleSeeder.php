@@ -92,6 +92,6 @@ class RoleSeeder extends Seeder
 
        $data_pengguna = User::factory()->count(30)->create();
 
-        $data_pengguna->assignRole($orangtua);
+        // $data_pengguna->assignRole($orangtua);
     }
 }

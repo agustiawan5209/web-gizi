@@ -50,6 +50,14 @@ class Pemeriksaan extends Model
             });
         });
     }
+    public function scopeSearchByJenkel($query, $jenkel)
+    {
+        $query->when($jenkel ?? null, function ($query, $jenkel) {
+            $query->whereHas('balita', function ($query) use ($jenkel) {
+                $query->where('jenis_kelamin', $jenkel);
+            });
+        });
+    }
 
 
 /**

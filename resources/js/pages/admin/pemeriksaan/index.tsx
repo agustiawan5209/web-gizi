@@ -7,8 +7,8 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { FormEventHandler, useEffect, useState } from 'react';
-export interface BalitaProps {
-    balita?: {
+export interface PemeriksaanProps {
+    pemeriksaan?: {
         current_page: number;
         data: string[];
         first_page_url: string;
@@ -41,7 +41,7 @@ type GetForm = {
     order_by?: string;
 };
 
-export default function BalitaIndex({ balita, breadcrumb, filter }: BalitaProps) {
+export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter }: PemeriksaanProps) {
     const breadcrumbs: BreadcrumbItem[] = breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : [];
 
     const { data, setData, get, processing, errors, reset } = useForm<GetForm>({
@@ -60,7 +60,7 @@ export default function BalitaIndex({ balita, breadcrumb, filter }: BalitaProps)
         const cleanedSearch = search.trim();
         if (cleanedSearch.length > 0) {
             // if search query is not empty, make request to server
-            get(route('admin.balita.index', { q: cleanedSearch, per_page: filter?.per_page, order_by: filter?.order_by }), {
+            get(route('admin.pemeriksaan.index', { q: cleanedSearch, per_page: filter?.per_page, order_by: filter?.order_by }), {
                 preserveState: true,
                 preserveScroll: true,
                 onSuccess: () => {},
@@ -74,7 +74,7 @@ export default function BalitaIndex({ balita, breadcrumb, filter }: BalitaProps)
         setSearch('');
         reset();
         // make request to server when search query is cleared
-        get(route('admin.balita.index'), {
+        get(route('admin.pemeriksaan.index'), {
             preserveState: true,
             preserveScroll: true,
             onSuccess: () => {},
@@ -90,7 +90,7 @@ export default function BalitaIndex({ balita, breadcrumb, filter }: BalitaProps)
         const cleanedOrderBy = orderBy.trim();
         if (cleanedOrderBy.length > 0) {
             // if search query is not empty, make request to server
-            get(route('admin.balita.index', { order_by: cleanedOrderBy, per_page: filter?.per_page, q: filter?.q }), {
+            get(route('admin.pemeriksaan.index', { order_by: cleanedOrderBy, per_page: filter?.per_page, q: filter?.q }), {
                 preserveState: true,
                 preserveScroll: true,
                 onSuccess: () => {},
@@ -110,7 +110,7 @@ export default function BalitaIndex({ balita, breadcrumb, filter }: BalitaProps)
         // Validasi nilai per_page
         if (!isNaN(numericPerPage) && numericPerPage > 0) {
             get(
-                route('admin.balita.index', {
+                route('admin.pemeriksaan.index', {
                     per_page: numericPerPage,
                 }),
                 {
@@ -124,12 +124,12 @@ export default function BalitaIndex({ balita, breadcrumb, filter }: BalitaProps)
     /** END Request Per_page */
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Balita" />
+            <Head title="Pemeriksaan" />
             <div className="dark:bg-elevation-1 flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
                     <div className="flex w-full flex-1 flex-row items-end justify-end gap-7 px-4 py-2 md:items-center md:justify-between">
                         <div className="flex w-full flex-1 flex-col gap-7 px-4 py-2 md:flex-row md:items-center">
-                            <Link href={route('admin.balita.create')} className="col-span-1 cursor-pointer">
+                            <Link href={route('admin.pemeriksaan.create')} className="col-span-1 cursor-pointer">
                                 <Button variant="default" className="flex cursor-pointer items-center gap-2 bg-blue-500 hover:bg-blue-600">
                                     Tambah Data
                                 </Button>
@@ -189,28 +189,28 @@ export default function BalitaIndex({ balita, breadcrumb, filter }: BalitaProps)
                                 <TableHead>
                                     <TableRow>
                                         <TableTh className="w-10">No.</TableTh>
-                                        <TableTh>Orang Tua</TableTh>
-                                        <TableTh>Nama</TableTh>
+                                        <TableTh>Tanggal Pemeriksaan</TableTh>
+                                        <TableTh>Nama Balita</TableTh>
+                                        <TableTh>Nama Orang Tua</TableTh>
                                         <TableTh>Tempat/Tanggal Lahir</TableTh>
-                                        <TableTh>Jenis Kelamin</TableTh>
                                         <TableTh>Aksi</TableTh>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody className={processing ? 'opacity-50' : ''}>
-                                    {(balita?.data ?? []).length > 0 &&
-                                        balita?.data.map((item: any, index: number) => (
+                                    {(pemeriksaan?.data ?? []).length > 0 &&
+                                        pemeriksaan?.data.map((item: any, index: number) => (
                                             <TableRow key={index}>
-                                                <TableColumn>{index + 1 + (balita?.current_page - 1) * balita?.per_page}</TableColumn>
-                                                <TableColumn> {item.orangtua.name} </TableColumn>
-                                                <TableColumn> {item.nama} </TableColumn>
-                                                <TableColumn> {item.tempat_lahir}/ {item.tanggal_lahir} </TableColumn>
-                                                <TableColumn> {item.jenis_kelamin} </TableColumn>
+                                                <TableColumn>{index + 1 + (pemeriksaan?.current_page - 1) * pemeriksaan?.per_page}</TableColumn>
+                                                <TableColumn> {item.tgl_pemeriksaan} </TableColumn>
+                                                <TableColumn> {item.balita.nama} </TableColumn>
+                                                <TableColumn> {item.balita.orangtua.name} </TableColumn>
+                                                <TableColumn> {item.balita.tempat_lahir}/ {item.tanggal_lahir} </TableColumn>
                                                 <TableAction
                                                     className="w-32"
-                                                    edit={route('admin.balita.edit', { balita: item.id })}
+                                                    edit={route('admin.pemeriksaan.edit', { pemeriksaan: item.id })}
                                                     delete="delete"
-                                                    url={route('admin.balita.destroy', { balita: item.id })}
-                                                    title={item.nama}
+                                                    url={route('admin.pemeriksaan.destroy', { pemeriksaan: item.id })}
+                                                    title={item.tgl_pemeriksaan}
                                                     id={item.id}
                                                 />
                                             </TableRow>
@@ -240,10 +240,10 @@ export default function BalitaIndex({ balita, breadcrumb, filter }: BalitaProps)
                                     </div>
                                     <div className="text-xs text-gray-600">
                                         {' '}
-                                        halaman {balita?.from} ke {balita?.to} dari {balita?.total} total
+                                        halaman {pemeriksaan?.from} ke {pemeriksaan?.to} dari {pemeriksaan?.total} total
                                     </div>
                                 </div>
-                                <PaginationTable links={balita?.links ?? []} data={filter} />
+                                <PaginationTable links={pemeriksaan?.links ?? []} data={filter} />
                             </div>
                         </TableContainer>
                     </div>

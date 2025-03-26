@@ -11,7 +11,7 @@ class StorePemeriksaanRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,16 @@ class StorePemeriksaanRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "orang_tua_id"=> "required|integer|exists:users,id",
+            "nama"=> "required|string|max:100",
+            "tempat_lahir"=> "required|string|max:100",
+            "tanggal_lahir"=> "required|date",
+            "jenis_kelamin"=> "required|string|in:Laki-laki,Perempuan",
+            "tanggal_pemeriksaan"=> "required|date",
+            'attribut'=> 'required|array',
+            'attribut.*.nilai'=> 'required|numeric',
+            'attribut.*.attribut_id'=> 'required|exists:attributs,id',
+
         ];
     }
 }

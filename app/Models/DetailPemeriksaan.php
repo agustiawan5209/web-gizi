@@ -9,7 +9,7 @@ class DetailPemeriksaan extends Model
     protected $table = "detail_pemeriksaans";
 
     protected $fillable = [
-        'id_pemeriksaan',
+        'pemeriksaan_id',
         'attribut_id',
         'nilai',
     ];
