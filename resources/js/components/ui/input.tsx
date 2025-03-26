@@ -17,5 +17,47 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
     />
   )
 }
+interface InputRadioProps extends React.ComponentProps<"input"> {
+  label?: string;
+  labelClassName?: string;
+  containerClassName?: string;
+}
 
-export { Input }
+function InputRadio({
+  className,
+  label,
+  labelClassName,
+  containerClassName,
+  ...props
+}: InputRadioProps) {
+  return (
+    <div className={cn("flex items-center gap-2", containerClassName)}>
+      <input
+        type="radio"
+        data-slot="input"
+        className={cn(
+          "h-4 w-4 border-input text-primary focus:ring-primary cursor-pointer rounded-full border bg-transparent shadow-xs transition-colors",
+          "focus:ring-2 focus:ring-offset-2",
+          "disabled:cursor-not-allowed disabled:opacity-50",
+          "aria-invalid:border-destructive aria-invalid:text-destructive",
+          className
+        )}
+        {...props}
+      />
+      {label && (
+        <label
+          htmlFor={props.id}
+          className={cn(
+            "text-sm font-medium leading-none text-black dark:text-white",
+            "cursor-pointer peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+            labelClassName
+          )}
+        >
+          {label}
+        </label>
+      )}
+    </div>
+  );
+}
+
+export { Input, InputRadio }

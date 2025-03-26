@@ -20,7 +20,7 @@ class Balita extends Model
 
 
     protected $casts = [
-        'tanggal_lahir' => 'date',
+        // 'tanggal_lahir' => 'date',
     ];
 
     /**
@@ -29,7 +29,7 @@ class Balita extends Model
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
 
-    public function orang_tua()
+    public function orangtua()
     {
         return $this->belongsTo(User::class, 'orang_tua_id');
     }

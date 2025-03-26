@@ -42,7 +42,7 @@ class BalitaController extends Controller
         }
 
         try {
-            $balita = $query->paginate($request->input('per_page', 10));
+            $balita = $query->with(['orangtua'])->paginate($request->input('per_page', 10));
         } catch (\Exception $e) {
             // Handle pagination error
             return redirect()->back()->withErrors(['pagination' => 'Pagination failed: ' . $e->getMessage()]);
@@ -70,7 +70,7 @@ class BalitaController extends Controller
     public function create()
     {
     return Inertia::render('admin/balita/create', [
-        'orang_tua' => User::role('orangtua')->get(),
+        'orangtua' => User::withoutRole('admin')->get(),
         'breadcrumb' => [
             [
                 'title' => 'dashboard',
@@ -102,6 +102,7 @@ class BalitaController extends Controller
      */
     public function show(Balita $balita)
     {
+        $balita->load(['orangtua']);
         return Inertia::render('admin/balita/show', [
             'balita'=> $balita,
             'breadcrumb' => [
@@ -126,9 +127,10 @@ class BalitaController extends Controller
      */
     public function edit(Balita $balita)
     {
+        $balita->load(['orangtua']);
         return Inertia::render('admin/balita/edit', [
             'balita'=> $balita,
-            'orang_tua' => User::role('orangtua')->get(),
+            'orangtua' => User::role('orangtua')->get(),
             'breadcrumb' => [
                 [
                     'title' => 'dashboard',
