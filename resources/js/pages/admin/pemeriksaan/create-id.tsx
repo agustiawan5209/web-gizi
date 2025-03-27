@@ -12,11 +12,12 @@ import { FormEventHandler, useEffect, useState } from 'react';
 
 export interface PemeriksaanCreateProps {
     breadcrumb?: { title: string; href: string }[];
-    orangtua: {
+    balita: {
         id: string;
-        name: string;
-        email: string;
-        password: string;
+        nama: string;
+        tanggal_lahir: string;
+        tempat_lahir: string;
+        jenis_kelamin: string;
     }[];
     attribut: {
         id: string;
@@ -25,7 +26,7 @@ export interface PemeriksaanCreateProps {
 }
 
 type CreateForm = {
-    orang_tua_id: string;
+    balita_id: string;
     nama: string;
     tempat_lahir: string;
     tanggal_lahir: string;
@@ -37,11 +38,11 @@ type CreateForm = {
     }[];
 };
 
-export default function PemeriksaanCreate({ breadcrumb, orangtua, attribut }: PemeriksaanCreateProps) {
+export default function PemeriksaanCreate({ breadcrumb, balita, attribut }: PemeriksaanCreateProps) {
     const breadcrumbs: BreadcrumbItem[] = breadcrumb?.map((item) => ({ title: item.title, href: item.href })) ?? [];
 
     const { data, setData, post, processing, errors } = useForm<CreateForm>({
-        orang_tua_id: '',
+        balita_id: '',
         nama: '',
         tempat_lahir: '',
         tanggal_lahir: '',
@@ -50,24 +51,30 @@ export default function PemeriksaanCreate({ breadcrumb, orangtua, attribut }: Pe
         attribut: attribut.map((attr) => ({ nilai: '', attribut_id: attr.id })),
     });
 
-    const [selectedOrangtua, setSelectedOrangtua] = useState<PemeriksaanCreateProps['orangtua'][0] | null>(null);
-    const [idOrangTua, setIdOrangTua] = useState('');
+    const [idBalita, setIdBalita] = useState('');
 
-    const filterById = (search: string): PemeriksaanCreateProps['orangtua'][0] | null => {
-        if (!orangtua || !search) return null;
-        return orangtua.find((element) => String(element.id).includes(search)) ?? null;
+    const filterById = (search: string): PemeriksaanCreateProps['balita'][0] | null => {
+        if (!balita || !search) return null;
+        return balita.find((element) => String(element.id).includes(search)) ?? null;
     };
 
     useEffect(() => {
-        if (idOrangTua) {
-            setSelectedOrangtua(filterById(idOrangTua));
-            setData('orang_tua_id', idOrangTua);
+        if (idBalita) {
+            const listbalita = filterById(idBalita);
+
+            setData('balita_id', idBalita);
+            if(listbalita){
+                setData('nama', listbalita.nama);
+                setData('tempat_lahir', listbalita.tempat_lahir);
+                setData('tanggal_lahir', listbalita.tanggal_lahir);
+                setData('jenis_kelamin', listbalita.jenis_kelamin);
+            }
         }
-    }, [idOrangTua]);
+    }, [idBalita]);
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        post(route('admin.pemeriksaan.store'), {
+        post(route('admin.pemeriksaan.store-id'), {
             onError: (err) => console.log(err),
         });
     };
@@ -81,36 +88,26 @@ export default function PemeriksaanCreate({ breadcrumb, orangtua, attribut }: Pe
                         <form className="flex flex-col gap-6" onSubmit={submit}>
                             <div className="grid gap-6">
                                 <div className="grid gap-2">
-                                    <Label htmlFor="nama">Pilih Berdasarkan Nama Orang Tua</Label>
-                                    <Select value={idOrangTua} onValueChange={(value) => setIdOrangTua(value)} disabled={processing}>
+                                    <Label htmlFor="nama">Pilih Berdasarkan Nama Balita</Label>
+                                    <Select value={idBalita} onValueChange={(value) => setIdBalita(value)} disabled={processing}>
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Pilih Orang Tua" />
+                                            <SelectValue placeholder="Pilih Balita" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectGroup>
-                                                <SelectLabel>Orang Tua</SelectLabel>
-                                                {orangtua.map((item) => (
+                                                <SelectLabel>Nama Balita</SelectLabel>
+                                                {balita.map((item) => (
                                                     <SelectItem key={item.id} value={item.id}>
-                                                        {item.name}
+                                                        {item.nama}
                                                     </SelectItem>
                                                 ))}
                                             </SelectGroup>
                                         </SelectContent>
                                     </Select>
+                                    <InputError message={errors.balita_id} className="mt-2" />
+
                                 </div>
 
-                                {selectedOrangtua && (
-                                    <div className="block space-y-4 p-2">
-                                        <div className="flex gap-2">
-                                            <Label className="text-muted-foreground">Nama Orang Tua:</Label>
-                                            <Label className="font-normal">{selectedOrangtua.name}</Label>
-                                        </div>
-                                        <div className="flex gap-2">
-                                            <Label className="text-muted-foreground">Email Orang Tua:</Label>
-                                            <Label className="font-normal">{selectedOrangtua.email}</Label>
-                                        </div>
-                                    </div>
-                                )}
 
                                 <div className="grid gap-2">
                                     <Label htmlFor="nama">Nama</Label>
@@ -123,6 +120,7 @@ export default function PemeriksaanCreate({ breadcrumb, orangtua, attribut }: Pe
                                         autoComplete="nama"
                                         value={data.nama}
                                         onChange={(e) => setData('nama', e.target.value)}
+                                        readOnly={true}
                                         disabled={processing}
                                         placeholder="Nama Balita"
                                     />
@@ -139,8 +137,9 @@ export default function PemeriksaanCreate({ breadcrumb, orangtua, attribut }: Pe
                                             tabIndex={2}
                                             autoComplete="tempat_lahir"
                                             value={data.tempat_lahir}
-                                            onChange={(e) => setData('tempat_lahir', e.target.value)}
                                             disabled={processing}
+                                            onChange={(e) => setData('tempat_lahir', e.target.value)}
+                                            readOnly={true}
                                             placeholder="Tempat lahir"
                                         />
                                         <InputError message={errors.tempat_lahir} />
@@ -154,8 +153,9 @@ export default function PemeriksaanCreate({ breadcrumb, orangtua, attribut }: Pe
                                             tabIndex={2}
                                             autoComplete="tanggal_lahir"
                                             value={data.tanggal_lahir}
-                                            onChange={(e) => setData('tanggal_lahir', e.target.value)}
                                             disabled={processing}
+                                            onChange={(e) => setData('tanggal_lahir', e.target.value)}
+                                            readOnly={true}
                                         />
                                         <InputError message={errors.tanggal_lahir} />
                                     </div>
@@ -163,22 +163,17 @@ export default function PemeriksaanCreate({ breadcrumb, orangtua, attribut }: Pe
 
                                 <div className="grid gap-2">
                                     <Label htmlFor="jenis_kelamin">Jenis Kelamin</Label>
-                                    <InputRadio
-                                        id="jenis1"
-                                        name="jenis_kelamin"
-                                        label="Laki-laki"
-                                        value="Laki-laki"
-                                        disabled={processing}
-                                        onChange={(e) => setData('jenis_kelamin', e.target.value)}
-                                    />
-                                    <InputRadio
-                                        id="jenis2"
-                                        name="jenis_kelamin"
-                                        label="Perempuan"
-                                        value="Perempuan"
-                                        disabled={processing}
-                                        onChange={(e) => setData('jenis_kelamin', e.target.value)}
-                                    />
+                                    <Input
+                                            id="jenis_kelamin"
+                                            type="text"
+                                            required
+                                            tabIndex={2}
+                                            autoComplete="jenis_kelamin"
+                                            value={data.jenis_kelamin}
+                                            disabled={processing}
+                                            onChange={(e) => setData('jenis_kelamin', e.target.value)}
+                                            readOnly={true}
+                                        />
                                     <InputError message={errors.jenis_kelamin} />
                                 </div>
                                 <div className="block py-2">

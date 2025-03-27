@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePemeriksaanBalitaIdRequest;
 use Carbon\Carbon;
 use Inertia\Inertia;
 use App\Models\Balita;
@@ -91,6 +92,34 @@ class PemeriksaanController extends Controller
             ],
         ]);
     }
+    public function createById()
+    {
+        return Inertia::render('admin/pemeriksaan/create-id', [
+            'attribut' => Attribut::orderBy('id', 'asc')->whereNotIn('nama', ['jenis kelamin', 'status'])->get(),
+            'orangtua' => User::withoutRole('admin')->get(),
+            'balita'=> Balita::orderBy('id', 'asc')->get(),
+            'label' => [
+                ['nama' => 'gizi buruk'],
+                ['nama' => 'gizi kurang'],
+                ['nama' => 'gizi baik'],
+                ['nama' => 'gizi lebih'],
+            ],
+            'breadcrumb' => [
+                [
+                    'title' => 'dashboard',
+                    'href' => '/dashboard',
+                ],
+                [
+                    'title' => 'data pemeriksaan',
+                    'href' => '/admin/pemeriksaan/',
+                ],
+                [
+                    'title' => 'tambah pemeriksaan',
+                    'href' => '/admin/pemeriksaan/create',
+                ],
+            ],
+        ]);
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -132,29 +161,42 @@ class PemeriksaanController extends Controller
         return redirect()->route('admin.pemeriksaan.index')->with('error', 'terjadi kesalahan '. $e->getMessage());
        }
     }
-    public function storeByBalita(StorePemeriksaanRequest $request)
+    public function storeByBalita(StorePemeriksaanBalitaIdRequest $request)
     {
-        $attribut =  Attribut::orderBy('id', 'asc')->get();
+        try{
+            $balita = Balita::find($request->balita_id);
 
-        $pemeriksaan = Balita::find($request->pemeriksaan_id);
+            $attribut = $request->input('attribut');
 
-        $pemeriksaan = Pemeriksaan::create([
-            'pemeriksaan_id' => $request->input('pemeriksaan_id'),
-            'data_pemeriksaan' => $pemeriksaan,
-            'data_pemeriksaan' => $request->input('data_pemeriksaan'),
-            'tgl_pemeriksaan' => $request->input('tgl_pemeriksaan'),
-            'label' => $request->input('label'),
-        ]);
-
-        foreach ($attribut as $key => $value) {
-            DetailPemeriksaan::create([
-                'pemeriksaan_id' => $pemeriksaan->id,
-                'attribut_id' => $value->id,
-                'nilai' => $request->attribut[$key],
+            $pemeriksaan = Pemeriksaan::create([
+                'balita_id' => $balita->id,
+                'data_balita'=> json_encode($balita),
+                'data_pemeriksaan'=> json_encode($attribut),
+                'tgl_pemeriksaan' => $request->input('tanggal_pemeriksaan'),
+                'label' => 'GIZI??',
             ]);
-        }
 
-        return redirect()->route('admin.pemeriksaan.index')->with('success', 'data pemeriksaan berhasil ditambahkan!!');
+            foreach ($attribut as $item) {
+                DetailPemeriksaan::create([
+                    'pemeriksaan_id' => $pemeriksaan->id,
+                    'attribut_id' => $item['attribut_id'],
+                    'nilai' => $item['nilai'],
+                ]);
+            }
+
+            $jenkelAttribut = Attribut::where('nama', 'like', '%jenis kelamin%')->first();
+            if ($jenkelAttribut) {
+                DetailPemeriksaan::create([
+                    'pemeriksaan_id' => $pemeriksaan->id,
+                    'attribut_id' => $jenkelAttribut->id,
+                    'nilai' => $balita->jenis_kelamin,
+                ]);
+            }
+
+            return redirect()->route('admin.pemeriksaan.index')->with('success', 'data pemeriksaan berhasil ditambahkan!!');
+           }catch(\Exception $e){
+            return redirect()->route('admin.pemeriksaan.index')->with('error', 'terjadi kesalahan '. $e->getMessage());
+           }
     }
 
     /**

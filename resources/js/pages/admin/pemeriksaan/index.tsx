@@ -1,5 +1,6 @@
 import PaginationTable from '@/components/pagination-table';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableAction, TableBody, TableColumn, TableContainer, TableHead, TableRow, TableTh } from '@/components/ui/table';
@@ -58,7 +59,7 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter }: Pe
     const submitTglPemeriksaan = () => {
         const cleanedDate = TglPemeriksaan;
 
-        console.log(cleanedDate)
+        console.log(cleanedDate);
         // Validasi nilai per_page
         if (cleanedDate) {
             get(
@@ -81,7 +82,7 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter }: Pe
 
     const submitSearch: FormEventHandler = (e) => {
         e.preventDefault();
-        const cleanedDate = TglPemeriksaan
+        const cleanedDate = TglPemeriksaan;
         // clean search query
         const cleanedSearch = search.trim();
         if (cleanedSearch.length > 0) {
@@ -152,6 +153,18 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter }: Pe
             onSuccess: () => {},
         });
     };
+    // End Filter //
+
+    /**
+     * Kode untuk melakukan pemilihan
+     * apakah ingin menambah berdasarkan id bayi
+     * atau menambah secara langsung data bayi
+     * @agustiawan5209
+     */
+
+    const [open, setOpen] = useState(false);
+
+    /** END  */
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Pemeriksaan" />
@@ -159,11 +172,51 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter }: Pe
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
                     <div className="flex w-full flex-1 flex-row items-end justify-end gap-7 px-4 py-2 md:items-center md:justify-between">
                         <div className="flex w-full flex-1 flex-col gap-7 px-4 py-2 md:flex-row md:items-center">
-                            <Link href={route('admin.pemeriksaan.create')} className="col-span-1 cursor-pointer">
-                                <Button variant="default" className="flex cursor-pointer items-center gap-2 bg-blue-500 hover:bg-blue-600">
-                                    Tambah Data
-                                </Button>
-                            </Link>
+                            <Dialog open={open} onOpenChange={setOpen}>
+                                <DialogTrigger asChild>
+                                    <Button
+                                        type="button"
+                                        variant={'destructive'}
+                                        size={'lg'}
+                                        tabIndex={4}
+                                        className="flex cursor-pointer items-center gap-2 bg-blue-500 hover:bg-blue-600"
+                                    >
+                                        Tambah Data
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                    <DialogTitle>Pilih Cara Penambahan Data!!</DialogTitle>
+                                    <DialogDescription>
+                                        <section className="flex gap-4">
+                                            <div className="block space-y-3 border-x p-4">
+                                                <p className="text-left">Tambah Data Dengan Memilih berdasarkan id Bayi</p>
+                                                <Link href={route('admin.pemeriksaan.create-id')} className="col-span-1 cursor-pointer">
+                                                    <Button
+                                                        type="button"
+                                                        variant="default"
+                                                        className="flex w-full cursor-pointer items-center gap-2 bg-blue-500 hover:bg-blue-600"
+                                                    >
+                                                        Mulai
+                                                    </Button>
+                                                </Link>
+                                            </div>
+                                            <div className="block space-y-3 border-x p-4">
+                                                <p>Tambah Data pemeriksaan secara langsung dengan menginputkan data bayi</p>
+                                                <Link href={route('admin.pemeriksaan.create')} className="col-span-1 cursor-pointer">
+                                                    <Button
+                                                        type="button"
+                                                        variant="default"
+                                                        className="flex w-full cursor-pointer items-center gap-2 bg-blue-500 hover:bg-blue-600"
+                                                    >
+                                                        Mulai
+                                                    </Button>
+                                                </Link>
+                                            </div>
+                                        </section>
+                                    </DialogDescription>
+                                    <DialogClose />
+                                </DialogContent>
+                            </Dialog>
                             <div className="col-span-2 flex items-center gap-2">
                                 <label htmlFor="search" className="sr-only">
                                     Cari

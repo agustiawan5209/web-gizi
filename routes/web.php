@@ -114,6 +114,8 @@ Route::prefix('admin')->as('admin.')->middleware(['auth', 'verified'])->group(fu
             Route::get('/', 'index')->name('index');
             // Create a pemeriksaan
             Route::get('/create', 'create')->name('create');
+            Route::get('/create-id', 'createById')->name('create-id');
+
             // Edit a pemeriksaan
             Route::get('/edit/{pemeriksaan}', 'edit')->name('edit');
             // Show a pemeriksaan
@@ -121,6 +123,7 @@ Route::prefix('admin')->as('admin.')->middleware(['auth', 'verified'])->group(fu
 
             // Store a pemeriksaan
             Route::post('/store', 'store')->name('store');
+            Route::post('/store-id', 'storeByBalita')->name('store-id');
             // Update a pemeriksaan
             Route::put('/update/{pemeriksaan}', 'update')->name('update');
             // Delete a pemeriksaan
