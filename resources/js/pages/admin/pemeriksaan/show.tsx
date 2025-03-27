@@ -50,11 +50,11 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, detail,
                         <section className="border-x px-4">
                             <h3 className="p-4 text-lg md:text-xl bg-blue-100 dark:bg-accent font-semibold  border-b border-gray-300 dark:border-gray-700">Data Orang Tua</h3>
                             <div className="grid grid-cols-1 gap-4 text-base mt-3">
-                                <div className='border-b py-1'>
-                                    <span className="font-normal text-gray-600 dark:text-gray-400">Nama:</span> {orangTua.name}
+                                <div className='border-b py-1 '>
+                                    <div className="font-normal text-gray-600 dark:text-gray-400">Nama:</div> <div>{orangTua.name}</div>
                                 </div>
                                 <div className='border-b py-1'>
-                                    <span className="font-normal text-gray-600 dark:text-gray-400">Email:</span> {orangTua.email}
+                                    <div className="font-normal text-gray-600 dark:text-gray-400">Email:</div> <div>{orangTua.email}</div>
                                 </div>
                             </div>
                         </section>
@@ -63,29 +63,29 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, detail,
                             <h3 className="p-4 text-lg md:text-xl bg-blue-100 dark:bg-accent font-semibold  border-b border-gray-300 dark:border-gray-700">Data Balita</h3>
                             <div className="grid grid-cols-1 gap-4 text-base mt-3">
                                 <div className='border-b py-1'>
-                                    <span className="font-normal text-gray-600 dark:text-gray-400">Nama:</span> {balita.nama}
+                                    <div className="font-normal text-gray-600 dark:text-gray-400">Nama:</div><div> {balita.nama}</div>
                                 </div>
                                 <div className='border-b py-1'>
-                                    <span className="font-normal text-gray-600 dark:text-gray-400">Tempat Lahir:</span> {balita.tempat_lahir}
+                                    <div className="font-normal text-gray-600 dark:text-gray-400">Tempat Lahir:</div> <div>{balita.tempat_lahir}</div>
                                 </div>
                                 <div className='border-b py-1'>
-                                    <span className="font-normal text-gray-600 dark:text-gray-400">Tanggal Lahir:</span> {balita.tanggal_lahir}
+                                    <div className="font-normal text-gray-600 dark:text-gray-400">Tanggal Lahir:</div> <div>{balita.tanggal_lahir}</div>
                                 </div>
                                 <div className='border-b py-1'>
-                                    <span className="font-normal text-gray-600 dark:text-gray-400">Jenis Kelamin:</span> {balita.jenis_kelamin}
+                                    <div className="font-normal text-gray-600 dark:text-gray-400">Jenis Kelamin:</div> <div>{balita.jenis_kelamin}</div>
                                 </div>
                             </div>
                         </section>
 
                         <section className="border-x px-4">
                             <h3 className="p-4 text-lg md:text-xl bg-blue-100 dark:bg-accent font-semibold  border-b border-gray-300 dark:border-gray-700">Data Pemeriksaan</h3>
-                            <ul className="list-decimal text-base mt-3 pl-5 space-y-4">
+                            <ul className="list-disc text-base mt-3 pl-5 space-y-4">
                                 {detail.filter((attr)=> !['jenis kelamin'].includes(attr.attribut.nama.toLowerCase())).map((item, index) => (
                                     <li key={index} className='border-b py-1'>
-                                        <span className="font-normal text-gray-600 dark:text-gray-400">
+                                        <div className="font-normal text-gray-600 dark:text-gray-400">
                                             {item.attribut.nama}:
-                                        </span>{' '}
-                                        {item.nilai}
+                                        </div>{' '}
+                                        <div>{item.nilai}</div>
                                     </li>
                                 ))}
                             </ul>

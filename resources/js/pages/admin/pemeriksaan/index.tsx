@@ -32,6 +32,7 @@ export interface PemeriksaanProps {
         q: string;
         per_page: string;
         order_by: string;
+        date: string;
     };
 }
 
@@ -39,6 +40,7 @@ type GetForm = {
     q?: string;
     per_page?: string;
     order_by?: string;
+    date?: string;
 };
 
 export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter }: PemeriksaanProps) {
@@ -50,35 +52,48 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter }: Pe
         // order_by: '',
     });
 
+    /** Search By tanggal Pemeriksaan */
+    const [TglPemeriksaan, setTglPemeriksaan] = useState(filter?.per_page ?? null); // Default value lebih baik angka
+
+    const submitTglPemeriksaan = () => {
+        const cleanedDate = TglPemeriksaan;
+
+        console.log(cleanedDate)
+        // Validasi nilai per_page
+        if (cleanedDate) {
+            get(
+                route('admin.pemeriksaan.index', {
+                    date: cleanedDate,
+                }),
+                {
+                    preserveState: true,
+                    preserveScroll: true,
+                    replace: true, // Hindari penumpukan history
+                },
+            );
+        }
+    };
+    /** End tanggal Pemeriksaan */
+
     /** START SEARCH */
     // store search query in state
     const [search, setSearch] = useState(filter?.q ?? '');
 
     const submitSearch: FormEventHandler = (e) => {
         e.preventDefault();
+        const cleanedDate = TglPemeriksaan
         // clean search query
         const cleanedSearch = search.trim();
         if (cleanedSearch.length > 0) {
             // if search query is not empty, make request to server
-            get(route('admin.pemeriksaan.index', { q: cleanedSearch, per_page: filter?.per_page, order_by: filter?.order_by }), {
+            get(route('admin.pemeriksaan.index', { q: cleanedSearch, per_page: filter?.per_page, order_by: filter?.order_by, date: filter?.date }), {
                 preserveState: true,
                 preserveScroll: true,
                 onSuccess: () => {},
             });
+        } else if (cleanedDate.length > 0) {
+            submitTglPemeriksaan();
         }
-    };
-
-    // clear search query when form is submitted
-    const clearSearch: FormEventHandler = (e) => {
-        e.preventDefault();
-        setSearch('');
-        reset();
-        // make request to server when search query is cleared
-        get(route('admin.pemeriksaan.index'), {
-            preserveState: true,
-            preserveScroll: true,
-            onSuccess: () => {},
-        });
     };
     /** END SEARCH */
 
@@ -122,6 +137,21 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter }: Pe
         }
     };
     /** END Request Per_page */
+
+    // clear search query when form is submitted
+    const clearSearch: FormEventHandler = (e) => {
+        e.preventDefault();
+        setSearch('');
+        reset();
+        setTglPemeriksaan('yyyy-mm-dd');
+        setPerPage('10');
+        // make request to server when search query is cleared
+        get(route('admin.pemeriksaan.index'), {
+            preserveState: true,
+            preserveScroll: true,
+            onSuccess: () => {},
+        });
+    };
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Pemeriksaan" />
@@ -140,11 +170,18 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter }: Pe
                                 </label>
                                 <Input
                                     type="text"
-                                    id="search"
+                                    id="search-text"
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
-
                                     placeholder="Cari berdasarkan nama atau keterangan"
+                                />
+                                <Input
+                                    type="date"
+                                    id="search-date"
+                                    value={TglPemeriksaan}
+                                    onChange={(e) => setTglPemeriksaan(e.target.value)}
+                                    className="max-w-fit"
+                                    placeholder="Cari berdasarkan tanggal"
                                 />
                                 <Button variant="outline" type="button" onClick={submitSearch} className="flex items-center gap-2 text-xs">
                                     Cari
@@ -204,14 +241,17 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter }: Pe
                                                 <TableColumn> {item.tgl_pemeriksaan} </TableColumn>
                                                 <TableColumn> {item.balita.nama} </TableColumn>
                                                 <TableColumn> {item.balita.orangtua.name} </TableColumn>
-                                                <TableColumn> {item.balita.tempat_lahir}/ {item.tanggal_lahir} </TableColumn>
+                                                <TableColumn>
+                                                    {' '}
+                                                    {item.balita.tempat_lahir}/ {item.tanggal_lahir}{' '}
+                                                </TableColumn>
                                                 <TableAction
                                                     className="w-32"
                                                     delete="delete"
                                                     url={route('admin.pemeriksaan.destroy', { pemeriksaan: item.id })}
                                                     title={item.tgl_pemeriksaan}
                                                     id={item.id}
-                                                    show={route('admin.pemeriksaan.show', {pemeriksaan: item.id})}
+                                                    show={route('admin.pemeriksaan.show', { pemeriksaan: item.id })}
                                                 />
                                             </TableRow>
                                         ))}
@@ -220,7 +260,7 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter }: Pe
 
                             <div className="flex justify-between gap-7 border-x-2 border-b-2 p-2">
                                 <div className="flex items-center gap-7 px-4 py-2">
-                                    <div className='flex flex-row gap-2'>
+                                    <div className="flex flex-row gap-2">
                                         <Select defaultValue="10" value={perPage} onValueChange={(e) => setPerPage(e.toString())}>
                                             <SelectTrigger>
                                                 <SelectValue placeholder="Jumlah Data" />

@@ -22,36 +22,28 @@ class PemeriksaanController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Pemeriksaan::query();
+        $pemeriksaanQuery = Pemeriksaan::query();
 
-        if ($request->filled('q')) {
-            $query->searchByBalita($request->input('q', ''));
+        if ($request->filled('search')) {
+            $pemeriksaanQuery->searchByBalita($request->input('search'));
         }
 
-        if ($request->filled('order_by')) {
-            $orderBy = $request->input('order_by');
-            if (in_array($orderBy, ['asc', 'desc'])) {
-                $query->orderBy('created_at', $orderBy);
-            } else if (in_array($orderBy, ['A-Z', 'Z-A'])) {
-                if ($orderBy == 'A-Z') {
-                    $query->orderBy('name', 'asc');
-                } else {
-                    $query->orderBy('name', 'desc');
-                }
-            } else if (in_array($orderBy, ['Laki-laki', 'Perempuan'])) {
-                $query->searchByJenkel($orderBy);
-            } else {
-                // Handle invalid order_by value
-                return redirect()->back()->withErrors(['order_by' => 'Invalid order_by value']);
-            }
+        $orderBy = $request->input('order_by', 'asc');
+
+        if (in_array($orderBy, ['asc', 'desc'])) {
+            $pemeriksaanQuery->orderBy('created_at', $orderBy);
+        } elseif (in_array($orderBy, ['A-Z', 'Z-A'])) {
+            $pemeriksaanQuery->orderBy('name', $orderBy === 'A-Z' ? 'asc' : 'desc');
+        } elseif (in_array($orderBy, ['Laki-laki', 'Perempuan'])) {
+            $pemeriksaanQuery->searchByJenkel($orderBy);
         }
 
-        try {
-            $pemeriksaan = $query->with(['balita', 'balita.orangtua'])->paginate($request->input('per_page', 10));
-        } catch (\Exception $e) {
-            // Handle pagination error
-            return redirect()->back()->withErrors(['pagination' => 'Pagination failed: ' . $e->getMessage()]);
+        if($request->filled('date')){
+            $pemeriksaanQuery->searchByTanggal($request->date);
         }
+        $pemeriksaan = $pemeriksaanQuery
+            ->with(['balita', 'balita.orangtua'])
+            ->paginate($request->input('per_page', 10));
 
         return Inertia::render('admin/pemeriksaan/index', [
             'pemeriksaan' => $pemeriksaan,
@@ -65,7 +57,7 @@ class PemeriksaanController extends Controller
                     'href' => '/admin/pemeriksaan/',
                 ],
             ],
-            'filter' => $request->only('q'),
+            'filter' => $request->only('search', 'order_by', 'date', 'q'),
         ]);
     }
 
