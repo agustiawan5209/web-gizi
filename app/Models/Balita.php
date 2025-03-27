@@ -33,6 +33,10 @@ class Balita extends Model
     {
         return $this->belongsTo(User::class, 'orang_tua_id');
     }
+    public function pemeriksaan()
+    {
+        return $this->hasMany(Pemeriksaan::class, 'balita_id', 'id');
+    }
 
 
     /**

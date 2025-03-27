@@ -8,6 +8,7 @@ use App\Models\Balita;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreBalitaRequest;
 use App\Http\Requests\UpdateBalitaRequest;
+use App\Models\Attribut;
 
 class BalitaController extends Controller
 {
@@ -102,9 +103,12 @@ class BalitaController extends Controller
      */
     public function show(Balita $balita)
     {
-        $balita->load(['orangtua']);
+        $balita->load(['orangtua', 'pemeriksaan', 'pemeriksaan.detailpemeriksaan']);
         return Inertia::render('admin/balita/show', [
             'balita'=> $balita,
+            'pemeriksaan'=> $balita->pemeriksaan,
+            'orangTua'=> $balita->orangtua,
+            'attribut'=> Attribut::orderBy('id', 'asc')->get(),
             'breadcrumb' => [
                 [
                     'title' => 'dashboard',

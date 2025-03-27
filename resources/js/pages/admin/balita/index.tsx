@@ -207,6 +207,7 @@ export default function BalitaIndex({ balita, breadcrumb, filter }: BalitaProps)
                                                 <TableColumn> {item.jenis_kelamin} </TableColumn>
                                                 <TableAction
                                                     className="w-32"
+                                                    show={route('admin.balita.show', { balita: item.id })}
                                                     edit={route('admin.balita.edit', { balita: item.id })}
                                                     delete="delete"
                                                     url={route('admin.balita.destroy', { balita: item.id })}

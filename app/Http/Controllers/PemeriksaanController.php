@@ -130,13 +130,13 @@ class PemeriksaanController extends Controller
         $balita = Balita::create($request->except('attribut', 'tanggal_pemeriksaan'));
 
         $attribut = $request->input('attribut');
-
+        $label = 'GIZI??';
         $pemeriksaan = Pemeriksaan::create([
             'balita_id' => $balita->id,
             'data_balita'=> json_encode($balita),
             'data_pemeriksaan'=> json_encode($attribut),
             'tgl_pemeriksaan' => $request->input('tanggal_pemeriksaan'),
-            'label' => 'GIZI??',
+            'label' => $label,
         ]);
 
         foreach ($attribut as $item) {
@@ -148,11 +148,19 @@ class PemeriksaanController extends Controller
         }
 
         $jenkelAttribut = Attribut::where('nama', 'like', '%jenis kelamin%')->first();
+        $statusAttribut = Attribut::where('nama', 'like', '%status%')->first();
         if ($jenkelAttribut) {
             DetailPemeriksaan::create([
                 'pemeriksaan_id' => $pemeriksaan->id,
                 'attribut_id' => $jenkelAttribut->id,
                 'nilai' => $balita->jenis_kelamin,
+            ]);
+        }
+        if ($statusAttribut) {
+            DetailPemeriksaan::create([
+                'pemeriksaan_id' => $pemeriksaan->id,
+                'attribut_id' => $statusAttribut->id,
+                'nilai' => $label,
             ]);
         }
 
@@ -167,13 +175,13 @@ class PemeriksaanController extends Controller
             $balita = Balita::find($request->balita_id);
 
             $attribut = $request->input('attribut');
-
+            $label = 'GIZI??';
             $pemeriksaan = Pemeriksaan::create([
                 'balita_id' => $balita->id,
                 'data_balita'=> json_encode($balita),
                 'data_pemeriksaan'=> json_encode($attribut),
                 'tgl_pemeriksaan' => $request->input('tanggal_pemeriksaan'),
-                'label' => 'GIZI??',
+                'label' => $label,
             ]);
 
             foreach ($attribut as $item) {
@@ -185,11 +193,19 @@ class PemeriksaanController extends Controller
             }
 
             $jenkelAttribut = Attribut::where('nama', 'like', '%jenis kelamin%')->first();
+            $statusAttribut = Attribut::where('nama', 'like', '%status%')->first();
             if ($jenkelAttribut) {
                 DetailPemeriksaan::create([
                     'pemeriksaan_id' => $pemeriksaan->id,
                     'attribut_id' => $jenkelAttribut->id,
                     'nilai' => $balita->jenis_kelamin,
+                ]);
+            }
+            if ($statusAttribut) {
+                DetailPemeriksaan::create([
+                    'pemeriksaan_id' => $pemeriksaan->id,
+                    'attribut_id' => $statusAttribut->id,
+                    'nilai' => $label,
                 ]);
             }
 
