@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('attribut_id')->constrained('attributs')->cascadeOnDelete();
             $table->foreignId('dataset_id')->constrained('datasets')->cascadeOnDelete();
-            $table->bigInteger('nilai')->default('0');
+            $table->string('nilai',30)->default('0');
             $table->timestamps();
         });
     }

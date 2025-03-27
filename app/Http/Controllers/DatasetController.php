@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateDatasetRequest;
 use App\Models\Attribut;
 use App\Models\FiturDataset;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class DatasetController extends Controller
 {
@@ -17,11 +18,46 @@ class DatasetController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $datasets = Dataset::with(['fiturdataset'])->paginate(10);
+$statusLabel = [
+    'gizi buruk',
+    'gizi kurang',
+    'gizi baik',
+    'gizi lebih',
+];
+        $datasetQuery = Dataset::query();
+
+        $orderBy = $request->input('order_by', 'asc');
+
+        if (in_array($orderBy, ['asc', 'desc'])) {
+            $datasetQuery->orderBy('created_at', $orderBy);
+        } elseif (in_array($orderBy, $statusLabel)) {
+            $datasetQuery->where('label','=', $orderBy);
+        }
+
+        if($request->filled('date')){
+            $datasetQuery->searchByTanggal($request->date);
+        }
+        $dataset = $datasetQuery
+            ->with(['fiturdataset'])
+            ->paginate($request->input('per_page', 10));
+
         return Inertia::render('admin/dataset/index', [
-            'datasets' => $datasets
+            'dataset' => $dataset,
+            'attribut' => Attribut::orderBy('id', 'asc')->get(),
+            'breadcrumb' => [
+                [
+                    'title' => 'dashboard',
+                    'href' => '/dashboard',
+                ],
+                [
+                    'title' => 'data dataset',
+                    'href' => '/admin/dataset/',
+                ],
+            ],
+            'statusLabel' => $statusLabel,
+            'filter' => $request->only('search', 'order_by', 'date', 'q'),
         ]);
     }
 
@@ -31,13 +67,27 @@ class DatasetController extends Controller
     public function create()
     {
         return Inertia::render('admin/dataset/create', [
-            'attribut' => Attribut::orderBy('id', 'asc')->get(),
-            'label' => [
-                ['nama' => 'gizi buruk'],
-                ['nama' => 'gizi kurang'],
-                ['nama' => 'gizi baik'],
-                ['nama' => 'gizi lebih'],
-            ]
+            'attribut' => Attribut::orderBy('id', 'asc')->whereNotIn('nama', ['jenis kelamin', 'status'])->get(),
+            'statusLabel' => [
+                'gizi buruk',
+                'gizi kurang',
+                'gizi baik',
+                'gizi lebih',
+            ],
+            'breadcrumb' => [
+                [
+                    'title' => 'dashboard',
+                    'href' => '/dashboard',
+                ],
+                [
+                    'title' => 'data dataset',
+                    'href' => '/admin/dataset/',
+                ],
+                [
+                    'title' => 'tambah dataset',
+                    'href' => '/admin/dataset/create',
+                ],
+            ],
         ]);
     }
 
@@ -46,22 +96,43 @@ class DatasetController extends Controller
      */
     public function store(StoreDatasetRequest $request)
     {
-        $tgl = Carbon::now()->format('Y-m-d');
-        $attribut =  Attribut::orderBy('id', 'asc')->get();
-
-        $dataset = Dataset::create([
-            'tgl' => $tgl,
-            'label' => $request->input('label'),
-        ]);
-        foreach ($attribut as $key => $value) {
-            FiturDataset::create([
-                'dataset_id' => $dataset->id,
-                'attribut_id' => $value->id,
-                'nilai' => $request->attribut[$key],
+        try{
+            $attribut = $request->input('attribut');
+            $label = $request->label;
+            $dataset = Dataset::create([
+                'tgl'=> Carbon::now()->format('y-m-d'),
+                'label' => $label,
             ]);
-        }
 
-        return redirect()->route('admin.dataset.index')->with('success', 'data dataset berhasil ditambahkan!!');
+            foreach ($attribut as $item) {
+                FiturDataset::create([
+                    'dataset_id' => $dataset->id,
+                    'attribut_id' => $item['attribut_id'],
+                    'nilai' => $item['nilai'],
+                ]);
+            }
+
+            $jenkelAttribut = Attribut::where('nama', 'like', '%jenis kelamin%')->first();
+            $statusAttribut = Attribut::where('nama', 'like', '%status%')->first();
+            if ($jenkelAttribut) {
+                FiturDataset::create([
+                    'dataset_id' => $dataset->id,
+                    'attribut_id' => $jenkelAttribut->id,
+                    'nilai' => $request->jenis_kelamin,
+                ]);
+            }
+            if ($statusAttribut) {
+                FiturDataset::create([
+                    'dataset_id' => $dataset->id,
+                    'attribut_id' => $statusAttribut->id,
+                    'nilai' => $label,
+                ]);
+            }
+
+            return redirect()->route('admin.dataset.index')->with('success', 'data dataset berhasil ditambahkan!!');
+           }catch(\Exception $e){
+            return redirect()->route('admin.dataset.index')->with('error', 'terjadi kesalahan '. $e->getMessage());
+           }
     }
 
     /**
@@ -70,7 +141,21 @@ class DatasetController extends Controller
     public function show(Dataset $dataset)
     {
         return Inertia::render('admin/dataset/show', [
-            'dataset' => $dataset
+            'dataset' => $dataset,
+            'breadcrumb' => [
+                [
+                    'title' => 'dashboard',
+                    'href' => '/dashboard',
+                ],
+                [
+                    'title' => 'data dataset',
+                    'href' => '/admin/dataset/',
+                ],
+                [
+                    'title' => 'detail dataset',
+                    'href' => '/admin/dataset/show',
+                ],
+            ],
         ]);
     }
 
@@ -87,7 +172,21 @@ class DatasetController extends Controller
                 ['nama' => 'gizi baik'],
                 ['nama' => 'gizi lebih'],
             ],
-            'dataset' => $dataset
+            'dataset' => $dataset,
+            'breadcrumb' => [
+                [
+                    'title' => 'dashboard',
+                    'href' => '/dashboard',
+                ],
+                [
+                    'title' => 'data dataset',
+                    'href' => '/admin/dataset/',
+                ],
+                [
+                    'title' => 'edit dataset',
+                    'href' => '/admin/dataset/edit',
+                ],
+            ],
         ]);
     }
 

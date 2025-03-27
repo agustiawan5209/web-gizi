@@ -17,7 +17,7 @@ class Dataset extends Model
 
     public function fiturdataset()
     {
-        return $this->hasMany(Dataset::class, 'dataset_id', 'id');
+        return $this->hasMany(FiturDataset::class, 'dataset_id', 'id');
     }
 
     /**
@@ -47,6 +47,13 @@ class Dataset extends Model
     {
         $query->when($label ?? null, function ($query, $label) {
             $query->where('label', 'like', '%' . $label . '%');
+        });
+    }
+
+    public function scopeSearchByTanggal($query, $tanggal)
+    {
+        $query->when($tanggal, function ($query, $tanggal) {
+            $query->whereDate('tgl_pemeriksaan', $tanggal);
         });
     }
 }
