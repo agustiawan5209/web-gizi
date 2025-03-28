@@ -220,7 +220,7 @@ class PemeriksaanController extends Controller
      */
     public function show(Pemeriksaan $pemeriksaan)
     {
-        $pemeriksaan->load(['balita', 'balita.orangtua', 'detailpemeriksaan', 'detailpemeriksaan.attribut']);
+        $pemeriksaan->load(['balita', 'balita.orangtua', 'detailpemeriksaan', 'detailpemeriksaan.attribut', 'polamakan']);
         return Inertia::render('admin/pemeriksaan/show', [
             'pemeriksaan' => $pemeriksaan,
             'balita' => $pemeriksaan->balita,
@@ -240,6 +240,7 @@ class PemeriksaanController extends Controller
                     'href' => '/admin/pemeriksaan/show',
                 ],
             ],
+            'polamakan'=> $pemeriksaan->polamakan,
         ]);
     }
 

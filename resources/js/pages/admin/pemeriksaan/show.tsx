@@ -27,15 +27,22 @@ interface DetailPemeriksaan {
     nilai: number | string;
 }
 
+interface PolaMakan {
+    id: string;
+    rekomendasi: string;
+    catatan_dokter: string;
+}
+
 export interface PemeriksaanProps {
     orangTua: OrangTua;
     balita: Balita;
     pemeriksaan: Pemeriksaan;
     detail: DetailPemeriksaan[];
+    polamakan: PolaMakan;
     breadcrumb: { title: string; href: string }[];
 }
 
-export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, detail, breadcrumb }: PemeriksaanProps) {
+export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, detail, polamakan, breadcrumb }: PemeriksaanProps) {
     return (
         <AppLayout breadcrumbs={breadcrumb}>
             <Head title="Detail Pemeriksaan" />
@@ -79,22 +86,18 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, detail,
                                             Data Balita
                                         </TableTh>
                                     </TableRow>
-                                    <TableRow className="border-b">
-                                        <TableColumn className="p-3 font-medium text-gray-600 dark:text-gray-400">Nama Balita</TableColumn>
-                                        <TableColumn className="p-3">{balita.nama}</TableColumn>
+
+                                    {([
+                                        { attribut: 'Nama', nilai: balita.nama },
+                                        { attribut: 'Tempat Lahir', nilai: balita.tempat_lahir },
+                                        { attribut: 'Tanggal Lahir', nilai: balita.tanggal_lahir },
+                                        { attribut: 'Jenis Kelamin', nilai: balita.jenis_kelamin },
+                                    ]).map((item) =>(
+                                        <TableRow className="border-b">
+                                        <TableColumn className="p-3 font-medium text-gray-600 dark:text-gray-400">{item.attribut}</TableColumn>
+                                        <TableColumn className="p-3">{item.nilai}</TableColumn>
                                     </TableRow>
-                                    <TableRow className="border-b">
-                                        <TableColumn className="p-3 font-medium text-gray-600 dark:text-gray-400">Tempat Lahir</TableColumn>
-                                        <TableColumn className="p-3">{balita.tempat_lahir}</TableColumn>
-                                    </TableRow>
-                                    <TableRow className="border-b">
-                                        <TableColumn className="p-3 font-medium text-gray-600 dark:text-gray-400">Tanggal Lahir</TableColumn>
-                                        <TableColumn className="p-3">{balita.tanggal_lahir}</TableColumn>
-                                    </TableRow>
-                                    <TableRow className="border-b">
-                                        <TableColumn className="p-3 font-medium text-gray-600 dark:text-gray-400">Jenis Kelamin</TableColumn>
-                                        <TableColumn className="p-3">{balita.jenis_kelamin}</TableColumn>
-                                    </TableRow>
+                                    ))}
                                 </TableBody>
                             </Table>
                             </TableContainer>
@@ -119,6 +122,23 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, detail,
                                     </Table>
                                 </TableContainer>
                             </section>
+                            {polamakan && (
+                                <section className="border-x">
+                                <h3  className="bg-blue-100 text-black p-4 text-left text-lg font-semibold md:text-xl dark:bg-gray-800">
+                                   Pola Makan
+                                </h3>
+                                <div className='container'>
+                                    <div className="bg-card dark:bg-gray-800">
+                                        <h2 className='p-3 text-lg font-semibold text-gray-600 dark:text-gray-400'>Rekomendasi Pola Makan</h2>
+                                        <p className='p-3 ql-editor' dangerouslySetInnerHTML={{ __html: polamakan.rekomendasi }}></p>
+                                    </div>
+                                    <div className="bg-card dark:bg-gray-800">
+                                        <h2 className='p-3 text-lg font-semibold text-gray-600 dark:text-gray-400'>Catatan Dokter</h2>
+                                        <p className='p-3 ql-editor' dangerouslySetInnerHTML={{ __html: polamakan.catatan_dokter }}></p>
+                                    </div>
+                                </div>
+                            </section>
+                            )}
                         </div>
                     </div>
                 </div>
