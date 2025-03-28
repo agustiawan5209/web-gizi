@@ -164,9 +164,9 @@ class PemeriksaanController extends Controller
             ]);
         }
 
-        return redirect()->route('admin.pemeriksaan.index')->with('success', 'data pemeriksaan berhasil ditambahkan!!');
+        return redirect()->route('admin.pola-makan.index', ['pemeriksaan'=> $pemeriksaan->id])->with('success', 'data pemeriksaan berhasil ditambahkan!!');
        }catch(\Exception $e){
-        return redirect()->route('admin.pemeriksaan.index')->with('error', 'terjadi kesalahan '. $e->getMessage());
+        return redirect()->route('admin.pola-makan.index', ['pemeriksaan'=> $pemeriksaan->id])->with('error', 'terjadi kesalahan '. $e->getMessage());
        }
     }
     public function storeByBalita(StorePemeriksaanBalitaIdRequest $request)
@@ -209,9 +209,9 @@ class PemeriksaanController extends Controller
                 ]);
             }
 
-            return redirect()->route('admin.pemeriksaan.index')->with('success', 'data pemeriksaan berhasil ditambahkan!!');
+            return redirect()->route('admin.pola-makan.index', ['pemeriksaan'=> $pemeriksaan->id])->with('success', 'data pemeriksaan berhasil ditambahkan!!');
            }catch(\Exception $e){
-            return redirect()->route('admin.pemeriksaan.index')->with('error', 'terjadi kesalahan '. $e->getMessage());
+            return redirect()->route('admin.pola-makan.index', ['pemeriksaan'=> $pemeriksaan->id])->with('error', 'terjadi kesalahan '. $e->getMessage());
            }
     }
 

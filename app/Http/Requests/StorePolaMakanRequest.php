@@ -11,7 +11,7 @@ class StorePolaMakanRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class StorePolaMakanRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "pemeriksaan_id"=> "required|exists:pemeriksaans,id",
+            "rekomendasi"=> "required|string",
+            "catatan_dokter"=> "required|string",
         ];
     }
 }

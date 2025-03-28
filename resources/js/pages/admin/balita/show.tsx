@@ -60,49 +60,63 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, attribu
             <div className="dark:bg-elevation-1 flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
                     <div className="mx-auto max-w-full rounded-lg bg-white p-2 shadow-lg dark:bg-gray-900 dark:text-white">
-                        <h2 className="mb-6 text-3xl font-bold tracking-tight">Detail Pemeriksaan</h2>
+                        <h2 className="mb-6 text-xl font-bold tracking-tight">Detail Pemeriksaan</h2>
 
                         <div className="grid grid-cols-1 gap-8 md:gap-4">
-                            <section className="border-x px-4">
-                                <h3 className="dark:bg-accent border-b border-gray-300 bg-blue-100 p-4 text-lg font-semibold md:text-xl dark:border-gray-700">
-                                    Data Orang Tua
-                                </h3>
-                                <div className="mt-3 grid grid-cols-1 gap-4 text-base">
-                                    <div className="flex gap-2 border-b pl-2">
-                                        <div className="font-normal text-gray-600 dark:text-gray-400">Nama:</div> <div>{orangTua.name}</div>
-                                    </div>
-                                    <div className="flex gap-2 border-b pl-2">
-                                        <div className="font-normal text-gray-600 dark:text-gray-400">Email:</div> <div>{orangTua.email}</div>
-                                    </div>
-                                </div>
-                            </section>
+                           <TableContainer>
+                           <Table className="w-full border-collapse">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableTh
+                                            colSpan={2}
+                                            className="bg-blue-100 p-4 text-left text-lg font-semibold text-black md:text-xl dark:bg-gray-800"
+                                        >
+                                            Data Orang Tua
+                                        </TableTh>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {/* Parent Data */}
+                                    <TableRow className="border-b">
+                                        <TableColumn className="w-1/3 p-3 font-medium text-gray-600 dark:text-gray-400">Nama Orang Tua</TableColumn>
+                                        <TableColumn className="p-3">{orangTua.name}</TableColumn>
+                                    </TableRow>
+                                    <TableRow className="border-b">
+                                        <TableColumn className="p-3 font-medium text-gray-600 dark:text-gray-400">Email Orang Tua</TableColumn>
+                                        <TableColumn className="p-3">{orangTua.email}</TableColumn>
+                                    </TableRow>
+
+                                    {/* Child Data */}
+                                    <TableRow>
+                                        <TableTh
+                                            colSpan={2}
+                                            className="bg-blue-100 p-4 text-left text-lg font-semibold text-black md:text-xl dark:bg-gray-800"
+                                        >
+                                            Data Balita
+                                        </TableTh>
+                                    </TableRow>
+                                    <TableRow className="border-b">
+                                        <TableColumn className="p-3 font-medium text-gray-600 dark:text-gray-400">Nama Balita</TableColumn>
+                                        <TableColumn className="p-3">{balita.nama}</TableColumn>
+                                    </TableRow>
+                                    <TableRow className="border-b">
+                                        <TableColumn className="p-3 font-medium text-gray-600 dark:text-gray-400">Tempat Lahir</TableColumn>
+                                        <TableColumn className="p-3">{balita.tempat_lahir}</TableColumn>
+                                    </TableRow>
+                                    <TableRow className="border-b">
+                                        <TableColumn className="p-3 font-medium text-gray-600 dark:text-gray-400">Tanggal Lahir</TableColumn>
+                                        <TableColumn className="p-3">{balita.tanggal_lahir}</TableColumn>
+                                    </TableRow>
+                                    <TableRow className="border-b">
+                                        <TableColumn className="p-3 font-medium text-gray-600 dark:text-gray-400">Jenis Kelamin</TableColumn>
+                                        <TableColumn className="p-3">{balita.jenis_kelamin}</TableColumn>
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
+                           </TableContainer>
 
                             <section className="border-x px-4">
-                                <h3 className="dark:bg-accent border-b border-gray-300 bg-blue-100 p-4 text-lg font-semibold md:text-xl dark:border-gray-700">
-                                    Data Balita
-                                </h3>
-                                <div className="mt-3 grid grid-cols-1 gap-4 text-base">
-                                    <div className="flex gap-2 border-b pl-2">
-                                        <div className="font-normal text-gray-600 dark:text-gray-400">Nama:</div>
-                                        <div> {balita.nama}</div>
-                                    </div>
-                                    <div className="flex gap-2 border-b pl-2">
-                                        <div className="font-normal text-gray-600 dark:text-gray-400">Tempat Lahir:</div>{' '}
-                                        <div>{balita.tempat_lahir}</div>
-                                    </div>
-                                    <div className="flex gap-2 border-b pl-2">
-                                        <div className="font-normal text-gray-600 dark:text-gray-400">Tanggal Lahir:</div>{' '}
-                                        <div>{balita.tanggal_lahir}</div>
-                                    </div>
-                                    <div className="flex gap-2 border-b pl-2">
-                                        <div className="font-normal text-gray-600 dark:text-gray-400">Jenis Kelamin:</div>{' '}
-                                        <div>{balita.jenis_kelamin}</div>
-                                    </div>
-                                </div>
-                            </section>
-
-                            <section className="border-x px-4">
-                                <h3 className="dark:bg-accent border-b border-gray-300 bg-blue-100 p-4 text-lg font-semibold md:text-xl dark:border-gray-700">
+                                <h3  className="bg-blue-100 text-black p-4 text-left text-lg font-semibold md:text-xl dark:bg-gray-800">
                                     Data Pemeriksaan
                                 </h3>
                                 <TableContainer className="relative">
@@ -122,7 +136,9 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, attribu
                                                         <TableColumn> {item.tgl_pemeriksaan} </TableColumn>
                                                         {attribut.length > 0 &&
                                                             attribut.map((attributs: any) => (
-                                                                <TableColumn key={attributs.id}>{filterById(attributs.id, item.detailpemeriksaan)}</TableColumn>
+                                                                <TableColumn key={attributs.id}>
+                                                                    {filterById(attributs.id, item.detailpemeriksaan)}
+                                                                </TableColumn>
                                                             ))}
                                                     </TableRow>
                                                 ))}

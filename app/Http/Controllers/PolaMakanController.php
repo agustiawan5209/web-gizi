@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\PolaMakan;
 use App\Http\Requests\StorePolaMakanRequest;
 use App\Http\Requests\UpdatePolaMakanRequest;
+use App\Models\Pemeriksaan;
+use Inertia\Inertia;
 
 class PolaMakanController extends Controller
 {
@@ -19,8 +21,32 @@ class PolaMakanController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Pemeriksaan $pemeriksaan)
     {
+        $pemeriksaan->find(1);
+        $pemeriksaan->load(['balita', 'balita.orangtua', 'detailpemeriksaan', 'detailpemeriksaan.attribut']);
+
+
+        return Inertia::render('admin/polamakan/index',[
+            'pemeriksaan' => $pemeriksaan,
+            'balita' => $pemeriksaan->balita,
+            'orangTua' => $pemeriksaan->balita->orangtua,
+            'detail' => $pemeriksaan->detailpemeriksaan,
+            'breadcrumb' => [
+                [
+                    'title' => 'dashboard',
+                    'href' => '/dashboard',
+                ],
+                [
+                    'title' => 'data pemeriksaan',
+                    'href' => '/admin/pemeriksaan/',
+                ],
+                [
+                    'title' => 'detail pemeriksaan',
+                    'href' => '/admin/pemeriksaan/show',
+                ],
+            ],
+        ]);
         //
     }
 
@@ -29,7 +55,8 @@ class PolaMakanController extends Controller
      */
     public function store(StorePolaMakanRequest $request)
     {
-        //
+        $polaMakan = PolaMakan::create($request->all());
+        return redirect()->route('admin.pemeriksaan.index')->with('success', 'data pemeriksaan berhasil ditambahkan!!');
     }
 
     /**
