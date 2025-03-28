@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('pola_makans', function (Blueprint $table) {
             $table->id();
             $table->foreignId('pemeriksaan_id')->constrained('pemeriksaans')->cascadeOnDelete();
-            $table->string('rekomendasi')->comment('rekomendasi makanan untuk anak');
-            $table->string('jml_kalori')->comment('pemberitahuan jumlah kalori terhadap makanan');
+            $table->text('rekomendasi')->comment('rekomendasi makanan untuk anak');
             $table->text('catatan_dokter');
             $table->timestamps();
         });

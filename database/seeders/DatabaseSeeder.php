@@ -17,6 +17,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RoleSeeder::class,
             AttributSeeder::class,
+            DatasetSeeder::class,
+            FiturDatasetSeeder::class,
         ]);
     }
 }
