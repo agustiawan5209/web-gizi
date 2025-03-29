@@ -139,3 +139,6 @@ Route::prefix('admin')->as('admin.')->middleware(['auth', 'verified'])->group(fu
 
 Route::get('classify/', [NaiveBayesController::class,'generate'])->name('naive-bayes.generate');
 Route::get('classify-index/', [NaiveBayesController::class,'index'])->name('naive-bayes.index');
+
+
+require __DIR__.'/api.php';
