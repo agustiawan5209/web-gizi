@@ -31,6 +31,7 @@ export interface SharedData {
         success?: string;
         error?: string;
     },
+    defaultUrl: string,
     [key: string]: unknown;
 }
 

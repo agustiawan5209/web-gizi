@@ -1,6 +1,8 @@
+import GrowthChart from '@/components/chart/GrowthChart';
 import { Table, TableBody, TableColumn, TableContainer, TableHead, TableRow, TableTh } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
-import { Head } from '@inertiajs/react';
+import { SharedData } from '@/types';
+import { Head, usePage } from '@inertiajs/react';
 
 interface OrangTua {
     name: string;
@@ -8,6 +10,7 @@ interface OrangTua {
 }
 
 interface Balita {
+    id: string;
     nama: string;
     tempat_lahir: string;
     tanggal_lahir: string;
@@ -53,6 +56,8 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, attribu
             return '';
         }
     };
+    const page = usePage<SharedData>();
+    const { defaultUrl } = page.props;
 
     return (
         <AppLayout breadcrumbs={breadcrumb}>
@@ -63,60 +68,62 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, attribu
                         <h2 className="mb-6 text-xl font-bold tracking-tight">Detail Pemeriksaan</h2>
 
                         <div className="grid grid-cols-1 gap-8 md:gap-4">
-                           <TableContainer>
-                           <Table className="w-full border-collapse">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableTh
-                                            colSpan={2}
-                                            className="bg-blue-100 p-4 text-left text-lg font-semibold text-black md:text-xl dark:bg-gray-800"
-                                        >
-                                            Data Orang Tua
-                                        </TableTh>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {/* Parent Data */}
-                                    <TableRow className="border-b">
-                                        <TableColumn className="w-1/3 p-3 font-medium text-gray-600 dark:text-gray-400">Nama Orang Tua</TableColumn>
-                                        <TableColumn className="p-3">{orangTua.name}</TableColumn>
-                                    </TableRow>
-                                    <TableRow className="border-b">
-                                        <TableColumn className="p-3 font-medium text-gray-600 dark:text-gray-400">Email Orang Tua</TableColumn>
-                                        <TableColumn className="p-3">{orangTua.email}</TableColumn>
-                                    </TableRow>
+                            <TableContainer>
+                                <Table className="w-full border-collapse">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableTh
+                                                colSpan={2}
+                                                className="bg-blue-100 p-4 text-left text-lg font-semibold text-black md:text-xl dark:bg-gray-800"
+                                            >
+                                                Data Orang Tua
+                                            </TableTh>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {/* Parent Data */}
+                                        <TableRow className="border-b">
+                                            <TableColumn className="w-1/3 p-3 font-medium text-gray-600 dark:text-gray-400">
+                                                Nama Orang Tua
+                                            </TableColumn>
+                                            <TableColumn className="p-3">{orangTua.name}</TableColumn>
+                                        </TableRow>
+                                        <TableRow className="border-b">
+                                            <TableColumn className="p-3 font-medium text-gray-600 dark:text-gray-400">Email Orang Tua</TableColumn>
+                                            <TableColumn className="p-3">{orangTua.email}</TableColumn>
+                                        </TableRow>
 
-                                    {/* Child Data */}
-                                    <TableRow>
-                                        <TableTh
-                                            colSpan={2}
-                                            className="bg-blue-100 p-4 text-left text-lg font-semibold text-black md:text-xl dark:bg-gray-800"
-                                        >
-                                            Data Balita
-                                        </TableTh>
-                                    </TableRow>
-                                    <TableRow className="border-b">
-                                        <TableColumn className="p-3 font-medium text-gray-600 dark:text-gray-400">Nama Balita</TableColumn>
-                                        <TableColumn className="p-3">{balita.nama}</TableColumn>
-                                    </TableRow>
-                                    <TableRow className="border-b">
-                                        <TableColumn className="p-3 font-medium text-gray-600 dark:text-gray-400">Tempat Lahir</TableColumn>
-                                        <TableColumn className="p-3">{balita.tempat_lahir}</TableColumn>
-                                    </TableRow>
-                                    <TableRow className="border-b">
-                                        <TableColumn className="p-3 font-medium text-gray-600 dark:text-gray-400">Tanggal Lahir</TableColumn>
-                                        <TableColumn className="p-3">{balita.tanggal_lahir}</TableColumn>
-                                    </TableRow>
-                                    <TableRow className="border-b">
-                                        <TableColumn className="p-3 font-medium text-gray-600 dark:text-gray-400">Jenis Kelamin</TableColumn>
-                                        <TableColumn className="p-3">{balita.jenis_kelamin}</TableColumn>
-                                    </TableRow>
-                                </TableBody>
-                            </Table>
-                           </TableContainer>
+                                        {/* Child Data */}
+                                        <TableRow>
+                                            <TableTh
+                                                colSpan={2}
+                                                className="bg-blue-100 p-4 text-left text-lg font-semibold text-black md:text-xl dark:bg-gray-800"
+                                            >
+                                                Data Balita
+                                            </TableTh>
+                                        </TableRow>
+                                        <TableRow className="border-b">
+                                            <TableColumn className="p-3 font-medium text-gray-600 dark:text-gray-400">Nama Balita</TableColumn>
+                                            <TableColumn className="p-3">{balita.nama}</TableColumn>
+                                        </TableRow>
+                                        <TableRow className="border-b">
+                                            <TableColumn className="p-3 font-medium text-gray-600 dark:text-gray-400">Tempat Lahir</TableColumn>
+                                            <TableColumn className="p-3">{balita.tempat_lahir}</TableColumn>
+                                        </TableRow>
+                                        <TableRow className="border-b">
+                                            <TableColumn className="p-3 font-medium text-gray-600 dark:text-gray-400">Tanggal Lahir</TableColumn>
+                                            <TableColumn className="p-3">{balita.tanggal_lahir}</TableColumn>
+                                        </TableRow>
+                                        <TableRow className="border-b">
+                                            <TableColumn className="p-3 font-medium text-gray-600 dark:text-gray-400">Jenis Kelamin</TableColumn>
+                                            <TableColumn className="p-3">{balita.jenis_kelamin}</TableColumn>
+                                        </TableRow>
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
 
                             <section className="border-x px-4">
-                                <h3  className="bg-blue-100 text-black p-4 text-left text-lg font-semibold md:text-xl dark:bg-gray-800">
+                                <h3 className="bg-blue-100 p-4 text-left text-lg font-semibold text-black md:text-xl dark:bg-gray-800">
                                     Data Pemeriksaan
                                 </h3>
                                 <TableContainer className="relative">
@@ -146,6 +153,9 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, attribu
                                     </Table>
                                 </TableContainer>
                             </section>
+                        {pemeriksaan.length > 1 && <section className="my-4">
+                            <GrowthChart url={defaultUrl + '/api/chart/balita/' + balita.id} title="perkembangan anak secara individual" />
+                        </section>}
                         </div>
                     </div>
                 </div>

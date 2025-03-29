@@ -53,7 +53,8 @@ class HandleInertiaRequests extends Middleware
             'flash' => fn(): array => [
                 'success' => $request->session()->get('success'),
                 'error' => $request->session()->get('error'),
-                ]
+            ],
+            'defaultUrl'=> url('/'),
         ];
     }
 }

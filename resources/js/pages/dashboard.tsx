@@ -85,6 +85,7 @@ export default function Dashboard({ orangtuacount, balitacount, datasetcount, pe
                         <div className="max-h-full w-full p-4 col-span-full md:col-span-4 dark:bg-white">
                             <PieChart data={PieChartData} title='Jumlah Orang tua dan balita' />
                         </div>
+
                     </div>
                 </div>
             </div>
