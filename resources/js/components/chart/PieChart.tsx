@@ -1,10 +1,10 @@
 import { Chart as ChartJs, ArcElement, Tooltip, Legend } from 'chart.js';
-import { Doughnut } from 'react-chartjs-2';
+import { Pie } from 'react-chartjs-2';
 
 ChartJs.register(ArcElement, Tooltip, Legend);
 
 // Definisikan tipe untuk props
-interface DoughnutChartProps {
+interface PieChartProps {
   data: {
     labels: string[];
     datasets: {
@@ -18,7 +18,7 @@ interface DoughnutChartProps {
   title?: string; // Opsional: judul chart
 }
 
-const DoughnutChart: React.FC<DoughnutChartProps> = ({ data, title }) => {
+const PieChart: React.FC<PieChartProps> = ({ data, title }) => {
   const options = {
     responsive: true,
     plugins: {
@@ -30,10 +30,10 @@ const DoughnutChart: React.FC<DoughnutChartProps> = ({ data, title }) => {
         text: title,
       },
     },
-    cutout: '50%',
   };
 
-  return <Doughnut data={data} options={options} className="w-72 h-64" />;
+  return <Pie data={data} options={options} />;
 };
 
-export default DoughnutChart;
+export default PieChart;
+

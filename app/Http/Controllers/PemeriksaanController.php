@@ -192,7 +192,7 @@ class PemeriksaanController extends Controller
                 'data_balita' => json_encode($balita),
                 'data_pemeriksaan' => json_encode($attribut),
                 'tgl_pemeriksaan' => $request->input('tanggal_pemeriksaan'),
-                // 'label' => $label,
+                'label' => $label,
             ]);
 
             foreach ($attribut as $item) {

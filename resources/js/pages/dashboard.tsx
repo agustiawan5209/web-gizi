@@ -1,4 +1,4 @@
-import DoughnutChart from '@/components/chart/DoughnutChart';
+import PieChart from '@/components/chart/PieChart';
 import LineChart from '@/components/chart/LineChart';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
@@ -34,8 +34,8 @@ export default function Dashboard({ orangtuacount, balitacount, datasetcount, pe
         ],
     };
 
-    // Data yang akan dikirim ke DoughnutChart
-    const DoughnutChartData = {
+    // Data yang akan dikirim ke PieChart
+    const PieChartData = {
         labels: ['Orang Tua', 'Balita'],
         datasets: [
             {
@@ -83,7 +83,7 @@ export default function Dashboard({ orangtuacount, balitacount, datasetcount, pe
                             <LineChart data={LineChartData} title="Jumlah Pemeriksaan" />
                         </div>
                         <div className="max-h-full w-full p-4 col-span-full md:col-span-4 dark:bg-white">
-                            <DoughnutChart data={DoughnutChartData} title='Jumlah Orang tua dan balita' />
+                            <PieChart data={PieChartData} title='Jumlah Orang tua dan balita' />
                         </div>
                     </div>
                 </div>
