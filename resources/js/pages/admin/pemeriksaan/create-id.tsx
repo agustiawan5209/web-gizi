@@ -8,7 +8,7 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
-import { FormEventHandler, useEffect, useState } from 'react';
+import { FormEventHandler, useEffect, useState, useMemo } from 'react';
 
 export interface PemeriksaanCreateProps {
     breadcrumb?: { title: string; href: string }[];
@@ -39,7 +39,12 @@ type CreateForm = {
 };
 
 export default function PemeriksaanCreate({ breadcrumb, balita, attribut }: PemeriksaanCreateProps) {
-    const breadcrumbs: BreadcrumbItem[] = breadcrumb?.map((item) => ({ title: item.title, href: item.href })) ?? [];
+     // Memoize breadcrumbs to prevent unnecessary recalculations
+     const breadcrumbs: BreadcrumbItem[] = useMemo(
+        () => (breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : []),
+        [breadcrumb]
+    );
+
 
     const { data, setData, post, processing, errors } = useForm<CreateForm>({
         balita_id: '',

@@ -7,7 +7,7 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
-import { FormEventHandler, useState } from 'react';
+import { FormEventHandler, useState, useMemo } from 'react';
 export interface DatasetCreaterops {
     breadcrumb?: { title: string; href: string }[];
     orangtua: {
@@ -34,7 +34,12 @@ type CreateForm = {
 };
 
 export default function DatasetCreate({ breadcrumb, orangtua, dataset }: DatasetCreaterops) {
-    const breadcrumbs: BreadcrumbItem[] = breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : [];
+     // Memoize breadcrumbs to prevent unnecessary recalculations
+    const breadcrumbs: BreadcrumbItem[] = useMemo(
+        () => (breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : []),
+        [breadcrumb]
+    );
+
     const { data, setData, get, post, processing, progress, errors, reset } = useForm<Required<CreateForm>>({
         orang_tua_id: dataset.orang_tua_id,
         nama: dataset.nama,

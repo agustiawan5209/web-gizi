@@ -29,30 +29,26 @@ class PemeriksaanController extends Controller
             'gizi baik',
             'gizi lebih',
         ];
-        $pemeriksaanQuery = Pemeriksaan::query();
+
+        $pemeriksaanQuery = Pemeriksaan::with(['balita', 'balita.orangtua', 'detailpemeriksaan', 'detailpemeriksaan.attribut', 'polamakan']);
 
         if ($request->filled('q')) {
             $pemeriksaanQuery->searchByBalita($request->input('q'));
         }
 
-        $orderBy = $request->input('order_by', 'asc');
-
-        if (in_array($orderBy, ['asc', 'desc'])) {
-            $pemeriksaanQuery->orderBy('created_at', $orderBy);
-        } elseif (in_array($orderBy, ['A-Z', 'Z-A'])) {
-            $pemeriksaanQuery->orderBy('label', $orderBy === 'A-Z' ? 'asc' : 'desc');
-        } elseif (in_array($orderBy, ['Laki-laki', 'Perempuan'])) {
-            $pemeriksaanQuery->searchByJenkel($orderBy);
-        }elseif (in_array($orderBy, $statusLabel)) {
-            $pemeriksaanQuery->where('label', '=', $orderBy);
-        }
-
         if ($request->filled('date')) {
-            $pemeriksaanQuery->searchByTanggal($request->date);
+            $pemeriksaanQuery->searchByTangal(Carbon::parse($request->date));
         }
-        $pemeriksaan = $pemeriksaanQuery
-            ->with(['balita', 'balita.orangtua', 'detailpemeriksaan', 'detailpemeriksaan.attribut', 'polamakan'])
-            ->paginate($request->input('per_page', 10));
+
+        if (in_array($request->input('order_by'), ['asc', 'desc'])) {
+            $pemeriksaanQuery->orderBy('created_at', $request->input('order_by'));
+        } elseif (in_array($request->input('order_by'), ['A-Z', 'Z-A'])) {
+            $pemeriksaanQuery->orderBy('label', $request->input('order_by') === 'A-Z' ? 'asc' : 'desc');
+        } elseif (in_array($request->input('order_by'), $statusLabel)) {
+            $pemeriksaanQuery->where('label', '=', $request->input('order_by'));
+        }
+
+        $pemeriksaan = $pemeriksaanQuery->paginate($request->input('per_page', 10));
 
         return Inertia::render('admin/pemeriksaan/index', [
             'pemeriksaan' => $pemeriksaan,

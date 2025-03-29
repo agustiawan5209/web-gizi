@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
+import { useMemo } from 'react';
 export interface AttributCreaterops {
     breadcrumb?: { title: string; href: string }[];
 }
@@ -17,7 +18,12 @@ type CreateForm = {
 };
 
 export default function AttributCreate({ breadcrumb }: AttributCreaterops) {
-    const breadcrumbs: BreadcrumbItem[] = breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : [];
+     // Memoize breadcrumbs to prevent unnecessary recalculations
+    const breadcrumbs: BreadcrumbItem[] = useMemo(
+        () => (breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : []),
+        [breadcrumb]
+    );
+
     const { data, setData, post, processing, progress, errors, reset } = useForm<Required<CreateForm>>({
         nama: '',
         keterangan: '',

@@ -6,7 +6,7 @@ import { Table, TableAction, TableBody, TableColumn, TableContainer, TableHead, 
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { FormEventHandler, useEffect, useState } from 'react';
+import { FormEventHandler, useEffect, useMemo, useState } from 'react';
 export interface AttributProps {
     attribut?: {
         current_page: number;
@@ -42,7 +42,11 @@ type GetForm = {
 };
 
 export default function AttributIndex({ attribut, breadcrumb, filter }: AttributProps) {
-    const breadcrumbs: BreadcrumbItem[] = breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : [];
+    // Memoize breadcrumbs to prevent unnecessary recalculations
+    const breadcrumbs: BreadcrumbItem[] = useMemo(
+        () => (breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : []),
+        [breadcrumb],
+    );
 
     const { data, setData, get, processing, errors, reset } = useForm<GetForm>({
         // q: '',
@@ -207,7 +211,7 @@ export default function AttributIndex({ attribut, breadcrumb, filter }: Attribut
 
                             <div className="flex justify-between gap-7 border-x-2 border-b-2 p-2">
                                 <div className="flex items-center gap-7 px-4 py-2">
-                                    <div className='flex flex-row gap-2'>
+                                    <div className="flex flex-row gap-2">
                                         <Select defaultValue="10" value={perPage} onValueChange={(e) => setPerPage(e.toString())}>
                                             <SelectTrigger>
                                                 <SelectValue placeholder="Jumlah Data" />

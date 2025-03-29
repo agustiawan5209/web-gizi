@@ -1,12 +1,12 @@
 import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { FormEventHandler } from 'react';
-
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
+import { useMemo } from 'react';
 import { type BreadcrumbItem } from '@/types';
 export interface OrangtuaUpdaterops {
     orangtua: {
@@ -24,7 +24,12 @@ type UpdateForm = {
 };
 
 export default function OrangtuaUpdate({ orangtua, breadcrumb }: OrangtuaUpdaterops) {
-    const breadcrumbs: BreadcrumbItem[] = breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : [];
+     // Memoize breadcrumbs to prevent unnecessary recalculations
+    const breadcrumbs: BreadcrumbItem[] = useMemo(
+        () => (breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : []),
+        [breadcrumb]
+    );
+
     const { data, setData, put, processing, progress, errors, reset } = useForm<Required<UpdateForm>>({
         name: orangtua.name,
         email: orangtua.email,

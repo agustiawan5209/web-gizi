@@ -2,12 +2,12 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input, InputRadio } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
-import { FormEventHandler, useState } from 'react';
+import { FormEventHandler, useEffect, useMemo, useState } from 'react';
 export interface BalitaCreaterops {
     breadcrumb?: { title: string; href: string }[];
     orangtua: {
@@ -33,9 +33,14 @@ type CreateForm = {
     jenis_kelamin: string;
 };
 
-export default function BalitaCreate({ breadcrumb, orangtua, balita }: BalitaCreaterops) {
-    const breadcrumbs: BreadcrumbItem[] = breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : [];
-    const { data, setData, get, post, processing, progress, errors, reset } = useForm<Required<CreateForm>>({
+export default function BalitaEdit({ breadcrumb, orangtua , balita}: BalitaCreaterops) {
+    // Memoize breadcrumbs to prevent unnecessary recalculations
+    const breadcrumbs: BreadcrumbItem[] = useMemo(
+        () => (breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : []),
+        [breadcrumb],
+    );
+
+    const { data, setData, put, processing, progress, errors, reset } = useForm<Required<CreateForm>>({
         orang_tua_id: balita.orang_tua_id,
         nama: balita.nama,
         tempat_lahir: balita.tempat_lahir,
@@ -52,14 +57,14 @@ export default function BalitaCreate({ breadcrumb, orangtua, balita }: BalitaCre
         e.preventDefault();
 
         console.log(data.jenis_kelamin);
-        post(route('admin.balita.update', {balita: balita.id}), {
+        put(route('admin.balita.update', {balita: balita.id}), {
             onError: (err) => console.log(err),
         });
     };
 
     /** Get Data From orangtua */
-    const [listOrangtua, setListOrangtua] = useState(orangtua);
-
+    const [listOrangtua, setListOrangtua] = useState<{ id: string; name: string; email: string } | null>(null);
+    const [idOrangTua, setIdOrangTua] = useState(balita.orang_tua_id);
     /**
      * Filters the list of orangtua by the given search string.
      * If the search string is empty, returns the original list.
@@ -82,33 +87,81 @@ export default function BalitaCreate({ breadcrumb, orangtua, balita }: BalitaCre
         return filtered;
     };
 
+    const searchById = (search: string): { id: string; name: string; email: string } | null => {
+        if (!orangtua) {
+            return null;
+        }
+
+        try {
+            const filtered = orangtua
+                ?.filter((element: any) => {
+                    if (!element || !element.id) {
+                        return false;
+                    }
+
+                    return String(element.id).includes(search);
+                })
+                .map((element: any) => element);
+
+            return filtered[0] ?? null;
+        } catch (error) {
+            console.error('Error filtering orangtua by ID:', error);
+            return null;
+        }
+    };
+    useEffect(() => {
+        if (idOrangTua) {
+            setListOrangtua(searchById(idOrangTua));
+            setData('orang_tua_id', idOrangTua);
+        }
+    }, [idOrangTua]);
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Create" />
+            <Head title="Edit" />
             <div className="dark:bg-elevation-1 flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
                     <div className="p-4 md:p-6">
                         <form className="flex flex-col gap-6" onSubmit={submit}>
                             <div className="grid gap-6">
                                 <div className="grid gap-2">
-                                    <Label htmlFor="nama">Nama</Label>
-
-                                    <Select defaultValue="" value={data.orang_tua_id} onValueChange={(e) => setData('orang_tua_id', e)}>
-                                        <SelectTrigger className="text-black">
-                                            <SelectValue placeholder="Data Orang Tua" />
+                                    <Label htmlFor="nama">Pilih Berdasarkan Nama Orang Tua</Label>
+                                    <Select defaultValue="0" value={idOrangTua} onValueChange={(value) => setIdOrangTua(value)}>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Pilih Orang Tua" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {orangtua.length > 0 &&
-                                                orangtua.map((item, index) => {
-                                                    return (
-                                                        <SelectItem key={item.id} value={item.id}>
-                                                            {item.name}
-                                                        </SelectItem>
-                                                    );
-                                                })}
+                                            <SelectGroup>
+                                                <SelectLabel>Pilih Orang Tua</SelectLabel>
+                                                {orangtua.map((item) => (
+                                                    <SelectItem key={item.id} value={item.id}>
+                                                        {item.name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectGroup>
                                         </SelectContent>
                                     </Select>
                                 </div>
+                                {listOrangtua && (
+                                    <div className="block space-y-4 p-2">
+                                        <div className="flex gap-2">
+                                            <Label htmlFor="email-orangtua" className="text-muted-foreground">
+                                                Nama Orang Tua:{' '}
+                                            </Label>
+                                            <Label htmlFor="Nama-orangtua" className="font-normal">
+                                                {listOrangtua?.name}
+                                            </Label>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <Label htmlFor="email-orangtua" className="text-muted-foreground">
+                                                Email Orang Tua:{' '}
+                                            </Label>
+                                            <Label htmlFor="Nama-orangtua" className="font-normal">
+                                                {listOrangtua?.email}
+                                            </Label>
+                                        </div>
+                                    </div>
+                                )}
                                 <div className="grid gap-2">
                                     <Label htmlFor="nama">Nama</Label>
                                     <Input
@@ -165,6 +218,7 @@ export default function BalitaCreate({ breadcrumb, orangtua, balita }: BalitaCre
                                         name="jenis_kelaim"
                                         label="Laki-laki"
                                         value="Laki-laki"
+                                        checked={data.jenis_kelamin == 'Laki-laki'}
                                         onChange={(e) => setData('jenis_kelamin', e.target.value)}
                                         className="border-red-500"
                                         labelClassName="text-gray-800 dark:text-white"
@@ -174,6 +228,7 @@ export default function BalitaCreate({ breadcrumb, orangtua, balita }: BalitaCre
                                         name="jenis_kelaim"
                                         label="Perempuan"
                                         value="Perempuan"
+                                        checked={data.jenis_kelamin == 'Perempuan'}
                                         onChange={(e) => setData('jenis_kelamin', e.target.value)}
                                         className="border-red-500"
                                         labelClassName="text-gray-800 dark:text-white"

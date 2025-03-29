@@ -134,7 +134,7 @@ class BalitaController extends Controller
         $balita->load(['orangtua']);
         return Inertia::render('admin/balita/edit', [
             'balita'=> $balita,
-            'orangtua' => User::role('orangtua')->get(),
+            'orangtua' => User::withoutRole('admin')->get(),
             'breadcrumb' => [
                 [
                     'title' => 'dashboard',

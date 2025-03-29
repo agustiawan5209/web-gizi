@@ -9,11 +9,23 @@ import { Table, TableBody, TableContainer, TableHead, TableRow, TableTh } from '
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { FormEventHandler, useEffect, useState } from 'react';
-export interface PemeriksaanProps {
+import { FormEventHandler, useCallback, useEffect, useMemo, useState } from 'react';
+
+interface PemeriksaanProps {
     pemeriksaan?: {
         current_page: number;
-        data: string[];
+        data: Array<{
+            id: string;
+            tgl_pemeriksaan: string;
+            label: string;
+            balita: {
+                nama: string;
+                orangtua: { name: string };
+                tempat_lahir: string;
+                tanggal_lahir: string;
+            };
+            detailpemeriksaan: any;
+        }>;
         first_page_url: string;
         from: number;
         last_page: number;
@@ -24,13 +36,13 @@ export interface PemeriksaanProps {
         prev_page_url: string;
         to: number;
         total: number;
-        links: {
+        links: Array<{
             url: string | null;
             label: string;
             active: boolean;
-        }[];
+        }>;
     };
-    breadcrumb?: { title: string; href: string }[];
+    breadcrumb?: Array<{ title: string; href: string }>;
     filter: {
         q: string;
         per_page: string;
@@ -48,126 +60,116 @@ type GetForm = {
 };
 
 export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, statusLabel }: PemeriksaanProps) {
-    const breadcrumbs: BreadcrumbItem[] = breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : [];
+    // Memoize breadcrumbs to prevent unnecessary recalculations
+    const breadcrumbs: BreadcrumbItem[] = useMemo(
+        () => (breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : []),
+        [breadcrumb]
+    );
 
-    const { data, setData, get, processing, errors, reset } = useForm<GetForm>({
-        // q: '',
-        // per_page: '',
-        // order_by: '',
-    });
+    const { get, processing } = useForm<GetForm>();
 
-    /** Search By tanggal Pemeriksaan */
-    const [TglPemeriksaan, setTglPemeriksaan] = useState(filter?.per_page ?? null); // Default value lebih baik angka
-
-    const submitTglPemeriksaan = () => {
-        const cleanedDate = TglPemeriksaan;
-
-        console.log(cleanedDate);
-        // Validasi nilai per_page
-        if (cleanedDate) {
-            get(
-                route('admin.pemeriksaan.index', {
-                    date: cleanedDate,
-                }),
-                {
-                    preserveState: true,
-                    preserveScroll: true,
-                    replace: true, // Hindari penumpukan history
-                },
-            );
-        }
-    };
-    /** End tanggal Pemeriksaan */
-
-    /** START SEARCH */
-    // store search query in state
+    // State management
     const [search, setSearch] = useState(filter?.q ?? '');
-
-    const submitSearch: FormEventHandler = (e) => {
-        e.preventDefault();
-        const cleanedDate = TglPemeriksaan;
-        // clean search query
-        const cleanedSearch = search.trim();
-        if (cleanedSearch.length > 0) {
-            // if search query is not empty, make request to server
-            get(route('admin.pemeriksaan.index', { q: cleanedSearch, per_page: filter?.per_page, order_by: filter?.order_by, date: filter?.date }), {
-                preserveState: true,
-                preserveScroll: true,
-                onSuccess: () => {},
-            });
-        } else if (cleanedDate.length > 0) {
-            submitTglPemeriksaan();
-        }
-    };
-    /** END SEARCH */
-
-    /** Start Order BY (ASC, DESC) */
+    const [TglPemeriksaan, setTglPemeriksaan] = useState(filter?.date ?? '');
     const [orderBy, setOrderBy] = useState(filter?.order_by ?? '');
+    const [perPage, setPerPage] = useState(filter?.per_page ?? '10');
+    const [dialogOpen, setDialogOpen] = useState(false);
 
-    useEffect(() => {
-        // clean search query
-        const cleanedOrderBy = orderBy.trim();
-        if (cleanedOrderBy.length > 0) {
-            // if search query is not empty, make request to server
-            get(route('admin.pemeriksaan.index', { order_by: cleanedOrderBy, per_page: filter?.per_page, q: filter?.q }), {
+    // Memoized route parameters to avoid recalculations
+    const routeParams = useMemo(() => ({
+        q: search.trim(),
+        per_page: perPage,
+        order_by: orderBy,
+        date: TglPemeriksaan
+    }), [search, perPage, orderBy, TglPemeriksaan]);
+
+    // Optimized filter submission using useCallback
+    const submitFilter = useCallback(() => {
+        const cleanedSearch = search.trim();
+        const cleanedDate = TglPemeriksaan.trim();
+        const numericPerPage = parseInt(perPage.toString());
+
+        // Only make request if there are valid changes
+        if (cleanedSearch || cleanedDate || !isNaN(numericPerPage) ){
+            get(route('admin.pemeriksaan.index', routeParams), {
                 preserveState: true,
                 preserveScroll: true,
-                onSuccess: () => {},
+                replace: true,
             });
         }
-    }, [orderBy]);
-    /** END Order BY */
+    }, [get, routeParams]);
 
-    /** Start Request Per_page */
-    const [perPage, setPerPage] = useState(filter?.per_page ?? 10); // Default value lebih baik angka
-
-    const submitPerPage: FormEventHandler = (e) => {
+    // Handle search submission
+    const submitSearch: FormEventHandler = useCallback((e) => {
         e.preventDefault();
-        const cleanedPerPage = perPage.toString().trim();
-        const numericPerPage = parseInt(cleanedPerPage);
+        submitFilter();
+    }, [submitFilter]);
 
-        // Validasi nilai per_page
-        if (!isNaN(numericPerPage) && numericPerPage > 0) {
-            get(
-                route('admin.pemeriksaan.index', {
-                    per_page: numericPerPage,
-                }),
-                {
-                    preserveState: true,
-                    preserveScroll: true,
-                    replace: true, // Hindari penumpukan history
-                },
-            );
-        }
-    };
-    /** END Request Per_page */
+    // Handle per page submission
+    const submitPerPage: FormEventHandler = useCallback((e) => {
+        e.preventDefault();
+        submitFilter();
+    }, [submitFilter]);
 
-    // clear search query when form is submitted
-    const clearSearch: FormEventHandler = (e) => {
+    // Handle date submission
+    const submitTglPemeriksaan = useCallback(() => {
+        submitFilter();
+    }, [submitFilter]);
+
+    // Clear all filters
+    const clearSearch: FormEventHandler = useCallback((e) => {
         e.preventDefault();
         setSearch('');
-        reset();
-        setTglPemeriksaan('yyyy-mm-dd');
+        setTglPemeriksaan('');
         setPerPage('10');
-        // make request to server when search query is cleared
+        setOrderBy('');
+
         get(route('admin.pemeriksaan.index'), {
             preserveState: true,
             preserveScroll: true,
-            onSuccess: () => {},
         });
-    };
-    // End Filter //
+    }, [get]);
 
-    /**
-     * Kode untuk melakukan pemilihan
-     * apakah ingin menambah berdasarkan id bayi
-     * atau menambah secara langsung data bayi
-     * @agustiawan5209
-     */
+    // Effect for orderBy changes
+    useEffect(() => {
+        const cleanedOrderBy = orderBy.trim();
+        if (cleanedOrderBy) {
+            get(route('admin.pemeriksaan.index', {
+                order_by: cleanedOrderBy,
+                per_page: perPage,
+                q: search
+            }), {
+                preserveState: true,
+                preserveScroll: true,
+            });
+        }
+    }, [orderBy, get, perPage, search]);
 
-    const [open, setOpen] = useState(false);
+    // Memoize table rows to prevent unnecessary re-renders
+    const tableRows = useMemo(() => {
+        if (!pemeriksaan?.data?.length) return null;
 
-    /** END  */
+        return pemeriksaan.data.map((item, index) => (
+            <CollapsibleRow
+                key={item.id} // Using item.id as key is better than index
+                num={index + 1 + (pemeriksaan.current_page - 1) * pemeriksaan.per_page}
+                title={item.tgl_pemeriksaan}
+                columnData={[
+                    item.balita.nama,
+                    item.balita.orangtua.name,
+                    `${item.balita.tempat_lahir}/${item.balita.tanggal_lahir}`,
+                    item.label,
+                ]}
+                delete="delete"
+                url={route('admin.pemeriksaan.destroy', { pemeriksaan: item.id })}
+                id={item.id}
+                show={route('admin.pemeriksaan.show', { pemeriksaan: item.id })}
+            >
+                <DetailPemeriksaan detail={item.detailpemeriksaan} />
+            </CollapsibleRow>
+        ));
+    }, [pemeriksaan]);
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Pemeriksaan" />
@@ -175,12 +177,11 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
                     <div className="flex w-full flex-1 flex-row items-end justify-end gap-7 px-4 py-2 md:items-center md:justify-between">
                         <div className="flex w-full flex-1 flex-col gap-7 px-4 py-2 md:flex-row md:items-center">
-                            <Dialog open={open} onOpenChange={setOpen}>
+                            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                                 <DialogTrigger asChild>
                                     <Button
                                         type="button"
-                                        variant={'destructive'}
-                                        size={'lg'}
+                                        size="lg"
                                         tabIndex={4}
                                         className="flex cursor-pointer items-center gap-2 bg-blue-500 hover:bg-blue-600"
                                     >
@@ -196,7 +197,6 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
                                                 <Link href={route('admin.pemeriksaan.create-id')} className="col-span-1 cursor-pointer">
                                                     <Button
                                                         type="button"
-                                                        variant="default"
                                                         className="flex w-full cursor-pointer items-center gap-2 bg-blue-500 hover:bg-blue-600"
                                                     >
                                                         Mulai
@@ -208,7 +208,6 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
                                                 <Link href={route('admin.pemeriksaan.create')} className="col-span-1 cursor-pointer">
                                                     <Button
                                                         type="button"
-                                                        variant="default"
                                                         className="flex w-full cursor-pointer items-center gap-2 bg-blue-500 hover:bg-blue-600"
                                                     >
                                                         Mulai
@@ -239,7 +238,13 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
                                     className="max-w-fit"
                                     placeholder="Cari berdasarkan tanggal"
                                 />
-                                <Button variant="outline" type="button" onClick={submitSearch} className="flex items-center gap-2 text-xs">
+                                <Button
+                                    variant="outline"
+                                    type="button"
+                                    onClick={submitSearch}
+                                    className="flex items-center gap-2 text-xs"
+                                    disabled={processing}
+                                >
                                     Cari
                                 </Button>
                                 <Button
@@ -247,13 +252,14 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
                                     type="button"
                                     onClick={clearSearch}
                                     className="flex items-center gap-2 border-red-500 text-xs"
+                                    disabled={processing}
                                 >
                                     Clear
                                 </Button>
                             </div>
                         </div>
                         <div className="col-span-1 px-4 py-2">
-                            <Select defaultValue="" value={orderBy} onValueChange={(e) => setOrderBy(e)}>
+                            <Select value={orderBy} onValueChange={setOrderBy}>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Tampilan Status" />
                                 </SelectTrigger>
@@ -267,12 +273,11 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
                                     </SelectGroup>
                                     <SelectGroup>
                                         <SelectLabel>berdasarkan Gizi</SelectLabel>
-                                        {statusLabel.length > 0 &&
-                                            statusLabel.map((item) => (
-                                                <SelectItem key={item} value={item}>
-                                                    {item}
-                                                </SelectItem>
-                                            ))}
+                                        {statusLabel.map((item) => (
+                                            <SelectItem key={item} value={item}>
+                                                {item}
+                                            </SelectItem>
+                                        ))}
                                     </SelectGroup>
                                     <SelectSeparator />
                                     <SelectGroup>
@@ -280,7 +285,6 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
                                         <SelectItem value="Laki-laki">Laki-Laki</SelectItem>
                                         <SelectItem value="Perempuan">Perempuan</SelectItem>
                                     </SelectGroup>
-                                    <SelectSeparator />
                                 </SelectContent>
                             </Select>
                         </div>
@@ -300,54 +304,14 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
                                     </TableRow>
                                 </TableHead>
                                 <TableBody className={processing ? 'opacity-50' : ''}>
-                                    {(pemeriksaan?.data ?? []).length > 0 &&
-                                        pemeriksaan?.data.map((item: any, index: number) => (
-                                            // <TableRow key={index}>
-                                            //     <TableColumn>{index + 1 + (pemeriksaan?.current_page - 1) * pemeriksaan?.per_page}</TableColumn>
-                                            //     <TableColumn>
-
-                                            //     </TableColumn>
-                                            //     <TableColumn> {item.balita.nama} </TableColumn>
-                                            //     <TableColumn> {item.balita.orangtua.name} </TableColumn>
-                                            //     <TableColumn>
-                                            //         {' '}
-                                            //         {item.balita.tempat_lahir}/ {item.balita.tanggal_lahir}{' '}
-                                            //     </TableColumn>
-                                            //     <TableColumn> {item.label} </TableColumn>
-                                            //     <TableAction
-                                            //         className="w-32"
-                                            //         delete="delete"
-                                            //         url={route('admin.pemeriksaan.destroy', { pemeriksaan: item.id })}
-                                            //         title={item.tgl_pemeriksaan}
-                                            //         id={item.id}
-                                            //         show={route('admin.pemeriksaan.show', { pemeriksaan: item.id })}
-                                            //     />
-                                            // </TableRow>
-                                            <CollapsibleRow
-                                                key={index}
-                                                num={index + 1 + (pemeriksaan?.current_page - 1) * pemeriksaan?.per_page}
-                                                title={item.tgl_pemeriksaan}
-                                                columnData={[
-                                                    item.balita.nama,
-                                                    item.balita.orangtua.name,
-                                                    `${item.balita.tempat_lahir}/${item.balita.tanggal_lahir}`,
-                                                    item.label,
-                                                ]}
-                                                delete="delete"
-                                                url={route('admin.pemeriksaan.destroy', { pemeriksaan: item.id })}
-                                                id={item.id}
-                                                show={route('admin.pemeriksaan.show', { pemeriksaan: item.id })}
-                                            >
-                                                <DetailPemeriksaan key={index} detail={item.detailpemeriksaan} />
-                                            </CollapsibleRow>
-                                        ))}
+                                    {tableRows}
                                 </TableBody>
                             </Table>
 
                             <div className="flex justify-between gap-7 border-x-2 border-b-2 p-2">
                                 <div className="flex items-center gap-7 px-4 py-2">
                                     <div className="flex flex-row gap-2">
-                                        <Select defaultValue="10" value={perPage} onValueChange={(e) => setPerPage(e.toString())}>
+                                        <Select value={perPage} onValueChange={setPerPage}>
                                             <SelectTrigger>
                                                 <SelectValue placeholder="Jumlah Data" />
                                             </SelectTrigger>
@@ -360,12 +324,17 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
                                                 </SelectGroup>
                                             </SelectContent>
                                         </Select>
-                                        <Button variant="outline" type="button" onClick={submitPerPage} className="flex items-center gap-2 text-xs">
+                                        <Button
+                                            variant="outline"
+                                            type="button"
+                                            onClick={submitPerPage}
+                                            className="flex items-center gap-2 text-xs"
+                                            disabled={processing}
+                                        >
                                             Tampilkan
                                         </Button>
                                     </div>
                                     <div className="text-xs text-gray-600">
-                                        {' '}
                                         halaman {pemeriksaan?.from} ke {pemeriksaan?.to} dari {pemeriksaan?.total} total
                                     </div>
                                 </div>

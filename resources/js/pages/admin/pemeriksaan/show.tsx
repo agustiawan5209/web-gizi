@@ -2,6 +2,9 @@ import { Table, TableBody, TableColumn, TableContainer, TableHead, TableRow, Tab
 
 import AppLayout from '@/layouts/app-layout';
 import { Head } from '@inertiajs/react';
+import { useMemo } from 'react';
+import { type BreadcrumbItem } from '@/types';
+
 
 interface OrangTua {
     name: string;
@@ -43,8 +46,14 @@ export interface PemeriksaanProps {
 }
 
 export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, detail, polamakan, breadcrumb }: PemeriksaanProps) {
+     // Memoize breadcrumbs to prevent unnecessary recalculations
+     const breadcrumbs: BreadcrumbItem[] = useMemo(
+        () => (breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : []),
+        [breadcrumb]
+    );
+
     return (
-        <AppLayout breadcrumbs={breadcrumb}>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Detail Pemeriksaan" />
             <div className="dark:bg-elevation-1 flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">

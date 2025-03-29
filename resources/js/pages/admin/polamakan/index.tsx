@@ -2,11 +2,12 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableColumn, TableHead, TableRow, TableTh, TableContainer } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
-
 import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { FormEventHandler } from 'react';
 import ReactQuill from 'react-quill-new';
+import { type BreadcrumbItem } from '@/types';
+import { useMemo } from 'react';
 interface OrangTua {
     name: string;
     email: string;
@@ -48,6 +49,12 @@ type CreateForm = {
 };
 
 export default function PolaMakanShow({ pemeriksaan, balita, orangTua, detail, breadcrumb }: PemeriksaanProps) {
+     // Memoize breadcrumbs to prevent unnecessary recalculations
+     const breadcrumbs: BreadcrumbItem[] = useMemo(
+        () => (breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : []),
+        [breadcrumb]
+    );
+
     const format = `<p>LAPORAN HASIL PEMERIKSAAN GIZI ANAK  </p><p>I. Riwayat Makan &amp; Pola Diet  </p><ol><li data-list="bullet" class="ql-indent-1"><span class="ql-ui" contenteditable="false"></span>Frekuensi Makan Sehari:  </li></ol><p>   - Sarapan: ☐ Ya ☐ Tidak (Jenis: _________)  </p><p>   - Makan Siang: ☐ Ya ☐ Tidak (Jenis: _________)  </p><p>   - Makan Malam: ☐ Ya ☐ Tidak (Jenis: _________)  </p><p>   - Camilan: ____ kali/hari (Jenis: _________)</p><ol><li data-list="bullet" class="ql-indent-1"><span class="ql-ui" contenteditable="false"></span>Kebiasaan Makan:  </li></ol><p>   - Nafsu Makan: ☐ Baik ☐ Sedang ☐ Kurang  </p><p>   - Alergi/Intoleransi Makanan: ☐ Ya (_________) ☐ Tidak  </p><p>   - Susu Formula: ☐ Ya (Jenis: _________) ☐ Tidak  </p><p>II. Asupan Gizi Harian (Estimasi)   </p><table><tbody><tr><td data-row="1">Zat Gizi </td><td data-row="1">Komsumsi Harian</td><td data-row="1">Kebutuhan Harian</td><td data-row="1">Keterangan</td></tr><tr><td data-row="2">Energi</td><td data-row="2">__________kkal</td><td data-row="2">__________kkal</td><td data-row="2">☐ Cukup ☐ Kurang ☐ Lebih</td></tr><tr><td data-row="3">Protein</td><td data-row="3">__________gram</td><td data-row="3">__________gram</td><td data-row="3">☐ Cukup ☐ Kurang ☐ Lebih</td></tr><tr><td data-row="4">Karbohidrat</td><td data-row="4">_________ gram</td><td data-row="4">_________ gram</td><td data-row="4">☐ Cukup ☐ Kurang ☐ Lebih</td></tr><tr><td data-row="5">Lemak</td><td data-row="5">_________ gram</td><td data-row="5">_________ gram</td><td data-row="5">☐ Cukup ☐ Kurang ☐ Lebih</td></tr><tr><td data-row="6">Vitamin &amp; mineral</td><td data-row="6">_____________</td><td data-row="6">_____________</td><td data-row="6">☐ Cukup ☐ Kurang ☐ Lebih</td></tr></tbody></table><p><span style="color: white;">III. Keluhan &amp; Masalah Gizi  </span></p><ol><li data-list="bullet" class="ql-indent-1"><span class="ql-ui" contenteditable="false"></span>Keluhan Orang Tua: ________________________  </li></ol><p>IV.  Diagnisis Masalah Gizi:  </p><ol><li data-list="bullet" class="ql-indent-1"><span class="ql-ui" contenteditable="false"></span>☐ Kurang Energi Protein (KEP)  </li><li data-list="bullet" class="ql-indent-1"><span class="ql-ui" contenteditable="false"></span>☐ Obesitas  </li><li data-list="bullet" class="ql-indent-1"><span class="ql-ui" contenteditable="false"></span>☐ Stunting  </li><li data-list="bullet" class="ql-indent-1"><span class="ql-ui" contenteditable="false"></span>☐ Anemia  </li><li data-list="bullet" class="ql-indent-1"><span class="ql-ui" contenteditable="false"></span>☐ Lainnya: _______________  </li></ol><p>V. Rekomendasi &amp; Intervensi Gizi  </p><ol><li data-list="bullet" class="ql-indent-1"><span class="ql-ui" contenteditable="false"></span>Diet: ________________________  </li><li data-list="bullet" class="ql-indent-1"><span class="ql-ui" contenteditable="false"></span>Suplementasi: ☐ Vitamin A ☐ Zat Besi ☐ Zinc ☐ Lainnya: ____  </li><li data-list="bullet" class="ql-indent-1"><span class="ql-ui" contenteditable="false"></span>Edukasi Gizi: ☐ Pola Makan Seimbang ☐ Higiene Makanan ☐ Lainnya: ____  </li><li data-list="bullet" class="ql-indent-1"><span class="ql-ui" contenteditable="false"></span>Rujukan: ☐ Dokter ☐ Puskesmas ☐ Rumah Sakit (Alasan: _________)  </li></ol><p>VI. Monitoring &amp; Evaluasi  </p><ol><li data-list="bullet" class="ql-indent-1"><span class="ql-ui" contenteditable="false"></span>Tanggal Pemeriksaan Ulang: ____/____/____  </li><li data-list="bullet" class="ql-indent-1"><span class="ql-ui" contenteditable="false"></span>Target Perbaikan Gizi: ________________________  </li></ol><p><br></p>`;
     const { data, setData, post, processing, errors, reset, progress } = useForm<Required<CreateForm>>({
         pemeriksaan_id: pemeriksaan.id,

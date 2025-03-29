@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
+import { useMemo } from 'react';
 export interface AttributUpdaterops {
     attribut: {
         id: number;
@@ -22,7 +23,12 @@ type UpdateForm = {
 };
 
 export default function AttributUpdate({ attribut, breadcrumb }: AttributUpdaterops) {
-    const breadcrumbs: BreadcrumbItem[] = breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : [];
+     // Memoize breadcrumbs to prevent unnecessary recalculations
+    const breadcrumbs: BreadcrumbItem[] = useMemo(
+        () => (breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : []),
+        [breadcrumb]
+    );
+
     const { data, setData, put, processing, progress, errors, reset } = useForm<Required<UpdateForm>>({
         nama: attribut.nama,
         keterangan: attribut.keterangan,

@@ -3,6 +3,8 @@ import { Table, TableBody, TableColumn, TableContainer, TableHead, TableRow, Tab
 import AppLayout from '@/layouts/app-layout';
 import { SharedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
+import { type BreadcrumbItem } from '@/types';
+import { useMemo } from 'react';
 
 interface OrangTua {
     name: string;
@@ -46,6 +48,12 @@ export interface PemeriksaanProps {
 }
 
 export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, attribut, breadcrumb }: PemeriksaanProps) {
+     // Memoize breadcrumbs to prevent unnecessary recalculations
+        const breadcrumbs: BreadcrumbItem[] = useMemo(
+            () => (breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : []),
+            [breadcrumb]
+        );
+
     const searchById = (id: string, detail: { attribut_id: string; nilai: string }[]): string => {
         if (!detail || !id) return '';
         try {
@@ -60,7 +68,7 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, attribu
     const { defaultUrl } = page.props;
 
     return (
-        <AppLayout breadcrumbs={breadcrumb}>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Detail Pemeriksaan" />
             <div className="dark:bg-elevation-1 flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">

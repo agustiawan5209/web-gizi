@@ -8,81 +8,122 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
-import { FormEventHandler, useEffect, useState } from 'react';
+import { FormEventHandler, useCallback, useEffect, useMemo, useState } from 'react';
 
-export interface PemeriksaanCreateProps {
-    breadcrumb?: { title: string; href: string }[];
-    orangtua: {
-        id: string;
-        name: string;
-        email: string;
-        password: string;
-    }[];
-    attribut: {
-        id: string;
-        nama: string;
-    }[];
+interface OrangTua {
+    id: string;
+    name: string;
+    email: string;
+    password: string;
 }
 
-type CreateForm = {
+interface Attribute {
+    id: string;
+    nama: string;
+}
+
+interface AttributeValue {
+    nilai: string;
+    attribut_id: string;
+}
+
+interface PemeriksaanCreateProps {
+    breadcrumb?: Array<{ title: string; href: string }>;
+    orangtua: OrangTua[];
+    attribut: Attribute[];
+}
+
+interface CreateForm {
+    [key: string]: any;
     orang_tua_id: string;
     nama: string;
     tempat_lahir: string;
     tanggal_lahir: string;
     jenis_kelamin: string;
     tanggal_pemeriksaan: string;
-    attribut: {
-        nilai: string;
-        attribut_id: string;
-    }[];
-};
+    attribut: AttributeValue[];
+}
 
 export default function PemeriksaanCreate({ breadcrumb, orangtua, attribut }: PemeriksaanCreateProps) {
-    const breadcrumbs: BreadcrumbItem[] = breadcrumb?.map((item) => ({ title: item.title, href: item.href })) ?? [];
+    // Memoize breadcrumbs to prevent unnecessary recalculations
+    const breadcrumbs: BreadcrumbItem[] = useMemo(
+        () => breadcrumb?.map((item) => ({ title: item.title, href: item.href })) ?? [],
+        [breadcrumb]
+    );
 
-    const { data, setData, post, processing, errors } = useForm<CreateForm>({
+    // Initialize form data with proper types
+    const initialFormData: CreateForm = useMemo(() => ({
         orang_tua_id: '',
         nama: '',
         tempat_lahir: '',
         tanggal_lahir: '',
         jenis_kelamin: '',
         tanggal_pemeriksaan: '',
-        attribut: attribut.map((attr) => ({ nilai: '', attribut_id: attr.id })),
-    });
+        attribut: attribut.map((attr) => ({
+            nilai: '',
+            attribut_id: attr.id
+        })),
+    }), [attribut]);
 
-    const [selectedOrangtua, setSelectedOrangtua] = useState<PemeriksaanCreateProps['orangtua'][0] | null>(null);
+    const { data, setData, post, processing, errors } = useForm<CreateForm>(initialFormData);
+
+    // State for selected parent
+    const [selectedOrangtua, setSelectedOrangtua] = useState<OrangTua | null>(null);
     const [idOrangTua, setIdOrangTua] = useState('');
 
-    const searchById = (search: string): PemeriksaanCreateProps['orangtua'][0] | null => {
-        if (!orangtua || !search) return null;
-        return orangtua.find((element) => String(element.id).includes(search)) ?? null;
-    };
+    // Memoize filtered attributes to avoid recalculating on every render
+    const filteredAttributes = useMemo(() =>
+        attribut.filter(item =>
+            !['jenis kelamin', 'status'].includes(item.nama.toLowerCase())
+        ),
+        [attribut]
+    );
 
+    // Optimized parent search function
+    const searchById = useCallback((search: string): OrangTua | null => {
+        if (!orangtua?.length || !search) return null;
+        return orangtua.find((element) => element.id === search) ?? null;
+    }, [orangtua]);
+
+    // Effect for handling parent selection
     useEffect(() => {
         if (idOrangTua) {
-            setSelectedOrangtua(searchById(idOrangTua));
+            const foundParent = searchById(idOrangTua);
+            setSelectedOrangtua(foundParent);
             setData('orang_tua_id', idOrangTua);
         }
-    }, [idOrangTua]);
+    }, [idOrangTua, searchById, setData]);
 
-    const submit: FormEventHandler = (e) => {
+    // Optimized form submission handler
+    const submit: FormEventHandler = useCallback((e) => {
         e.preventDefault();
-        post(route('admin.pemeriksaan.store'), {
-            onError: (err) => console.log(err),
-        });
-    };
+        post(route('admin.pemeriksaan.store'));
+    }, [post]);
+
+    // Optimized handler for attribute changes
+    const handleAttributeChange = useCallback((index: number, value: string) => {
+        setData('attribut',
+            data.attribut.map((val, i) =>
+                i === index ? { ...val, nilai: value } : val
+            )
+        );
+    }, [data.attribut, setData]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Create" />
+            <Head title="Create Pemeriksaan" />
             <div className="dark:bg-elevation-1 flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
                     <div className="p-4 md:p-6">
                         <form className="flex flex-col gap-6" onSubmit={submit}>
                             <div className="grid gap-6">
                                 <div className="grid gap-2">
-                                    <Label htmlFor="nama">Pilih Berdasarkan Nama Orang Tua</Label>
-                                    <Select value={idOrangTua} onValueChange={(value) => setIdOrangTua(value)} disabled={processing}>
+                                    <Label htmlFor="orang_tua">Pilih Berdasarkan Nama Orang Tua</Label>
+                                    <Select
+                                        value={idOrangTua}
+                                        onValueChange={setIdOrangTua}
+                                        disabled={processing}
+                                    >
                                         <SelectTrigger>
                                             <SelectValue placeholder="Pilih Orang Tua" />
                                         </SelectTrigger>
@@ -97,10 +138,11 @@ export default function PemeriksaanCreate({ breadcrumb, orangtua, attribut }: Pe
                                             </SelectGroup>
                                         </SelectContent>
                                     </Select>
+                                    <InputError message={errors.orang_tua_id} />
                                 </div>
 
                                 {selectedOrangtua && (
-                                    <div className="block space-y-4 p-2">
+                                    <div className="block space-y-4 p-2 border rounded-lg">
                                         <div className="flex gap-2">
                                             <Label className="text-muted-foreground">Nama Orang Tua:</Label>
                                             <Label className="font-normal">{selectedOrangtua.name}</Label>
@@ -113,31 +155,27 @@ export default function PemeriksaanCreate({ breadcrumb, orangtua, attribut }: Pe
                                 )}
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="nama">Nama</Label>
+                                    <Label htmlFor="nama">Nama Balita</Label>
                                     <Input
                                         id="nama"
                                         type="text"
                                         required
                                         autoFocus
-                                        tabIndex={1}
-                                        autoComplete="nama"
                                         value={data.nama}
                                         onChange={(e) => setData('nama', e.target.value)}
                                         disabled={processing}
                                         placeholder="Nama Balita"
                                     />
-                                    <InputError message={errors.nama} className="mt-2" />
+                                    <InputError message={errors.nama} />
                                 </div>
 
-                                <div className="flex items-center gap-2">
-                                    <div className="col-span-1 grid gap-2">
-                                        <Label htmlFor="tempat_lahir">Tempat</Label>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="tempat_lahir">Tempat Lahir</Label>
                                         <Input
                                             id="tempat_lahir"
                                             type="text"
                                             required
-                                            tabIndex={2}
-                                            autoComplete="tempat_lahir"
                                             value={data.tempat_lahir}
                                             onChange={(e) => setData('tempat_lahir', e.target.value)}
                                             disabled={processing}
@@ -145,14 +183,12 @@ export default function PemeriksaanCreate({ breadcrumb, orangtua, attribut }: Pe
                                         />
                                         <InputError message={errors.tempat_lahir} />
                                     </div>
-                                    <div className="col-span-2 grid gap-2">
+                                    <div className="grid gap-2">
                                         <Label htmlFor="tanggal_lahir">Tanggal Lahir</Label>
                                         <Input
                                             id="tanggal_lahir"
                                             type="date"
                                             required
-                                            tabIndex={2}
-                                            autoComplete="tanggal_lahir"
                                             value={data.tanggal_lahir}
                                             onChange={(e) => setData('tanggal_lahir', e.target.value)}
                                             disabled={processing}
@@ -162,25 +198,30 @@ export default function PemeriksaanCreate({ breadcrumb, orangtua, attribut }: Pe
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="jenis_kelamin">Jenis Kelamin</Label>
-                                    <InputRadio
-                                        id="jenis1"
-                                        name="jenis_kelamin"
-                                        label="Laki-laki"
-                                        value="Laki-laki"
-                                        disabled={processing}
-                                        onChange={(e) => setData('jenis_kelamin', e.target.value)}
-                                    />
-                                    <InputRadio
-                                        id="jenis2"
-                                        name="jenis_kelamin"
-                                        label="Perempuan"
-                                        value="Perempuan"
-                                        disabled={processing}
-                                        onChange={(e) => setData('jenis_kelamin', e.target.value)}
-                                    />
+                                    <Label>Jenis Kelamin</Label>
+                                    <div className="flex gap-4">
+                                        <InputRadio
+                                            id="jenis1"
+                                            name="jenis_kelamin"
+                                            label="Laki-laki"
+                                            value="Laki-laki"
+                                            checked={data.jenis_kelamin === 'Laki-laki'}
+                                            disabled={processing}
+                                            onChange={(e) => setData('jenis_kelamin', e.target.value)}
+                                        />
+                                        <InputRadio
+                                            id="jenis2"
+                                            name="jenis_kelamin"
+                                            label="Perempuan"
+                                            value="Perempuan"
+                                            checked={data.jenis_kelamin === 'Perempuan'}
+                                            disabled={processing}
+                                            onChange={(e) => setData('jenis_kelamin', e.target.value)}
+                                        />
+                                    </div>
                                     <InputError message={errors.jenis_kelamin} />
                                 </div>
+
                                 <div className="block py-2">
                                     <TableContainer>
                                         <Table>
@@ -199,10 +240,7 @@ export default function PemeriksaanCreate({ breadcrumb, orangtua, attribut }: Pe
                                                         <Input
                                                             id="tanggal_pemeriksaan"
                                                             type="date"
-                                                            className="w-max"
                                                             required
-                                                            tabIndex={2}
-                                                            autoComplete="tanggal_pemeriksaan"
                                                             value={data.tanggal_pemeriksaan}
                                                             onChange={(e) => setData('tanggal_pemeriksaan', e.target.value)}
                                                             disabled={processing}
@@ -210,40 +248,41 @@ export default function PemeriksaanCreate({ breadcrumb, orangtua, attribut }: Pe
                                                         <InputError message={errors.tanggal_pemeriksaan} />
                                                     </TableColumn>
                                                 </TableRow>
-                                                {attribut
-                                                    .filter((item) => !['jenis kelamin', 'status'].includes(item.nama.toLowerCase()))
-                                                    .map((item, index) => (
-                                                        <TableRow key={item.id}>
-                                                            <TableColumn>{item.nama}</TableColumn>
-                                                            <TableColumn>
-                                                                <Input
-                                                                    type="number"
-                                                                    id={`kriteria.${index}`}
-                                                                    value={data.attribut[index].nilai}
-                                                                    disabled={processing}
-                                                                    onChange={(e) =>
-                                                                        setData(
-                                                                            'attribut',
-                                                                            data.attribut.map((val, i) =>
-                                                                                i === index ? { nilai: e.target.value, attribut_id: item.id } : val,
-                                                                            ),
-                                                                        )
-                                                                    }
-                                                                />
-                                                        <InputError message={(errors as any)[`attribut.${index}.nilai`]} />
-                                                        <InputError message={(errors as any)[`attribut.${index}.attribut_id`]} />
 
-
-                                                            </TableColumn>
-                                                        </TableRow>
-                                                    ))}
+                                                {filteredAttributes.map((item, index) => (
+                                                    <TableRow key={item.id}>
+                                                        <TableColumn>
+                                                            <Label htmlFor={`attribut-${item.id}`}>
+                                                                {item.nama}
+                                                            </Label>
+                                                        </TableColumn>
+                                                        <TableColumn>
+                                                            <Input
+                                                                type="number"
+                                                                id={`attribut-${item.id}`}
+                                                                value={data.attribut[index]?.nilai || ''}
+                                                                disabled={processing}
+                                                                onChange={(e) => handleAttributeChange(index, e.target.value)}
+                                                            />
+                                                            <InputError message={errors[`attribut.${index}.nilai`] as string} />
+                                                        </TableColumn>
+                                                    </TableRow>
+                                                ))}
                                             </TableBody>
                                         </Table>
                                     </TableContainer>
                                 </div>
 
-                                <Button type="submit" variant="secondary" className="mt-2 w-full" tabIndex={5} disabled={processing}>
-                                    {processing && <LoaderCircle className="h-4 w-4 animate-spin" />} Simpan
+                                <Button
+                                    type="submit"
+                                    variant="secondary"
+                                    className="mt-2 w-full"
+                                    disabled={processing}
+                                >
+                                    {processing && (
+                                        <LoaderCircle className="h-4 w-4 animate-spin mr-2" />
+                                    )}
+                                    Simpan
                                 </Button>
                             </div>
                         </form>

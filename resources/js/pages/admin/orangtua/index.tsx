@@ -6,7 +6,7 @@ import { Table, TableAction, TableBody, TableColumn, TableContainer, TableHead, 
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { FormEventHandler, useEffect, useState } from 'react';
+import { FormEventHandler, useEffect, useState, useMemo } from 'react';
 export interface OrangtuaProps {
     orangtua?: {
         current_page: number;
@@ -42,7 +42,12 @@ type GetForm = {
 };
 
 export default function OrangtuaIndex({ orangtua, breadcrumb, filter }: OrangtuaProps) {
-    const breadcrumbs: BreadcrumbItem[] = breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : [];
+     // Memoize breadcrumbs to prevent unnecessary recalculations
+    const breadcrumbs: BreadcrumbItem[] = useMemo(
+        () => (breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : []),
+        [breadcrumb]
+    );
+
 
     const { data, setData, get, processing, errors, reset } = useForm<GetForm>({
         // q: '',

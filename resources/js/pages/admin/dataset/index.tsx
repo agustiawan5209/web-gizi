@@ -1,12 +1,11 @@
 import PaginationTable from '@/components/pagination-table';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableAction, TableBody, TableColumn, TableContainer, TableHead, TableRow, TableTh } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { FormEventHandler, useEffect, useState } from 'react';
+import { FormEventHandler, useEffect, useMemo, useState } from 'react';
 
 interface Attribut {
     id: string;
@@ -51,7 +50,11 @@ type GetForm = {
 };
 
 export default function DatasetIndex({ dataset, breadcrumb, filter, attribut, statusLabel }: DatasetProps) {
-    const breadcrumbs: BreadcrumbItem[] = breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : [];
+    // Memoize breadcrumbs to prevent unnecessary recalculations
+    const breadcrumbs: BreadcrumbItem[] = useMemo(
+        () => (breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : []),
+        [breadcrumb],
+    );
 
     const { data, setData, get, processing, errors, reset } = useForm<GetForm>({
         // q: '',
@@ -193,8 +196,8 @@ export default function DatasetIndex({ dataset, breadcrumb, filter, attribut, st
                                 <SelectContent>
                                     <SelectGroup>
                                         <SelectLabel>Urutkan</SelectLabel>
-                                        <SelectItem value="asc">Terbaru</SelectItem>
-                                        <SelectItem value="desc">Terlama</SelectItem>
+                                        <SelectItem value="desc">Terbaru</SelectItem>
+                                        <SelectItem value="asc">Terlama</SelectItem>
                                     </SelectGroup>
                                     <SelectGroup>
                                         <SelectLabel>berdasarkan Gizi</SelectLabel>
