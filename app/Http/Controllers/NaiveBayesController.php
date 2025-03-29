@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Http;
 class NaiveBayesController extends Controller
 {
     private $attributes;
-    private $dataset;
+    private $dataset =[];
     private $datauji;
     private $label = "label";
     private $target;
@@ -66,7 +66,7 @@ class NaiveBayesController extends Controller
     public function loadDataset()
     {
         $dataset = Dataset::with(['fiturdataset'])->get();
-        $this->dataset = [];
+
         foreach ($dataset as $key_dataset => $value_dataset) {
             foreach ($this->attributes as $key => $value) {
                 $attributes_id = $value['id'];
