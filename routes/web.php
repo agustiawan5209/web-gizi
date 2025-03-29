@@ -8,6 +8,7 @@ use App\Http\Controllers\AttributController;
 use App\Http\Controllers\OrangTuaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PolaMakanController;
+use App\Http\Controllers\NaiveBayesController;
 use App\Http\Controllers\PemeriksaanController;
 
 Route::get('/', function () {
@@ -134,6 +135,7 @@ Route::prefix('admin')->as('admin.')->middleware(['auth', 'verified'])->group(fu
 
     Route::get('pola-makan/{pemeriksaan}', [PolaMakanController::class, 'create'])->name('pola-makan.index');
     Route::post('pola-makan', [PolaMakanController::class, 'store'])->name('pola-makan.store');
-
-
 });
+
+Route::get('classify/', [NaiveBayesController::class,'generate'])->name('naive-bayes.generate');
+Route::get('classify-index/', [NaiveBayesController::class,'index'])->name('naive-bayes.index');

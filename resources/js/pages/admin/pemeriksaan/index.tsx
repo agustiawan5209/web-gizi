@@ -1,9 +1,11 @@
+import CollapsibleRow from '@/components/collapsible-table';
+import DetailPemeriksaan from '@/components/detail-pemeriksaan';
 import PaginationTable from '@/components/pagination-table';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableAction, TableBody, TableColumn, TableContainer, TableHead, TableRow, TableTh } from '@/components/ui/table';
+import { Table, TableBody, TableContainer, TableHead, TableRow, TableTh } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
@@ -283,30 +285,51 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter }: Pe
                                         <TableTh>Nama Balita</TableTh>
                                         <TableTh>Nama Orang Tua</TableTh>
                                         <TableTh>Tempat/Tanggal Lahir</TableTh>
+                                        <TableTh>Hasil Pemeriksaan Gizi</TableTh>
                                         <TableTh>Aksi</TableTh>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody className={processing ? 'opacity-50' : ''}>
                                     {(pemeriksaan?.data ?? []).length > 0 &&
                                         pemeriksaan?.data.map((item: any, index: number) => (
-                                            <TableRow key={index}>
-                                                <TableColumn>{index + 1 + (pemeriksaan?.current_page - 1) * pemeriksaan?.per_page}</TableColumn>
-                                                <TableColumn> {item.tgl_pemeriksaan} </TableColumn>
-                                                <TableColumn> {item.balita.nama} </TableColumn>
-                                                <TableColumn> {item.balita.orangtua.name} </TableColumn>
-                                                <TableColumn>
-                                                    {' '}
-                                                    {item.balita.tempat_lahir}/ {item.tanggal_lahir}{' '}
-                                                </TableColumn>
-                                                <TableAction
-                                                    className="w-32"
-                                                    delete="delete"
-                                                    url={route('admin.pemeriksaan.destroy', { pemeriksaan: item.id })}
-                                                    title={item.tgl_pemeriksaan}
-                                                    id={item.id}
-                                                    show={route('admin.pemeriksaan.show', { pemeriksaan: item.id })}
-                                                />
-                                            </TableRow>
+                                            // <TableRow key={index}>
+                                            //     <TableColumn>{index + 1 + (pemeriksaan?.current_page - 1) * pemeriksaan?.per_page}</TableColumn>
+                                            //     <TableColumn>
+
+                                            //     </TableColumn>
+                                            //     <TableColumn> {item.balita.nama} </TableColumn>
+                                            //     <TableColumn> {item.balita.orangtua.name} </TableColumn>
+                                            //     <TableColumn>
+                                            //         {' '}
+                                            //         {item.balita.tempat_lahir}/ {item.balita.tanggal_lahir}{' '}
+                                            //     </TableColumn>
+                                            //     <TableColumn> {item.label} </TableColumn>
+                                            //     <TableAction
+                                            //         className="w-32"
+                                            //         delete="delete"
+                                            //         url={route('admin.pemeriksaan.destroy', { pemeriksaan: item.id })}
+                                            //         title={item.tgl_pemeriksaan}
+                                            //         id={item.id}
+                                            //         show={route('admin.pemeriksaan.show', { pemeriksaan: item.id })}
+                                            //     />
+                                            // </TableRow>
+                                            <CollapsibleRow
+                                                key={index}
+                                                num={index + 1 + (pemeriksaan?.current_page - 1) * pemeriksaan?.per_page}
+                                                title={item.tgl_pemeriksaan}
+                                                columnData={[
+                                                    item.balita.nama,
+                                                    item.balita.orangtua.name,
+                                                    `${item.balita.tempat_lahir}/${item.balita.tanggal_lahir}`,
+                                                    item.label,
+                                                ]}
+                                                delete="delete"
+                                                url={route('admin.pemeriksaan.destroy', { pemeriksaan: item.id })}
+                                                id={item.id}
+                                                show={route('admin.pemeriksaan.show', { pemeriksaan: item.id })}
+                                            >
+                                                <DetailPemeriksaan key={index} detail={item.detailpemeriksaan} />
+                                            </CollapsibleRow>
                                         ))}
                                 </TableBody>
                             </Table>

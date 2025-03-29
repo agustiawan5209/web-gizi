@@ -39,11 +39,11 @@ class PemeriksaanController extends Controller
             $pemeriksaanQuery->searchByJenkel($orderBy);
         }
 
-        if($request->filled('date')){
+        if ($request->filled('date')) {
             $pemeriksaanQuery->searchByTanggal($request->date);
         }
         $pemeriksaan = $pemeriksaanQuery
-            ->with(['balita', 'balita.orangtua'])
+            ->with(['balita', 'balita.orangtua', 'detailpemeriksaan', 'detailpemeriksaan.attribut', 'polamakan'])
             ->paginate($request->input('per_page', 10));
 
         return Inertia::render('admin/pemeriksaan/index', [
@@ -97,7 +97,7 @@ class PemeriksaanController extends Controller
         return Inertia::render('admin/pemeriksaan/create-id', [
             'attribut' => Attribut::orderBy('id', 'asc')->whereNotIn('nama', ['jenis kelamin', 'status'])->get(),
             'orangtua' => User::withoutRole('admin')->get(),
-            'balita'=> Balita::orderBy('id', 'asc')->get(),
+            'balita' => Balita::orderBy('id', 'asc')->get(),
             'label' => [
                 ['nama' => 'gizi buruk'],
                 ['nama' => 'gizi kurang'],
@@ -126,62 +126,73 @@ class PemeriksaanController extends Controller
      */
     public function store(StorePemeriksaanRequest $request)
     {
-       try{
-        $balita = Balita::create($request->except('attribut', 'tanggal_pemeriksaan'));
+        try {
+            $balita = Balita::create($request->except('attribut', 'tanggal_pemeriksaan'));
 
-        $attribut = $request->input('attribut');
-        $label = 'GIZI??';
-        $pemeriksaan = Pemeriksaan::create([
-            'balita_id' => $balita->id,
-            'data_balita'=> json_encode($balita),
-            'data_pemeriksaan'=> json_encode($attribut),
-            'tgl_pemeriksaan' => $request->input('tanggal_pemeriksaan'),
-            'label' => $label,
-        ]);
 
-        foreach ($attribut as $item) {
-            DetailPemeriksaan::create([
-                'pemeriksaan_id' => $pemeriksaan->id,
-                'attribut_id' => $item['attribut_id'],
-                'nilai' => $item['nilai'],
+            $attribut = $request->input('attribut');
+            $label = 'GIZI??';
+            $pemeriksaan = Pemeriksaan::create([
+                'balita_id' => $balita->id,
+                'data_balita' => json_encode($balita),
+                'data_pemeriksaan' => json_encode($attribut),
+                'tgl_pemeriksaan' => $request->input('tanggal_pemeriksaan'),
+                // 'label' => $label,
             ]);
-        }
 
-        $jenkelAttribut = Attribut::where('nama', 'like', '%jenis kelamin%')->first();
-        $statusAttribut = Attribut::where('nama', 'like', '%status%')->first();
-        if ($jenkelAttribut) {
-            DetailPemeriksaan::create([
-                'pemeriksaan_id' => $pemeriksaan->id,
-                'attribut_id' => $jenkelAttribut->id,
-                'nilai' => $balita->jenis_kelamin,
-            ]);
-        }
-        if ($statusAttribut) {
-            DetailPemeriksaan::create([
-                'pemeriksaan_id' => $pemeriksaan->id,
-                'attribut_id' => $statusAttribut->id,
-                'nilai' => $label,
-            ]);
-        }
 
-        return redirect()->route('admin.pola-makan.index', ['pemeriksaan'=> $pemeriksaan->id])->with('success', 'data pemeriksaan berhasil ditambahkan!!');
-       }catch(\Exception $e){
-        return redirect()->route('admin.pola-makan.index', ['pemeriksaan'=> $pemeriksaan->id])->with('error', 'terjadi kesalahan '. $e->getMessage());
-       }
+
+            foreach ($attribut as $item) {
+                DetailPemeriksaan::create([
+                    'pemeriksaan_id' => $pemeriksaan->id,
+                    'attribut_id' => $item['attribut_id'],
+                    'nilai' => $item['nilai'],
+                ]);
+            }
+
+            $jenkelAttribut = Attribut::where('nama', 'like', '%jenis kelamin%')->first();
+            $statusAttribut = Attribut::where('nama', 'like', '%status%')->first();
+            if ($jenkelAttribut) {
+                DetailPemeriksaan::create([
+                    'pemeriksaan_id' => $pemeriksaan->id,
+                    'attribut_id' => $jenkelAttribut->id,
+                    'nilai' => $balita->jenis_kelamin,
+                ]);
+            }
+            $naive = new NaiveBayesController($pemeriksaan->id);
+            $klasifikasi = $naive->generate();
+
+            if ($klasifikasi['success'] == true) {
+                $label = $klasifikasi['hasil_prediksi'];
+                $pemeriksaan->update(['label' => $label]);
+                $label = $label . " - akurasi=" . $klasifikasi['akurasi'];
+            }
+            if ($statusAttribut) {
+                DetailPemeriksaan::create([
+                    'pemeriksaan_id' => $pemeriksaan->id,
+                    'attribut_id' => $statusAttribut->id,
+                    'nilai' => $label,
+                ]);
+            }
+
+            return redirect()->route('admin.pola-makan.index', ['pemeriksaan' => $pemeriksaan->id])->with('success', 'data pemeriksaan berhasil ditambahkan!!');
+        } catch (\Throwable $e) {
+            return redirect()->route('admin.pola-makan.index', ['pemeriksaan' => $pemeriksaan->id])->with('error', 'terjadi kesalahan ' . $e->getMessage());
+        }
     }
     public function storeByBalita(StorePemeriksaanBalitaIdRequest $request)
     {
-        try{
+        try {
             $balita = Balita::find($request->balita_id);
 
             $attribut = $request->input('attribut');
             $label = 'GIZI??';
             $pemeriksaan = Pemeriksaan::create([
                 'balita_id' => $balita->id,
-                'data_balita'=> json_encode($balita),
-                'data_pemeriksaan'=> json_encode($attribut),
+                'data_balita' => json_encode($balita),
+                'data_pemeriksaan' => json_encode($attribut),
                 'tgl_pemeriksaan' => $request->input('tanggal_pemeriksaan'),
-                'label' => $label,
+                // 'label' => $label,
             ]);
 
             foreach ($attribut as $item) {
@@ -201,6 +212,17 @@ class PemeriksaanController extends Controller
                     'nilai' => $balita->jenis_kelamin,
                 ]);
             }
+
+            $naive = new NaiveBayesController($pemeriksaan->id);
+            $klasifikasi = $naive->generate();
+
+            if ($klasifikasi['success'] == true) {
+                $label = $klasifikasi['hasil_prediksi'];
+                $pemeriksaan->update(['label' => $label]);
+                $label = $label . " - akurasi=" . $klasifikasi['akurasi'];
+            }
+
+
             if ($statusAttribut) {
                 DetailPemeriksaan::create([
                     'pemeriksaan_id' => $pemeriksaan->id,
@@ -209,10 +231,10 @@ class PemeriksaanController extends Controller
                 ]);
             }
 
-            return redirect()->route('admin.pola-makan.index', ['pemeriksaan'=> $pemeriksaan->id])->with('success', 'data pemeriksaan berhasil ditambahkan!!');
-           }catch(\Exception $e){
-            return redirect()->route('admin.pola-makan.index', ['pemeriksaan'=> $pemeriksaan->id])->with('error', 'terjadi kesalahan '. $e->getMessage());
-           }
+            return redirect()->route('admin.pola-makan.index', ['pemeriksaan' => $pemeriksaan->id])->with('success', 'data pemeriksaan berhasil ditambahkan!!');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.pola-makan.index', ['pemeriksaan' => $pemeriksaan->id])->with('error', 'terjadi kesalahan ' . $e->getMessage());
+        }
     }
 
     /**
@@ -240,7 +262,7 @@ class PemeriksaanController extends Controller
                     'href' => '/admin/pemeriksaan/show',
                 ],
             ],
-            'polamakan'=> $pemeriksaan->polamakan,
+            'polamakan' => $pemeriksaan->polamakan,
         ]);
     }
 

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->json('data_balita')->nullable();
             $table->date('tgl_pemeriksaan');
             $table->json('data_pemeriksaan');
-            $table->string('label')->nullable();
+            $table->string('label', 50)->nullable();
             $table->timestamps();
         });
     }
