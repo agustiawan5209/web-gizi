@@ -23,10 +23,16 @@ class PemeriksaanController extends Controller
      */
     public function index(Request $request)
     {
+        $statusLabel = [
+            'gizi buruk',
+            'gizi kurang',
+            'gizi baik',
+            'gizi lebih',
+        ];
         $pemeriksaanQuery = Pemeriksaan::query();
 
-        if ($request->filled('search')) {
-            $pemeriksaanQuery->searchByBalita($request->input('search'));
+        if ($request->filled('q')) {
+            $pemeriksaanQuery->searchByBalita($request->input('q'));
         }
 
         $orderBy = $request->input('order_by', 'asc');
@@ -34,9 +40,11 @@ class PemeriksaanController extends Controller
         if (in_array($orderBy, ['asc', 'desc'])) {
             $pemeriksaanQuery->orderBy('created_at', $orderBy);
         } elseif (in_array($orderBy, ['A-Z', 'Z-A'])) {
-            $pemeriksaanQuery->orderBy('name', $orderBy === 'A-Z' ? 'asc' : 'desc');
+            $pemeriksaanQuery->orderBy('label', $orderBy === 'A-Z' ? 'asc' : 'desc');
         } elseif (in_array($orderBy, ['Laki-laki', 'Perempuan'])) {
             $pemeriksaanQuery->searchByJenkel($orderBy);
+        }elseif (in_array($orderBy, $statusLabel)) {
+            $pemeriksaanQuery->where('label', '=', $orderBy);
         }
 
         if ($request->filled('date')) {
@@ -59,6 +67,7 @@ class PemeriksaanController extends Controller
                 ],
             ],
             'filter' => $request->only('search', 'order_by', 'date', 'q'),
+            'statusLabel' => $statusLabel
         ]);
     }
 

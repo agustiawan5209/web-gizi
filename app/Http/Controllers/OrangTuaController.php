@@ -19,7 +19,7 @@ class OrangTuaController extends Controller
         $query = User::query();
         $query->withoutRole('admin');
         if ($request->filled('q')) {
-            $query->filterBySearch($request->input('q', ''));
+            $query->searchBySearch($request->input('q', ''));
         }
 
         if ($request->filled('order_by')) {

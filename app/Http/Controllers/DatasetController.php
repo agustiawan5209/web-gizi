@@ -20,12 +20,12 @@ class DatasetController extends Controller
      */
     public function index(Request $request)
     {
-$statusLabel = [
-    'gizi buruk',
-    'gizi kurang',
-    'gizi baik',
-    'gizi lebih',
-];
+        $statusLabel = [
+            'gizi buruk',
+            'gizi kurang',
+            'gizi baik',
+            'gizi lebih',
+        ];
         $datasetQuery = Dataset::query();
 
         $orderBy = $request->input('order_by', 'asc');
@@ -33,10 +33,10 @@ $statusLabel = [
         if (in_array($orderBy, ['asc', 'desc'])) {
             $datasetQuery->orderBy('created_at', $orderBy);
         } elseif (in_array($orderBy, $statusLabel)) {
-            $datasetQuery->where('label','=', $orderBy);
+            $datasetQuery->where('label', '=', $orderBy);
         }
 
-        if($request->filled('date')){
+        if ($request->filled('date')) {
             $datasetQuery->searchByTanggal($request->date);
         }
         $dataset = $datasetQuery
@@ -96,11 +96,11 @@ $statusLabel = [
      */
     public function store(StoreDatasetRequest $request)
     {
-        try{
+        try {
             $attribut = $request->input('attribut');
             $label = $request->label;
             $dataset = Dataset::create([
-                'tgl'=> Carbon::now()->format('y-m-d'),
+                'tgl' => Carbon::now()->format('y-m-d'),
                 'label' => $label,
             ]);
 
@@ -130,9 +130,9 @@ $statusLabel = [
             }
 
             return redirect()->route('admin.dataset.index')->with('success', 'data dataset berhasil ditambahkan!!');
-           }catch(\Exception $e){
-            return redirect()->route('admin.dataset.index')->with('error', 'terjadi kesalahan '. $e->getMessage());
-           }
+        } catch (\Exception $e) {
+            return redirect()->route('admin.dataset.index')->with('error', 'terjadi kesalahan ' . $e->getMessage());
+        }
     }
 
     /**
@@ -213,7 +213,6 @@ $statusLabel = [
         }
 
         return redirect()->route('admin.dataset.index')->with('success', 'data dataset berhasil diupdate!!');
-
     }
 
     /**

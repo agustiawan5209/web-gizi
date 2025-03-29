@@ -74,7 +74,7 @@ export default function BalitaCreate({ breadcrumb, orangtua }: BalitaCreaterops)
         return filtered;
     };
 
-    const filterById = (search: string): { id: string; name: string; email: string } | null => {
+    const searchById = (search: string): { id: string; name: string; email: string } | null => {
         if (!orangtua) {
             return null;
         }
@@ -98,7 +98,7 @@ export default function BalitaCreate({ breadcrumb, orangtua }: BalitaCreaterops)
     };
     useEffect(() => {
         if (idOrangTua) {
-            setListOrangtua(filterById(idOrangTua));
+            setListOrangtua(searchById(idOrangTua));
             setData('orang_tua_id', idOrangTua);
         }
     }, [idOrangTua]);

@@ -46,7 +46,7 @@ class Balita extends Model
      * @param  string  $name
      * @return void
      */
-    public function scopeSearchByName($query, $name): void
+    public function scopeSearchByNama($query, $name): void
     {
         $query->when($name, function ($query, $name) {
             $query->where('nama', 'like', '%' . $name . '%');

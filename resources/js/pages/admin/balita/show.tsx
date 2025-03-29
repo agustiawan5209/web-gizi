@@ -46,13 +46,13 @@ export interface PemeriksaanProps {
 }
 
 export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, attribut, breadcrumb }: PemeriksaanProps) {
-    const filterById = (id: string, detail: { attribut_id: string; nilai: string }[]): string => {
+    const searchById = (id: string, detail: { attribut_id: string; nilai: string }[]): string => {
         if (!detail || !id) return '';
         try {
             const foundElement = detail.find((element) => String(element.attribut_id).includes(id));
             return foundElement?.nilai ?? '';
         } catch (error) {
-            console.error('Error in filterById:', error);
+            console.error('Error in searchById:', error);
             return '';
         }
     };
@@ -144,7 +144,7 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, attribu
                                                         {attribut.length > 0 &&
                                                             attribut.map((attributs: any) => (
                                                                 <TableColumn key={attributs.id}>
-                                                                    {filterById(attributs.id, item.detailpemeriksaan)}
+                                                                    {searchById(attributs.id, item.detailpemeriksaan)}
                                                                 </TableColumn>
                                                             ))}
                                                     </TableRow>

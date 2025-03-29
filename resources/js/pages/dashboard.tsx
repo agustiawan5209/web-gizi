@@ -1,20 +1,20 @@
-import PieChart from '@/components/chart/PieChart';
 import LineChart from '@/components/chart/LineChart';
+import PieChart from '@/components/chart/PieChart';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
-
-
 
 export interface DashboardProps {
     orangtuacount?: number | string;
     balitacount?: number | string;
     datasetcount?: number | string;
     pemeriksaancount?: number | string;
+    gizi?: number[];
+    statusLabel?: string[];
 }
 
-export default function Dashboard({ orangtuacount, balitacount, datasetcount, pemeriksaancount }: DashboardProps) {
+export default function Dashboard({ orangtuacount, balitacount, datasetcount, pemeriksaancount, gizi, statusLabel }: DashboardProps) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Dashboard',
@@ -36,13 +36,13 @@ export default function Dashboard({ orangtuacount, balitacount, datasetcount, pe
 
     // Data yang akan dikirim ke PieChart
     const PieChartData = {
-        labels: ['Orang Tua', 'Balita'],
+        labels: statusLabel ?? [], // provide a default value if statusLabel is undefined or empty
         datasets: [
             {
                 label: 'Jumlah',
-                data: [Number(orangtuacount), Number(balitacount)], // Data dinamis
-                backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)'],
-                borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)'],
+                data: gizi, // Data dinamis
+                backgroundColor: ['rgba(222, 22, 0, 0.2)', 'rgba(194, 182, 0,0.2)', 'rgba(37, 255, 0, 0.2)', 'rgba(0, 134, 255, 0.2)'],
+                borderColor: ['rgba(222, 22, 0,1)', 'rgba(194, 182, 0,1)', 'rgba(37, 255, 0, 1)', 'rgba(0, 134, 255, 1)'],
                 borderWidth: 1,
             },
         ],
@@ -50,7 +50,7 @@ export default function Dashboard({ orangtuacount, balitacount, datasetcount, pe
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 dark:bg-elevation-1">
+            <div className="dark:bg-elevation-1 flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="grid auto-rows-min gap-4 md:grid-cols-4">
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border relative overflow-hidden rounded-xl border bg-gradient-to-br from-blue-400 to-blue-500 dark:from-blue-600 dark:to-blue-800">
                         <CardHeader className="px-4 pt-1 pb-0 text-center">
@@ -79,13 +79,12 @@ export default function Dashboard({ orangtuacount, balitacount, datasetcount, pe
                 </div>
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
                     <div className="grid h-full grid-cols-1 gap-4 align-middle md:grid-cols-12">
-                        <div className="w-full p-4 col-span-full md:col-span-7 dark:bg-white">
+                        <div className="col-span-full w-full p-4 md:col-span-7 dark:bg-white">
                             <LineChart data={LineChartData} title="Jumlah Pemeriksaan" />
                         </div>
-                        <div className="max-h-full w-full p-4 col-span-full md:col-span-4 dark:bg-white">
-                            <PieChart data={PieChartData} title='Jumlah Orang tua dan balita' />
+                        <div className="col-span-full max-h-full w-full p-4 md:col-span-4 dark:bg-white">
+                            <PieChart data={PieChartData} title="Jumlah Pemeriksaan Gizi" />
                         </div>
-
                     </div>
                 </div>
             </div>

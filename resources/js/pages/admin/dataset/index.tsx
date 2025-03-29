@@ -134,13 +134,13 @@ export default function DatasetIndex({ dataset, breadcrumb, filter, attribut, st
     };
     // End Filter //
 
-    const filterById = (id: string, detail: { attribut_id: string; nilai: string }[]): string => {
+    const searchById = (id: string, detail: { attribut_id: string; nilai: string }[]): string => {
         if (!detail || !id) return '';
         try {
             const foundElement = detail.find((element) => String(element.attribut_id).includes(id));
             return foundElement?.nilai ?? '';
         } catch (error) {
-            console.error('Error in filterById:', error);
+            console.error('Error in searchById:', error);
             return '';
         }
     };
@@ -236,7 +236,7 @@ export default function DatasetIndex({ dataset, breadcrumb, filter, attribut, st
                                                 <TableColumn> {item.label} </TableColumn>
                                                 {attribut.length > 0 &&
                                                     attribut.map((attributs: any) => (
-                                                        <TableColumn key={attributs.id}>{filterById(attributs.id, item.fiturdataset)}</TableColumn>
+                                                        <TableColumn key={attributs.id}>{searchById(attributs.id, item.fiturdataset)}</TableColumn>
                                                     ))}
                                                 <TableAction
                                                     className="w-32"

@@ -20,7 +20,7 @@ class BalitaController extends Controller
         $query = Balita::query();
 
         if ($request->filled('q')) {
-            $query->filterByNama($request->input('q', ''));
+            $query->searchByNama($request->input('q', ''));
         }
 
         if ($request->filled('order_by')) {

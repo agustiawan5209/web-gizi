@@ -53,14 +53,14 @@ export default function PemeriksaanCreate({ breadcrumb, orangtua, attribut }: Pe
     const [selectedOrangtua, setSelectedOrangtua] = useState<PemeriksaanCreateProps['orangtua'][0] | null>(null);
     const [idOrangTua, setIdOrangTua] = useState('');
 
-    const filterById = (search: string): PemeriksaanCreateProps['orangtua'][0] | null => {
+    const searchById = (search: string): PemeriksaanCreateProps['orangtua'][0] | null => {
         if (!orangtua || !search) return null;
         return orangtua.find((element) => String(element.id).includes(search)) ?? null;
     };
 
     useEffect(() => {
         if (idOrangTua) {
-            setSelectedOrangtua(filterById(idOrangTua));
+            setSelectedOrangtua(searchById(idOrangTua));
             setData('orang_tua_id', idOrangTua);
         }
     }, [idOrangTua]);

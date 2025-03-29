@@ -37,6 +37,7 @@ export interface PemeriksaanProps {
         order_by: string;
         date: string;
     };
+    statusLabel: string[];
 }
 
 type GetForm = {
@@ -46,7 +47,7 @@ type GetForm = {
     date?: string;
 };
 
-export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter }: PemeriksaanProps) {
+export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, statusLabel }: PemeriksaanProps) {
     const breadcrumbs: BreadcrumbItem[] = breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : [];
 
     const { data, setData, get, processing, errors, reset } = useForm<GetForm>({
@@ -263,6 +264,15 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter }: Pe
                                         <SelectItem value="Z-A">Z-A</SelectItem>
                                         <SelectItem value="asc">Terbaru</SelectItem>
                                         <SelectItem value="desc">Terlama</SelectItem>
+                                    </SelectGroup>
+                                    <SelectGroup>
+                                        <SelectLabel>berdasarkan Gizi</SelectLabel>
+                                        {statusLabel.length > 0 &&
+                                            statusLabel.map((item) => (
+                                                <SelectItem key={item} value={item}>
+                                                    {item}
+                                                </SelectItem>
+                                            ))}
                                     </SelectGroup>
                                     <SelectSeparator />
                                     <SelectGroup>

@@ -53,7 +53,7 @@ class User extends Authenticatable
     }
 
 
-    public function scopeFilterBySearch(Builder $query, ?string $name): Builder
+    public function scopeSearchBySearch(Builder $query, ?string $name): Builder
     {
         if(!$name) return $query;
        return $query->when($name ?? null, function ($query, $name) {

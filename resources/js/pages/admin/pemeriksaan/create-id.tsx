@@ -53,14 +53,14 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut }: Peme
 
     const [idBalita, setIdBalita] = useState('');
 
-    const filterById = (search: string): PemeriksaanCreateProps['balita'][0] | null => {
+    const searchById = (search: string): PemeriksaanCreateProps['balita'][0] | null => {
         if (!balita || !search) return null;
         return balita.find((element) => String(element.id).includes(search)) ?? null;
     };
 
     useEffect(() => {
         if (idBalita) {
-            const listbalita = filterById(idBalita);
+            const listbalita = searchById(idBalita);
 
             setData('balita_id', idBalita);
             if(listbalita){
