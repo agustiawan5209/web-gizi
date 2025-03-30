@@ -28,20 +28,20 @@ export default function Dashboard({ orangtuacount, balitacount, datasetcount, pe
     const LineChartData = {
         labels: chartPemeriksaan.label,
         datasets: [
-            {
-                label: 'Jumlah Pemeriksaan',
-                backgroundColor: ['rgba(75,192,192,0.4)'], // note the array
-                borderColor: ['rgba(75,192,192,1)'], // note the array
-                borderWidth: 1,
-                data: chartPemeriksaan.data,
-            },
             // {
-            //     label: 'Data Pemeriksaan',
-            //     backgroundColor: ['rgba(21,150,0,0.4)'], // note the array
-            //     borderColor: ['rgba(21,150,0,1)'], // note the array
+            //     label: 'Jumlah Pemeriksaan',
+            //     backgroundColor: ['rgba(75,192,192,0.4)'], // note the array
+            //     borderColor: ['rgba(75,192,192,1)'], // note the array
             //     borderWidth: 1,
-            //     data: [65, 59, 80, 81, 56, 55, 40],
+            //     data: chartPemeriksaan.data,
             // },
+            {
+                label: 'Data Pemeriksaan',
+                backgroundColor: ['rgba(21,150,0,0.4)'], // note the array
+                borderColor: ['rgba(21,150,0,1)'], // note the array
+                borderWidth: 1,
+                data: [65, 59, 80, 81, 56, 55, 40],
+            },
         ],
     };
 
