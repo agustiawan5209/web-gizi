@@ -11,6 +11,16 @@ use Illuminate\Auth\Events\Registered;
 
 class OrangTuaController extends Controller
 {
+    private const BASE_BREADCRUMB = [
+        [
+            'title' => 'dashboard',
+            'href' => '/dashboard',
+        ],
+        [
+            'title' => 'data orangtua',
+            'href' => '/admin/orangtua/',
+        ],
+    ];
     /**
      * Display a listing of the resource.
      */
@@ -47,16 +57,7 @@ class OrangTuaController extends Controller
 
         return Inertia::render('admin/orangtua/index', [
             'orangtua' => $users,
-            'breadcrumb' => [
-                [
-                    'title' => 'dashboard',
-                    'href' => '/dashboard',
-                ],
-                [
-                    'title' => 'dataorangtua',
-                    'href' => '/admin/orangtua/',
-                ],
-            ],
+            'breadcrumb' => self::BASE_BREADCRUMB,
             'filter' => $request->only('q', 'per_page', 'order_by'),
         ]);
     }
@@ -67,20 +68,12 @@ class OrangTuaController extends Controller
     public function create()
     {
         return Inertia::render('admin/orangtua/create', [
-            'breadcrumb'=> [
-                [
-                    'title'=> 'dashboard',
-                    'href'=> '/dashboard',
-                ],
-                [
-                    'title'=> 'dataorangtua',
-                    'href'=> '/admin/orangtua/',
-                ],
+            'breadcrumb'=> array_merge(self::BASE_BREADCRUMB,[
                 [
                     'title'=> 'tambah data',
                     'href'=> '/admin/orangtua/create',
                 ],
-            ],
+            ])
         ]);
     }
 
@@ -113,20 +106,12 @@ class OrangTuaController extends Controller
     {
         return Inertia::render('admin/orangtua/show', [
             'orangtua'=> $user,
-            'breadcrumb'=> [
+            'breadcrumb'=> array_merge(self::BASE_BREADCRUMB,[
                 [
-                    'title'=> 'dashboard',
-                    'href'=> '/dashboard',
-                ],
-                [
-                    'title'=> 'dataorangtua',
-                    'href'=> '/admin/orangtua/',
-                ],
-                [
-                    'title'=> 'Detail data',
+                    'title'=> 'detail data',
                     'href'=> '/admin/orangtua/show',
                 ],
-            ],
+            ])
         ]);
     }
 
@@ -137,20 +122,12 @@ class OrangTuaController extends Controller
     {
         return Inertia::render('admin/orangtua/edit', [
             'orangtua'=> $user,
-            'breadcrumb'=> [
+            'breadcrumb'=> array_merge(self::BASE_BREADCRUMB,[
                 [
-                    'title'=> 'dashboard',
-                    'href'=> '/dashboard',
-                ],
-                [
-                    'title'=> 'dataorangtua',
-                    'href'=> '/admin/orangtua/',
-                ],
-                [
-                    'title'=> 'Edit data',
+                    'title'=> 'edit data',
                     'href'=> '/admin/orangtua/edit',
                 ],
-            ],
+            ])
         ]);
     }
 

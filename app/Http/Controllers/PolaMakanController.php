@@ -10,6 +10,16 @@ use Inertia\Inertia;
 
 class PolaMakanController extends Controller
 {
+    private const BASE_BREADCRUMB = [
+        [
+            'title' => 'dashboard',
+            'href' => '/dashboard',
+        ],
+        [
+            'title' => 'data pemeriksaan',
+            'href' => '/admin/pemeriksaan/',
+        ],
+    ];
     /**
      * Display a listing of the resource.
      */
@@ -27,25 +37,15 @@ class PolaMakanController extends Controller
         $pemeriksaan->load(['balita', 'balita.orangtua', 'detailpemeriksaan', 'detailpemeriksaan.attribut']);
 
 
-        return Inertia::render('admin/polamakan/index',[
+        return Inertia::render('admin/polamakan/index', [
             'pemeriksaan' => $pemeriksaan,
             'balita' => $pemeriksaan->balita,
             'orangTua' => $pemeriksaan->balita->orangtua,
             'detail' => $pemeriksaan->detailpemeriksaan,
-            'breadcrumb' => [
-                [
-                    'title' => 'dashboard',
-                    'href' => '/dashboard',
-                ],
-                [
-                    'title' => 'data pemeriksaan',
-                    'href' => '/admin/pemeriksaan/',
-                ],
-                [
-                    'title' => 'detail pemeriksaan',
-                    'href' => '/admin/pemeriksaan/show',
-                ],
-            ],
+            'breadcrumb' => array_merge(self::BASE_BREADCRUMB, [
+                'title' => 'detail pola-makan',
+                'href' => '/admin/pola-makan/create',
+            ],),
         ]);
         //
     }

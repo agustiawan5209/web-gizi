@@ -24,7 +24,7 @@ const CollapsibleRow: React.FC<CollapsibleRowProps> = ({ num, title, columnData 
                 <TableColumn>{num}</TableColumn>
 
                 <TableColumn className="p-2">
-                    <button onClick={() => setIsOpen(!isOpen)} className="flex items-center text-sm text-blue-600 hover:underline">
+                    <button onClick={() => setIsOpen(!isOpen)} className="flex items-center text-sm text-blue-600 dark:text-white hover:underline">
                         {title}
                         <ChevronDownIcon className={`ml-1 h-4 w-4 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
                     </button>

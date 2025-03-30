@@ -21,7 +21,7 @@ function TableContainer({
     <div
       data-slot="table-container"
       className={cn(
-        'overflow-x-auto',
+        'overflow-x-auto ',
         className
       )}
       {...props}

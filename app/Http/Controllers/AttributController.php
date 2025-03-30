@@ -10,6 +10,16 @@ use Illuminate\Http\Request;
 
 class AttributController extends Controller
 {
+    private const BASE_BREADCRUMB = [
+        [
+            'title' => 'dashboard',
+            'href' => '/dashboard',
+        ],
+        [
+            'title' => 'data attribut',
+            'href' => '/admin/attribut/',
+        ],
+    ];
     /**
      * Display a listing of the resource.
      */
@@ -46,16 +56,7 @@ class AttributController extends Controller
 
         return Inertia::render('admin/attribut/index', [
             'attribut' => $attribut,
-            'breadcrumb' => [
-                [
-                    'title' => 'dashboard',
-                    'href' => '/dashboard',
-                ],
-                [
-                    'title' => 'data attribut',
-                    'href' => '/admin/attribut/',
-                ],
-            ],
+            'breadcrumb' => self::BASE_BREADCRUMB,
             'filter' => $request->only('q'),
         ]);
     }
@@ -66,20 +67,12 @@ class AttributController extends Controller
     public function create()
     {
         return Inertia::render('admin/attribut/create',[
-            'breadcrumb' => [
+            'breadcrumb'=> array_merge(self::BASE_BREADCRUMB,[
                 [
-                    'title' => 'dashboard',
-                    'href' => '/dashboard',
+                    'title'=> 'tambah data',
+                    'href'=> '/admin/attribut/create',
                 ],
-                [
-                    'title' => 'data attribut',
-                    'href' => '/admin/attribut/',
-                ],
-                [
-                    'title' => 'tambah attribut',
-                    'href' => '/admin/attribut/create',
-                ],
-            ],
+            ])
         ]);
     }
 
@@ -99,20 +92,12 @@ class AttributController extends Controller
     {
         return Inertia::render('admin/attribut/show', [
             'attribut'=> $attribut,
-            'breadcrumb' => [
+            'breadcrumb'=> array_merge(self::BASE_BREADCRUMB,[
                 [
-                    'title' => 'dashboard',
-                    'href' => '/dashboard',
+                    'title'=> 'detail data',
+                    'href'=> '/admin/attribut/show',
                 ],
-                [
-                    'title' => 'data attribut',
-                    'href' => '/admin/attribut/',
-                ],
-                [
-                    'title' => 'show attribut',
-                    'href' => '/admin/attribut/show',
-                ],
-            ],
+            ])
         ]);
     }
 
@@ -123,20 +108,12 @@ class AttributController extends Controller
     {
         return Inertia::render('admin/attribut/edit', [
             'attribut'=> $attribut,
-            'breadcrumb' => [
+            'breadcrumb'=> array_merge(self::BASE_BREADCRUMB,[
                 [
-                    'title' => 'dashboard',
-                    'href' => '/dashboard',
+                    'title'=> 'edit data',
+                    'href'=> '/admin/attribut/edit',
                 ],
-                [
-                    'title' => 'data attribut',
-                    'href' => '/admin/attribut/',
-                ],
-                [
-                    'title' => 'edit attribut',
-                    'href' => '/admin/attribut/edit',
-                ],
-            ],
+            ])
         ]);
     }
 

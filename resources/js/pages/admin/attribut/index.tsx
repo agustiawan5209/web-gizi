@@ -134,7 +134,7 @@ export default function AttributIndex({ attribut, breadcrumb, filter }: Attribut
                     <div className="flex w-full flex-1 flex-row items-end justify-end gap-7 px-4 py-2 md:items-center md:justify-between">
                         <div className="flex w-full flex-1 flex-col gap-7 px-4 py-2 md:flex-row md:items-center">
                             <Link href={route('admin.attribut.create')} className="col-span-1 cursor-pointer">
-                                <Button variant="default" className="flex cursor-pointer items-center gap-2 bg-blue-500 hover:bg-blue-600">
+                                <Button variant="default" className="flex cursor-pointer items-center gap-2 bg-primary ">
                                     Tambah Data
                                 </Button>
                             </Link>
@@ -149,7 +149,7 @@ export default function AttributIndex({ attribut, breadcrumb, filter }: Attribut
                                     onChange={(e) => setSearch(e.target.value)}
                                     placeholder="Cari berdasarkan nama atau keterangan"
                                 />
-                                <Button variant="outline" type="button" onClick={submitSearch} className="flex items-center gap-2 text-xs">
+                                <Button variant="secondary" type="button" onClick={submitSearch} className="flex items-center gap-2 text-xs">
                                     Cari
                                 </Button>
                                 <Button

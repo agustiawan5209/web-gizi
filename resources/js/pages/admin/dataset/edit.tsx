@@ -99,7 +99,7 @@ export default function DatasetCreate({ breadcrumb, orangtua, dataset }: Dataset
                                     <Label htmlFor="nama">Nama</Label>
 
                                     <Select defaultValue="" value={data.orang_tua_id} onValueChange={(e) => setData('orang_tua_id', e)}>
-                                        <SelectTrigger className="text-black">
+                                        <SelectTrigger className="text-foreground">
                                             <SelectValue placeholder="Data Orang Tua" />
                                         </SelectTrigger>
                                         <SelectContent>

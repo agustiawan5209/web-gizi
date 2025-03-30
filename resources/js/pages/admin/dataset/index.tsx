@@ -159,7 +159,7 @@ export default function DatasetIndex({ dataset, breadcrumb, filter, attribut, st
                                 <Button
                                     type="button"
                                     variant="default"
-                                    className="flex w-full cursor-pointer items-center gap-2 bg-blue-500 hover:bg-blue-600"
+                                    className="flex w-full cursor-pointer items-center gap-2 bg-primary"
                                 >
                                     Tambah Data
                                 </Button>
@@ -175,7 +175,7 @@ export default function DatasetIndex({ dataset, breadcrumb, filter, attribut, st
                                     onChange={(e) => setSearch(e.target.value)}
                                     placeholder="Cari berdasarkan nama atau keterangan"
                                 />
-                                <Button variant="outline" type="button" onClick={submitSearch} className="flex items-center gap-2 text-xs">
+                                <Button variant="secondary" type="button" onClick={submitSearch} className="flex items-center gap-2 text-xs">
                                     Cari
                                 </Button> */}
                                 <Button

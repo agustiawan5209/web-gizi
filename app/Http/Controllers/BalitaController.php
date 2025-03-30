@@ -12,6 +12,16 @@ use App\Models\Attribut;
 
 class BalitaController extends Controller
 {
+    private const BASE_BREADCRUMB = [
+        [
+            'title' => 'dashboard',
+            'href' => '/dashboard',
+        ],
+        [
+            'title' => 'data balita',
+            'href' => '/admin/balita/',
+        ],
+    ];
     /**
      * Display a listing of the resource.
      */
@@ -51,16 +61,7 @@ class BalitaController extends Controller
 
         return Inertia::render('admin/balita/index', [
             'balita' => $balita,
-            'breadcrumb' => [
-                [
-                    'title' => 'dashboard',
-                    'href' => '/dashboard',
-                ],
-                [
-                    'title' => 'data balita',
-                    'href' => '/admin/balita/',
-                ],
-            ],
+            'breadcrumb' => self::BASE_BREADCRUMB,
             'filter' => $request->only('q'),
         ]);
     }
@@ -72,20 +73,12 @@ class BalitaController extends Controller
     {
     return Inertia::render('admin/balita/create', [
         'orangtua' => User::withoutRole('admin')->get(),
-        'breadcrumb' => [
+        'breadcrumb'=> array_merge(self::BASE_BREADCRUMB,[
             [
-                'title' => 'dashboard',
-                'href' => '/dashboard',
+                'title'=> 'tambah data',
+                'href'=> '/admin/balita/create',
             ],
-            [
-                'title' => 'data balita',
-                'href' => '/admin/balita/',
-            ],
-            [
-                'title' => 'tambah balita',
-                'href' => '/admin/balita/create',
-            ],
-        ],
+        ])
     ]);
     }
 
@@ -109,20 +102,12 @@ class BalitaController extends Controller
             'pemeriksaan'=> $balita->pemeriksaan,
             'orangTua'=> $balita->orangtua,
             'attribut'=> Attribut::orderBy('id', 'asc')->get(),
-            'breadcrumb' => [
+            'breadcrumb'=> array_merge(self::BASE_BREADCRUMB,[
                 [
-                    'title' => 'dashboard',
-                    'href' => '/dashboard',
+                    'title'=> 'detail data',
+                    'href'=> '/admin/balita/show',
                 ],
-                [
-                    'title' => 'data balita',
-                    'href' => '/admin/balita/',
-                ],
-                [
-                    'title' => 'detail balita',
-                    'href' => '/admin/balita/show',
-                ],
-            ],
+            ])
         ]);
     }
 
@@ -135,20 +120,12 @@ class BalitaController extends Controller
         return Inertia::render('admin/balita/edit', [
             'balita'=> $balita,
             'orangtua' => User::withoutRole('admin')->get(),
-            'breadcrumb' => [
+            'breadcrumb'=> array_merge(self::BASE_BREADCRUMB,[
                 [
-                    'title' => 'dashboard',
-                    'href' => '/dashboard',
+                    'title'=> 'edit data',
+                    'href'=> '/admin/balita/edit',
                 ],
-                [
-                    'title' => 'data balita',
-                    'href' => '/admin/balita/',
-                ],
-                [
-                    'title' => 'edit balita',
-                    'href' => '/admin/balita/edit',
-                ],
-            ],
+            ])
         ]);
     }
 

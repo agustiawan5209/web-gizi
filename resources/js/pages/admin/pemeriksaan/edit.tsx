@@ -99,7 +99,7 @@ export default function PemeriksaanCreate({ breadcrumb, orangtua, pemeriksaan }:
                                     <Label htmlFor="nama">Nama</Label>
 
                                     <Select defaultValue="" value={data.orang_tua_id} onValueChange={(e) => setData('orang_tua_id', e)}>
-                                        <SelectTrigger className="text-black">
+                                        <SelectTrigger className="text-foreground">
                                             <SelectValue placeholder="Data Orang Tua" />
                                         </SelectTrigger>
                                         <SelectContent>

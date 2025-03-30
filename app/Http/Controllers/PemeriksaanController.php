@@ -3,68 +3,85 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePemeriksaanBalitaIdRequest;
-use Carbon\Carbon;
-use Inertia\Inertia;
-use App\Models\Balita;
-use App\Models\Attribut;
-use App\Models\Pemeriksaan;
-use App\Models\DetailPemeriksaan;
 use App\Http\Requests\StorePemeriksaanRequest;
 use App\Http\Requests\UpdatePemeriksaanRequest;
+use App\Models\Attribut;
+use App\Models\Balita;
+use App\Models\DetailPemeriksaan;
+use App\Models\Pemeriksaan;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class PemeriksaanController extends Controller
 {
+    private const STATUS_LABELS = [
+        'gizi buruk',
+        'gizi kurang',
+        'gizi baik',
+        'gizi lebih',
+    ];
 
+    private const BASE_BREADCRUMB = [
+        [
+            'title' => 'dashboard',
+            'href' => '/dashboard',
+        ],
+        [
+            'title' => 'data pemeriksaan',
+            'href' => '/admin/pemeriksaan/',
+        ],
+    ];
 
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $statusLabel = [
-            'gizi buruk',
-            'gizi kurang',
-            'gizi baik',
-            'gizi lebih',
-        ];
+        $pemeriksaanQuery = Pemeriksaan::with([
+            'balita',
+            'balita.orangtua',
+            'detailpemeriksaan',
+            'detailpemeriksaan.attribut',
+            'polamakan'
+        ]);
 
-        $pemeriksaanQuery = Pemeriksaan::with(['balita', 'balita.orangtua', 'detailpemeriksaan', 'detailpemeriksaan.attribut', 'polamakan']);
-
-        if ($request->filled('q')) {
-            $pemeriksaanQuery->searchByBalita($request->input('q'));
-        }
-
-        if ($request->filled('date')) {
-            $pemeriksaanQuery->searchByTangal(Carbon::parse($request->date));
-        }
-
-        if (in_array($request->input('order_by'), ['asc', 'desc'])) {
-            $pemeriksaanQuery->orderBy('created_at', $request->input('order_by'));
-        } elseif (in_array($request->input('order_by'), ['A-Z', 'Z-A'])) {
-            $pemeriksaanQuery->orderBy('label', $request->input('order_by') === 'A-Z' ? 'asc' : 'desc');
-        } elseif (in_array($request->input('order_by'), $statusLabel)) {
-            $pemeriksaanQuery->where('label', '=', $request->input('order_by'));
-        }
+        // Apply filters
+        $this->applyFilters($pemeriksaanQuery, $request);
 
         $pemeriksaan = $pemeriksaanQuery->paginate($request->input('per_page', 10));
 
         return Inertia::render('admin/pemeriksaan/index', [
             'pemeriksaan' => $pemeriksaan,
-            'breadcrumb' => [
-                [
-                    'title' => 'dashboard',
-                    'href' => '/dashboard',
-                ],
-                [
-                    'title' => 'data pemeriksaan',
-                    'href' => '/admin/pemeriksaan/',
-                ],
-            ],
+            'breadcrumb' => self::BASE_BREADCRUMB,
             'filter' => $request->only('search', 'order_by', 'date', 'q'),
-            'statusLabel' => $statusLabel
+            'statusLabel' => self::STATUS_LABELS
         ]);
+    }
+
+    /**
+     * Apply filters to the query
+     */
+    private function applyFilters($query, Request $request): void
+    {
+        if ($request->filled('q')) {
+            $query->searchByBalita($request->input('q'));
+        }
+
+        if ($request->filled('date')) {
+            $query->searchByTanggal(Carbon::parse($request->date));
+        }
+
+        if (in_array($request->input('order_by'), ['asc', 'desc'])) {
+            $query->orderBy('created_at', $request->input('order_by'));
+        } elseif (in_array($request->input('order_by'), ['A-Z', 'Z-A'])) {
+            $direction = $request->input('order_by') === 'A-Z' ? 'asc' : 'desc';
+            $query->orderBy('label', $direction);
+        } elseif (in_array($request->input('order_by'), self::STATUS_LABELS)) {
+            $query->where('label', $request->input('order_by'));
+        }
     }
 
     /**
@@ -73,56 +90,35 @@ class PemeriksaanController extends Controller
     public function create()
     {
         return Inertia::render('admin/pemeriksaan/create', [
-            'attribut' => Attribut::orderBy('id', 'asc')->whereNotIn('nama', ['jenis kelamin', 'status'])->get(),
+            'attribut' => Attribut::orderBy('id')
+                ->whereNotIn('nama', ['jenis kelamin', 'status'])
+                ->get(),
             'orangtua' => User::withoutRole('admin')->get(),
-            'label' => [
-                ['nama' => 'gizi buruk'],
-                ['nama' => 'gizi kurang'],
-                ['nama' => 'gizi baik'],
-                ['nama' => 'gizi lebih'],
-            ],
-            'breadcrumb' => [
-                [
-                    'title' => 'dashboard',
-                    'href' => '/dashboard',
-                ],
-                [
-                    'title' => 'data pemeriksaan',
-                    'href' => '/admin/pemeriksaan/',
-                ],
+            'label' => array_map(fn($label) => ['nama' => $label], self::STATUS_LABELS),
+            'breadcrumb' => array_merge(self::BASE_BREADCRUMB, [
                 [
                     'title' => 'tambah pemeriksaan',
                     'href' => '/admin/pemeriksaan/create',
                 ],
-            ],
+            ]),
         ]);
     }
+
     public function createById()
     {
         return Inertia::render('admin/pemeriksaan/create-id', [
-            'attribut' => Attribut::orderBy('id', 'asc')->whereNotIn('nama', ['jenis kelamin', 'status'])->get(),
+            'attribut' => Attribut::orderBy('id')
+                ->whereNotIn('nama', ['jenis kelamin', 'status'])
+                ->get(),
             'orangtua' => User::withoutRole('admin')->get(),
-            'balita' => Balita::orderBy('id', 'asc')->get(),
-            'label' => [
-                ['nama' => 'gizi buruk'],
-                ['nama' => 'gizi kurang'],
-                ['nama' => 'gizi baik'],
-                ['nama' => 'gizi lebih'],
-            ],
-            'breadcrumb' => [
-                [
-                    'title' => 'dashboard',
-                    'href' => '/dashboard',
-                ],
-                [
-                    'title' => 'data pemeriksaan',
-                    'href' => '/admin/pemeriksaan/',
-                ],
+            'balita' => Balita::orderBy('id')->get(),
+            'label' => array_map(fn($label) => ['nama' => $label], self::STATUS_LABELS),
+            'breadcrumb' => array_merge(self::BASE_BREADCRUMB, [
                 [
                     'title' => 'tambah pemeriksaan',
                     'href' => '/admin/pemeriksaan/create',
                 ],
-            ],
+            ]),
         ]);
     }
 
@@ -131,114 +127,96 @@ class PemeriksaanController extends Controller
      */
     public function store(StorePemeriksaanRequest $request)
     {
-        try {
+        return DB::transaction(function () use ($request) {
             $balita = Balita::create($request->except('attribut', 'tanggal_pemeriksaan'));
 
+            $pemeriksaan = $this->createPemeriksaan($balita, $request);
 
-            $attribut = $request->input('attribut');
-            $label = 'GIZI??';
-            $pemeriksaan = Pemeriksaan::create([
-                'balita_id' => $balita->id,
-                'data_balita' => json_encode($balita),
-                'data_pemeriksaan' => json_encode($attribut),
-                'tgl_pemeriksaan' => $request->input('tanggal_pemeriksaan'),
-                // 'label' => $label,
-            ]);
+            $this->createDetailPemeriksaan($pemeriksaan, $request->input('attribut'), $balita->jenis_kelamin);
 
+            $this->classifyAndUpdateLabel($pemeriksaan);
 
-
-            foreach ($attribut as $item) {
-                DetailPemeriksaan::create([
-                    'pemeriksaan_id' => $pemeriksaan->id,
-                    'attribut_id' => $item['attribut_id'],
-                    'nilai' => $item['nilai'],
-                ]);
-            }
-
-            $jenkelAttribut = Attribut::where('nama', 'like', '%jenis kelamin%')->first();
-            $statusAttribut = Attribut::where('nama', 'like', '%status%')->first();
-            if ($jenkelAttribut) {
-                DetailPemeriksaan::create([
-                    'pemeriksaan_id' => $pemeriksaan->id,
-                    'attribut_id' => $jenkelAttribut->id,
-                    'nilai' => $balita->jenis_kelamin,
-                ]);
-            }
-            $naive = new NaiveBayesController($pemeriksaan->id);
-            $klasifikasi = $naive->generate();
-
-            if ($klasifikasi['success'] == true) {
-                $label = $klasifikasi['hasil_prediksi'];
-                $pemeriksaan->update(['label' => $label]);
-                $label = $label . " - akurasi=" . $klasifikasi['akurasi'];
-            }
-            if ($statusAttribut) {
-                DetailPemeriksaan::create([
-                    'pemeriksaan_id' => $pemeriksaan->id,
-                    'attribut_id' => $statusAttribut->id,
-                    'nilai' => $label,
-                ]);
-            }
-
-            return redirect()->route('admin.pola-makan.index', ['pemeriksaan' => $pemeriksaan->id])->with('success', 'data pemeriksaan berhasil ditambahkan!!');
-        } catch (\Throwable $e) {
-            return redirect()->route('admin.pola-makan.index', ['pemeriksaan' => $pemeriksaan->id])->with('error', 'terjadi kesalahan ' . $e->getMessage());
-        }
+            return redirect()
+                ->route('admin.pola-makan.index', ['pemeriksaan' => $pemeriksaan->id])
+                ->with('success', 'Data pemeriksaan berhasil ditambahkan!');
+        });
     }
+
     public function storeByBalita(StorePemeriksaanBalitaIdRequest $request)
     {
-        try {
-            $balita = Balita::find($request->balita_id);
+        return DB::transaction(function () use ($request) {
+            $balita = Balita::findOrFail($request->balita_id);
 
-            $attribut = $request->input('attribut');
-            $label = 'GIZI??';
-            $pemeriksaan = Pemeriksaan::create([
-                'balita_id' => $balita->id,
-                'data_balita' => json_encode($balita),
-                'data_pemeriksaan' => json_encode($attribut),
-                'tgl_pemeriksaan' => $request->input('tanggal_pemeriksaan'),
-                'label' => $label,
-            ]);
+            $pemeriksaan = $this->createPemeriksaan($balita, $request);
 
-            foreach ($attribut as $item) {
-                DetailPemeriksaan::create([
-                    'pemeriksaan_id' => $pemeriksaan->id,
-                    'attribut_id' => $item['attribut_id'],
-                    'nilai' => $item['nilai'],
-                ]);
-            }
+            $this->createDetailPemeriksaan($pemeriksaan, $request->input('attribut'), $balita->jenis_kelamin);
 
-            $jenkelAttribut = Attribut::where('nama', 'like', '%jenis kelamin%')->first();
-            $statusAttribut = Attribut::where('nama', 'like', '%status%')->first();
-            if ($jenkelAttribut) {
-                DetailPemeriksaan::create([
-                    'pemeriksaan_id' => $pemeriksaan->id,
-                    'attribut_id' => $jenkelAttribut->id,
-                    'nilai' => $balita->jenis_kelamin,
-                ]);
-            }
+            $this->classifyAndUpdateLabel($pemeriksaan);
 
-            $naive = new NaiveBayesController($pemeriksaan->id);
-            $klasifikasi = $naive->generate();
+            return redirect()
+                ->route('admin.pola-makan.index', ['pemeriksaan' => $pemeriksaan->id])
+                ->with('success', 'Data pemeriksaan berhasil ditambahkan!');
+        });
+    }
 
-            if ($klasifikasi['success'] == true) {
-                $label = $klasifikasi['hasil_prediksi'];
-                $pemeriksaan->update(['label' => $label]);
-                $label = $label . " - akurasi=" . $klasifikasi['akurasi'];
-            }
+    /**
+     * Create pemeriksaan record
+     */
+    private function createPemeriksaan(Balita $balita, $request): Pemeriksaan
+    {
+        return Pemeriksaan::create([
+            'balita_id' => $balita->id,
+            'data_balita' => json_encode($balita),
+            'data_pemeriksaan' => json_encode($request->input('attribut')),
+            'tgl_pemeriksaan' => $request->input('tanggal_pemeriksaan'),
+        ]);
+    }
 
+    /**
+     * Create detail pemeriksaan records
+     */
+    private function createDetailPemeriksaan(Pemeriksaan $pemeriksaan, array $attribut, string $jenisKelamin): void
+    {
+        $detailRecords = array_map(function ($item) use ($pemeriksaan) {
+            return [
+                'pemeriksaan_id' => $pemeriksaan->id,
+                'attribut_id' => $item['attribut_id'],
+                'nilai' => $item['nilai'],
+            ];
+        }, $attribut);
 
-            if ($statusAttribut) {
+        // Add jenis kelamin attribute if exists
+        if ($jenkelAttribut = Attribut::where('nama', 'like', '%jenis kelamin%')->first()) {
+            $detailRecords[] = [
+                'pemeriksaan_id' => $pemeriksaan->id,
+                'attribut_id' => $jenkelAttribut->id,
+                'nilai' => $jenisKelamin,
+            ];
+        }
+
+        DetailPemeriksaan::insert($detailRecords);
+    }
+
+    /**
+     * Classify and update label using Naive Bayes
+     */
+    private function classifyAndUpdateLabel(Pemeriksaan $pemeriksaan): void
+    {
+        $naive = new NaiveBayesController($pemeriksaan->id);
+        $klasifikasi = $naive->generate();
+
+        if ($klasifikasi['success']) {
+            $label = $klasifikasi['hasil_prediksi'];
+            $pemeriksaan->update(['label' => $label]);
+
+            if ($statusAttribut = Attribut::where('nama', 'like', '%status%')->first()) {
+                $fullLabel = $label . " - akurasi=" . $klasifikasi['akurasi'];
                 DetailPemeriksaan::create([
                     'pemeriksaan_id' => $pemeriksaan->id,
                     'attribut_id' => $statusAttribut->id,
-                    'nilai' => $label,
+                    'nilai' => $fullLabel,
                 ]);
             }
-
-            return redirect()->route('admin.pola-makan.index', ['pemeriksaan' => $pemeriksaan->id])->with('success', 'data pemeriksaan berhasil ditambahkan!!');
-        } catch (\Exception $e) {
-            return redirect()->route('admin.pola-makan.index', ['pemeriksaan' => $pemeriksaan->id])->with('error', 'terjadi kesalahan ' . $e->getMessage());
         }
     }
 
@@ -247,26 +225,25 @@ class PemeriksaanController extends Controller
      */
     public function show(Pemeriksaan $pemeriksaan)
     {
-        $pemeriksaan->load(['balita', 'balita.orangtua', 'detailpemeriksaan', 'detailpemeriksaan.attribut', 'polamakan']);
+        $pemeriksaan->load([
+            'balita',
+            'balita.orangtua',
+            'detailpemeriksaan',
+            'detailpemeriksaan.attribut',
+            'polamakan'
+        ]);
+
         return Inertia::render('admin/pemeriksaan/show', [
             'pemeriksaan' => $pemeriksaan,
             'balita' => $pemeriksaan->balita,
             'orangTua' => $pemeriksaan->balita->orangtua,
             'detail' => $pemeriksaan->detailpemeriksaan,
-            'breadcrumb' => [
-                [
-                    'title' => 'dashboard',
-                    'href' => '/dashboard',
-                ],
-                [
-                    'title' => 'data pemeriksaan',
-                    'href' => '/admin/pemeriksaan/',
-                ],
+            'breadcrumb' => array_merge(self::BASE_BREADCRUMB, [
                 [
                     'title' => 'detail pemeriksaan',
                     'href' => '/admin/pemeriksaan/show',
                 ],
-            ],
+            ]),
             'polamakan' => $pemeriksaan->polamakan,
         ]);
     }
@@ -277,28 +254,15 @@ class PemeriksaanController extends Controller
     public function edit(Pemeriksaan $pemeriksaan)
     {
         return Inertia::render('admin/pemeriksaan/edit', [
-            'attribut' => Attribut::orderBy('id', 'asc')->get(),
-            'label' => [
-                ['nama' => 'gizi buruk'],
-                ['nama' => 'gizi kurang'],
-                ['nama' => 'gizi baik'],
-                ['nama' => 'gizi lebih'],
-            ],
+            'attribut' => Attribut::orderBy('id')->get(),
+            'label' => array_map(fn($label) => ['nama' => $label], self::STATUS_LABELS),
             'pemeriksaan' => $pemeriksaan,
-            'breadcrumb' => [
-                [
-                    'title' => 'dashboard',
-                    'href' => '/dashboard',
-                ],
-                [
-                    'title' => 'data pemeriksaan',
-                    'href' => '/admin/pemeriksaan/',
-                ],
+            'breadcrumb' => array_merge(self::BASE_BREADCRUMB, [
                 [
                     'title' => 'edit pemeriksaan',
                     'href' => '/admin/pemeriksaan/edit',
                 ],
-            ],
+            ]),
         ]);
     }
 
@@ -307,29 +271,29 @@ class PemeriksaanController extends Controller
      */
     public function update(UpdatePemeriksaanRequest $request, Pemeriksaan $pemeriksaan)
     {
-        $attribut =  Attribut::orderBy('id', 'asc')->get();
-
-        $pemeriksaan = Balita::find($request->pemeriksaan_id);
-
-        $pemeriksaan->update([
-            'pemeriksaan_id' => $request->input('pemeriksaan_id'),
-            'data_pemeriksaan' => $pemeriksaan,
-            'data_pemeriksaan' => $request->input('data_pemeriksaan'),
-            'tgl_pemeriksaan' => $request->input('tgl_pemeriksaan'),
-            'label' => $request->input('label'),
-        ]);
-
-        DetailPemeriksaan::where('pemeriksaan_id', $pemeriksaan->id)->delete();
-
-        foreach ($attribut as $key => $value) {
-            DetailPemeriksaan::create([
-                'pemeriksaan_id' => $pemeriksaan->id,
-                'attribut_id' => $value->id,
-                'nilai' => $request->attribut[$key],
+        DB::transaction(function () use ($request, $pemeriksaan) {
+            $pemeriksaan->update([
+                'data_pemeriksaan' => $request->input('data_pemeriksaan'),
+                'tgl_pemeriksaan' => $request->input('tgl_pemeriksaan'),
+                'label' => $request->input('label'),
             ]);
-        }
 
-        return redirect()->route('admin.pemeriksaan.index')->with('success', 'data pemeriksaan berhasil diupdate!!');
+            DetailPemeriksaan::where('pemeriksaan_id', $pemeriksaan->id)->delete();
+
+            $detailRecords = array_map(function ($attributId, $nilai) use ($pemeriksaan) {
+                return [
+                    'pemeriksaan_id' => $pemeriksaan->id,
+                    'attribut_id' => $attributId,
+                    'nilai' => $nilai,
+                ];
+            }, array_keys($request->attribut), $request->attribut);
+
+            DetailPemeriksaan::insert($detailRecords);
+        });
+
+        return redirect()
+            ->route('admin.pemeriksaan.index')
+            ->with('success', 'Data pemeriksaan berhasil diupdate!');
     }
 
     /**
@@ -338,6 +302,9 @@ class PemeriksaanController extends Controller
     public function destroy(Pemeriksaan $pemeriksaan)
     {
         $pemeriksaan->delete();
-        return redirect()->route('admin.pemeriksaan.index')->with('success', 'data pemeriksaan berhasil dihapus!!');
+
+        return redirect()
+            ->route('admin.pemeriksaan.index')
+            ->with('success', 'Data pemeriksaan berhasil dihapus!');
     }
 }

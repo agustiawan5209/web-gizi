@@ -82,7 +82,7 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, attribu
                                         <TableRow>
                                             <TableTh
                                                 colSpan={2}
-                                                className="bg-blue-100 p-4 text-left text-lg font-semibold text-black md:text-xl dark:bg-gray-800"
+                                                className="bg-blue-100 p-4 text-left text-lg font-semibold text-foreground md:text-xl dark:bg-gray-800"
                                             >
                                                 Data Orang Tua
                                             </TableTh>
@@ -91,13 +91,13 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, attribu
                                     <TableBody>
                                         {/* Parent Data */}
                                         <TableRow className="border-b">
-                                            <TableColumn className="w-1/3 p-3 font-medium text-gray-600 dark:text-gray-400">
+                                            <TableColumn className="w-1/3 p-3 font-medium text-foreground">
                                                 Nama Orang Tua
                                             </TableColumn>
                                             <TableColumn className="p-3">{orangTua.name}</TableColumn>
                                         </TableRow>
                                         <TableRow className="border-b">
-                                            <TableColumn className="p-3 font-medium text-gray-600 dark:text-gray-400">Email Orang Tua</TableColumn>
+                                            <TableColumn className="p-3 font-medium text-foreground">Email Orang Tua</TableColumn>
                                             <TableColumn className="p-3">{orangTua.email}</TableColumn>
                                         </TableRow>
 
@@ -105,25 +105,25 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, attribu
                                         <TableRow>
                                             <TableTh
                                                 colSpan={2}
-                                                className="bg-blue-100 p-4 text-left text-lg font-semibold text-black md:text-xl dark:bg-gray-800"
+                                                className="bg-blue-100 p-4 text-left text-lg font-semibold text-foreground md:text-xl dark:bg-gray-800"
                                             >
                                                 Data Balita
                                             </TableTh>
                                         </TableRow>
                                         <TableRow className="border-b">
-                                            <TableColumn className="p-3 font-medium text-gray-600 dark:text-gray-400">Nama Balita</TableColumn>
+                                            <TableColumn className="p-3 font-medium text-foreground">Nama Balita</TableColumn>
                                             <TableColumn className="p-3">{balita.nama}</TableColumn>
                                         </TableRow>
                                         <TableRow className="border-b">
-                                            <TableColumn className="p-3 font-medium text-gray-600 dark:text-gray-400">Tempat Lahir</TableColumn>
+                                            <TableColumn className="p-3 font-medium text-foreground">Tempat Lahir</TableColumn>
                                             <TableColumn className="p-3">{balita.tempat_lahir}</TableColumn>
                                         </TableRow>
                                         <TableRow className="border-b">
-                                            <TableColumn className="p-3 font-medium text-gray-600 dark:text-gray-400">Tanggal Lahir</TableColumn>
+                                            <TableColumn className="p-3 font-medium text-foreground">Tanggal Lahir</TableColumn>
                                             <TableColumn className="p-3">{balita.tanggal_lahir}</TableColumn>
                                         </TableRow>
                                         <TableRow className="border-b">
-                                            <TableColumn className="p-3 font-medium text-gray-600 dark:text-gray-400">Jenis Kelamin</TableColumn>
+                                            <TableColumn className="p-3 font-medium text-foreground">Jenis Kelamin</TableColumn>
                                             <TableColumn className="p-3">{balita.jenis_kelamin}</TableColumn>
                                         </TableRow>
                                     </TableBody>
@@ -131,7 +131,7 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, attribu
                             </TableContainer>
 
                             <section className="border-x px-4">
-                                <h3 className="bg-blue-100 p-4 text-left text-lg font-semibold text-black md:text-xl dark:bg-gray-800">
+                                <h3 className="bg-blue-100 p-4 text-left text-lg text-foreground font-semibold md:text-xl dark:bg-gray-800">
                                     Data Pemeriksaan
                                 </h3>
                                 <TableContainer className="relative">

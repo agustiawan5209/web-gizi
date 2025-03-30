@@ -73,7 +73,7 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, detail,
                                         </TableColumn>
                                     </TableRow>
                                     <TableRow>
-                                        <TableTh colSpan={2} className="bg-blue-100 text-black p-4 text-left text-lg font-semibold md:text-xl dark:bg-gray-800">
+                                        <TableTh colSpan={2} className="bg-blue-100 text-foreground p-4 text-left text-lg font-semibold md:text-xl dark:bg-gray-800">
                                             Data Orang Tua
                                         </TableTh>
                                     </TableRow>
@@ -81,17 +81,17 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, detail,
                                 <TableBody>
                                     {/* Parent Data */}
                                     <TableRow className="border-b">
-                                        <TableColumn className="w-1/3 p-3 font-medium text-gray-600 dark:text-gray-400">Nama Orang Tua</TableColumn>
+                                        <TableColumn className="w-1/3 p-3 font-medium text-foreground">Nama Orang Tua</TableColumn>
                                         <TableColumn className="p-3">{orangTua.name}</TableColumn>
                                     </TableRow>
                                     <TableRow className="border-b">
-                                        <TableColumn className="p-3 font-medium text-gray-600 dark:text-gray-400">Email Orang Tua</TableColumn>
+                                        <TableColumn className="p-3 font-medium text-foreground">Email Orang Tua</TableColumn>
                                         <TableColumn className="p-3">{orangTua.email}</TableColumn>
                                     </TableRow>
 
                                     {/* Child Data */}
                                     <TableRow>
-                                        <TableTh colSpan={2} className="bg-blue-100 text-black p-4 text-left text-lg font-semibold md:text-xl dark:bg-gray-800">
+                                        <TableTh colSpan={2} className="bg-blue-100 text-foreground p-4 text-left text-lg font-semibold md:text-xl dark:bg-gray-800">
                                             Data Balita
                                         </TableTh>
                                     </TableRow>
@@ -103,7 +103,7 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, detail,
                                         { attribut: 'Jenis Kelamin', nilai: balita.jenis_kelamin },
                                     ]).map((item) =>(
                                         <TableRow className="border-b">
-                                        <TableColumn className="p-3 font-medium text-gray-600 dark:text-gray-400">{item.attribut}</TableColumn>
+                                        <TableColumn className="p-3 font-medium text-foreground">{item.attribut}</TableColumn>
                                         <TableColumn className="p-3">{item.nilai}</TableColumn>
                                     </TableRow>
                                     ))}
@@ -113,7 +113,7 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, detail,
 
 
                             <section className="border-x">
-                                <h3  className="bg-blue-100 text-black p-4 text-left text-lg font-semibold md:text-xl dark:bg-gray-800">
+                                <h3  className="bg-blue-100 text-foreground p-4 text-left text-lg font-semibold md:text-xl dark:bg-gray-800">
                                     Data Pemeriksaan
                                 </h3>
                                 <TableContainer className="relative">
@@ -123,7 +123,7 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, detail,
                                                 .filter((attr) => !['jenis kelamin'].includes(attr.attribut.nama.toLowerCase()))
                                                 .map((item, index) => (
                                                     <TableRow key={index} className="border-b py-1">
-                                                        <TableColumn  className="font-normal w-1/3 text-gray-600 dark:text-gray-400">{item.attribut.nama}:</TableColumn>
+                                                        <TableColumn  className="font-normal w-1/3 text-foreground">{item.attribut.nama}:</TableColumn>
                                                         <TableColumn>{item.nilai}</TableColumn>
                                                     </TableRow>
                                                 ))}
@@ -133,16 +133,16 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, detail,
                             </section>
                             {polamakan && (
                                 <section className="border-x">
-                                <h3  className="bg-blue-100 text-black p-4 text-left text-lg font-semibold md:text-xl dark:bg-gray-800">
+                                <h3  className="bg-blue-100 text-foreground p-4 text-left text-lg font-semibold md:text-xl dark:bg-gray-800">
                                    Pola Makan
                                 </h3>
                                 <div className='container'>
                                     <div className="bg-card dark:bg-gray-800">
-                                        <h2 className='p-3 text-lg font-semibold text-gray-600 dark:text-gray-400'>Rekomendasi Pola Makan</h2>
+                                        <h2 className='p-3 text-lg font-semibold text-foreground'>Rekomendasi Pola Makan</h2>
                                         <p className='p-3 ql-editor' dangerouslySetInnerHTML={{ __html: polamakan.rekomendasi }}></p>
                                     </div>
                                     <div className="bg-card dark:bg-gray-800">
-                                        <h2 className='p-3 text-lg font-semibold text-gray-600 dark:text-gray-400'>Catatan Dokter</h2>
+                                        <h2 className='p-3 text-lg font-semibold text-foreground'>Catatan Dokter</h2>
                                         <p className='p-3 ql-editor' dangerouslySetInnerHTML={{ __html: polamakan.catatan_dokter }}></p>
                                     </div>
                                 </div>

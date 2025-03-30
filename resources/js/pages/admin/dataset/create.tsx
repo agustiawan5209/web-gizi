@@ -102,7 +102,7 @@ export default function DatasetCreate({ breadcrumb, orangtua, attribut, statusLa
                                         value={data.label}
                                         onValueChange={(value) => setData('label', value)}
                                     >
-                                        <SelectTrigger className="text-black">
+                                        <SelectTrigger className="text-foreground">
                                             <SelectValue placeholder="Data Status" />
                                         </SelectTrigger>
                                         <SelectContent>

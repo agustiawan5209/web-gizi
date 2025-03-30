@@ -175,15 +175,15 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
             <Head title="Pemeriksaan" />
             <div className="dark:bg-elevation-1 flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
-                    <div className="flex w-full flex-1 flex-row items-end justify-end gap-7 px-4 py-2 md:items-center md:justify-between">
-                        <div className="flex w-full flex-1 flex-col gap-7 px-4 py-2 md:flex-row md:items-center">
+                    <div className="flex w-full flex-1 flex-col lg:flex-row items-start justify-start gap-7 px-4 py-2 lg:items-center lg:justify-between">
+                        <div className="flex w-full flex-1 flex-col gap-7 px-4 py-2 lg:flex-row md:items-start">
                             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                                 <DialogTrigger asChild>
                                     <Button
                                         type="button"
                                         size="lg"
                                         tabIndex={4}
-                                        className="flex cursor-pointer items-center gap-2 bg-blue-500 hover:bg-blue-600"
+                                        className="flex cursor-pointer items-center gap-2 bg-primary "
                                     >
                                         Tambah Data
                                     </Button>
@@ -289,8 +289,8 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
                             </Select>
                         </div>
                     </div>
-                    <div className="w-full min-w-full">
-                        <TableContainer className="relative">
+                    <div className="lg:w-full overflow-hidden md:overflow-x-auto">
+                        <TableContainer className="md:max-w-[768px] lg:max-w-full">
                             <Table className="w-full">
                                 <TableHead>
                                     <TableRow>

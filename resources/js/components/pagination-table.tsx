@@ -23,10 +23,10 @@ const PaginationTable: React.FC<PaginationProps> = ({ links,data }) => {
           dangerouslySetInnerHTML={{ __html: link.label }}
           className={`px-3 py-1 border rounded text-sm ${
             link.active
-              ? "bg-blue-500 text-white"
+              ? "bg-primary text-white"
               : link.url
               ? "hover:bg-gray-200 text-gray-700"
-              : "text-gray-400 cursor-not-allowed"
+              : "text-gray-200 cursor-not-allowed"
           }`}
         />
       ))}

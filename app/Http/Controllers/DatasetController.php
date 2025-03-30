@@ -13,7 +13,16 @@ use Illuminate\Http\Request;
 
 class DatasetController extends Controller
 {
-
+    private const BASE_BREADCRUMB = [
+        [
+            'title' => 'dashboard',
+            'href' => '/dashboard',
+        ],
+        [
+            'title' => 'data dataset',
+            'href' => '/admin/dataset/',
+        ],
+    ];
 
     /**
      * Display a listing of the resource.
@@ -46,16 +55,7 @@ class DatasetController extends Controller
         return Inertia::render('admin/dataset/index', [
             'dataset' => $dataset,
             'attribut' => Attribut::orderBy('id', 'asc')->get(),
-            'breadcrumb' => [
-                [
-                    'title' => 'dashboard',
-                    'href' => '/dashboard',
-                ],
-                [
-                    'title' => 'data dataset',
-                    'href' => '/admin/dataset/',
-                ],
-            ],
+          'breadcrumb' => self::BASE_BREADCRUMB,
             'statusLabel' => $statusLabel,
             'filter' => $request->only('search', 'order_by', 'date', 'q'),
         ]);
@@ -74,20 +74,12 @@ class DatasetController extends Controller
                 'gizi baik',
                 'gizi lebih',
             ],
-            'breadcrumb' => [
+            'breadcrumb'=> array_merge(self::BASE_BREADCRUMB,[
                 [
-                    'title' => 'dashboard',
-                    'href' => '/dashboard',
+                    'title'=> 'tambah data',
+                    'href'=> '/admin/dataset/create',
                 ],
-                [
-                    'title' => 'data dataset',
-                    'href' => '/admin/dataset/',
-                ],
-                [
-                    'title' => 'tambah dataset',
-                    'href' => '/admin/dataset/create',
-                ],
-            ],
+            ])
         ]);
     }
 
@@ -142,20 +134,12 @@ class DatasetController extends Controller
     {
         return Inertia::render('admin/dataset/show', [
             'dataset' => $dataset,
-            'breadcrumb' => [
+            'breadcrumb'=> array_merge(self::BASE_BREADCRUMB,[
                 [
-                    'title' => 'dashboard',
-                    'href' => '/dashboard',
+                    'title'=> 'detail data',
+                    'href'=> '/admin/dataset/show',
                 ],
-                [
-                    'title' => 'data dataset',
-                    'href' => '/admin/dataset/',
-                ],
-                [
-                    'title' => 'detail dataset',
-                    'href' => '/admin/dataset/show',
-                ],
-            ],
+            ])
         ]);
     }
 
@@ -173,20 +157,12 @@ class DatasetController extends Controller
                 ['nama' => 'gizi lebih'],
             ],
             'dataset' => $dataset,
-            'breadcrumb' => [
+            'breadcrumb'=> array_merge(self::BASE_BREADCRUMB,[
                 [
-                    'title' => 'dashboard',
-                    'href' => '/dashboard',
+                    'title'=> 'edit data',
+                    'href'=> '/admin/dataset/edit',
                 ],
-                [
-                    'title' => 'data dataset',
-                    'href' => '/admin/dataset/',
-                ],
-                [
-                    'title' => 'edit dataset',
-                    'href' => '/admin/dataset/edit',
-                ],
-            ],
+            ])
         ]);
     }
 

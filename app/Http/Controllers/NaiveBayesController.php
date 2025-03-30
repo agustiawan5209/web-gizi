@@ -30,7 +30,7 @@ class NaiveBayesController extends Controller
     public function generate()
     {
         $attributes = array_filter(array_map('strtolower', array_column($this->attributes, 'nama')), fn($nama) => $nama !== 'status');
-        // dd($attributes);
+
         $url = "https://algoritma-web.citratekno.com/api/classify/";
 
         $response = Http::post($url, [
