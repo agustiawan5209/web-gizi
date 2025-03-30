@@ -12,7 +12,7 @@ use App\Http\Controllers\NaiveBayesController;
 use App\Http\Controllers\PemeriksaanController;
 
 Route::get('/', function () {
-    return Inertia::render('welcome');
+    return Inertia::render('welcome-page');
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
