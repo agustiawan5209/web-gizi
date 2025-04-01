@@ -46,24 +46,24 @@ interface CreateForm {
 
 export default function PemeriksaanCreate({ breadcrumb, orangtua, attribut }: PemeriksaanCreateProps) {
     // Memoize breadcrumbs to prevent unnecessary recalculations
-    const breadcrumbs: BreadcrumbItem[] = useMemo(
-        () => breadcrumb?.map((item) => ({ title: item.title, href: item.href })) ?? [],
-        [breadcrumb]
-    );
+    const breadcrumbs: BreadcrumbItem[] = useMemo(() => breadcrumb?.map((item) => ({ title: item.title, href: item.href })) ?? [], [breadcrumb]);
 
     // Initialize form data with proper types
-    const initialFormData: CreateForm = useMemo(() => ({
-        orang_tua_id: '',
-        nama: '',
-        tempat_lahir: '',
-        tanggal_lahir: '',
-        jenis_kelamin: '',
-        tanggal_pemeriksaan: '',
-        attribut: attribut.map((attr) => ({
-            nilai: '',
-            attribut_id: attr.id
-        })),
-    }), [attribut]);
+    const initialFormData: CreateForm = useMemo(
+        () => ({
+            orang_tua_id: '',
+            nama: '',
+            tempat_lahir: '',
+            tanggal_lahir: '',
+            jenis_kelamin: '',
+            tanggal_pemeriksaan: '',
+            attribut: attribut.map((attr) => ({
+                nilai: '',
+                attribut_id: attr.id,
+            })),
+        }),
+        [attribut],
+    );
 
     const { data, setData, post, processing, errors } = useForm<CreateForm>(initialFormData);
 
@@ -72,42 +72,46 @@ export default function PemeriksaanCreate({ breadcrumb, orangtua, attribut }: Pe
     const [idOrangTua, setIdOrangTua] = useState('');
 
     // Memoize filtered attributes to avoid recalculating on every render
-    const filteredAttributes = useMemo(() =>
-        attribut.filter(item =>
-            !['jenis kelamin', 'status'].includes(item.nama.toLowerCase())
-        ),
-        [attribut]
-    );
+    const filteredAttributes = useMemo(() => attribut.filter((item) => !['jenis kelamin', 'status'].includes(item.nama.toLowerCase())), [attribut]);
 
     // Optimized parent search function
-    const searchById = useCallback((search: string): OrangTua | null => {
-        if (!orangtua?.length || !search) return null;
-        return orangtua.find((element) => element.id === search) ?? null;
-    }, [orangtua]);
+    const searchById = useCallback(
+        (search: string): OrangTua | null => {
+            if (!orangtua?.length || !search) return null;
+            return orangtua.find((element) => element.name === search) ?? null;
+        },
+        [orangtua],
+    );
 
     // Effect for handling parent selection
     useEffect(() => {
         if (idOrangTua) {
             const foundParent = searchById(idOrangTua);
+            console.log(foundParent);
             setSelectedOrangtua(foundParent);
-            setData('orang_tua_id', idOrangTua);
+            if (foundParent) setData('orang_tua_id', foundParent.id);
         }
     }, [idOrangTua, searchById, setData]);
 
     // Optimized form submission handler
-    const submit: FormEventHandler = useCallback((e) => {
-        e.preventDefault();
-        post(route('admin.pemeriksaan.store'));
-    }, [post]);
+    const submit: FormEventHandler = useCallback(
+        (e) => {
+            e.preventDefault();
+            post(route('pemeriksaan.store'));
+        },
+        [post],
+    );
 
     // Optimized handler for attribute changes
-    const handleAttributeChange = useCallback((index: number, value: string) => {
-        setData('attribut',
-            data.attribut.map((val, i) =>
-                i === index ? { ...val, nilai: value } : val
-            )
-        );
-    }, [data.attribut, setData]);
+    const handleAttributeChange = useCallback(
+        (index: number, value: string) => {
+            setData(
+                'attribut',
+                data.attribut.map((val, i) => (i === index ? { ...val, nilai: value } : val)),
+            );
+        },
+        [data.attribut, setData],
+    );
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -119,11 +123,7 @@ export default function PemeriksaanCreate({ breadcrumb, orangtua, attribut }: Pe
                             <div className="grid gap-6">
                                 <div className="grid gap-2">
                                     <Label htmlFor="orang_tua">Pilih Berdasarkan Nama Orang Tua</Label>
-                                    <Select
-                                        value={idOrangTua}
-                                        onValueChange={setIdOrangTua}
-                                        disabled={processing}
-                                    >
+                                    <Select value={idOrangTua} onValueChange={setIdOrangTua} disabled={processing}>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Pilih Orang Tua" />
                                         </SelectTrigger>
@@ -131,7 +131,7 @@ export default function PemeriksaanCreate({ breadcrumb, orangtua, attribut }: Pe
                                             <SelectGroup>
                                                 <SelectLabel>Orang Tua</SelectLabel>
                                                 {orangtua.map((item) => (
-                                                    <SelectItem key={item.id} value={item.id}>
+                                                    <SelectItem key={item.id} value={item.name}>
                                                         {item.name}
                                                     </SelectItem>
                                                 ))}
@@ -142,7 +142,7 @@ export default function PemeriksaanCreate({ breadcrumb, orangtua, attribut }: Pe
                                 </div>
 
                                 {selectedOrangtua && (
-                                    <div className="block space-y-4 p-2 border rounded-lg">
+                                    <div className="block space-y-4 rounded-lg border p-2">
                                         <div className="flex gap-2">
                                             <Label className="text-muted-foreground">Nama Orang Tua:</Label>
                                             <Label className="font-normal">{selectedOrangtua.name}</Label>
@@ -169,7 +169,7 @@ export default function PemeriksaanCreate({ breadcrumb, orangtua, attribut }: Pe
                                     <InputError message={errors.nama} />
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                     <div className="grid gap-2">
                                         <Label htmlFor="tempat_lahir">Tempat Lahir</Label>
                                         <Input
@@ -252,9 +252,7 @@ export default function PemeriksaanCreate({ breadcrumb, orangtua, attribut }: Pe
                                                 {filteredAttributes.map((item, index) => (
                                                     <TableRow key={item.id}>
                                                         <TableColumn>
-                                                            <Label htmlFor={`attribut-${item.id}`}>
-                                                                {item.nama}
-                                                            </Label>
+                                                            <Label htmlFor={`attribut-${item.id}`}>{item.nama}</Label>
                                                         </TableColumn>
                                                         <TableColumn>
                                                             <Input
@@ -273,15 +271,8 @@ export default function PemeriksaanCreate({ breadcrumb, orangtua, attribut }: Pe
                                     </TableContainer>
                                 </div>
 
-                                <Button
-                                    type="submit"
-                                    variant="secondary"
-                                    className="mt-2 w-full"
-                                    disabled={processing}
-                                >
-                                    {processing && (
-                                        <LoaderCircle className="h-4 w-4 animate-spin mr-2" />
-                                    )}
+                                <Button type="submit" variant="secondary" className="mt-2 w-full" disabled={processing}>
+                                    {processing && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
                                     Simpan
                                 </Button>
                             </div>

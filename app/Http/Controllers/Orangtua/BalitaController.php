@@ -29,7 +29,7 @@ class BalitaController extends Controller
     public function index(Request $request)
     {
         $query = Balita::query();
-
+        $query->where('orang_tua_id', auth()->user()->id);
         if ($request->filled('q')) {
             $query->searchByNama($request->input('q', ''));
         }
@@ -73,7 +73,7 @@ class BalitaController extends Controller
     public function create()
     {
     return Inertia::render('orangtua/balita/create', [
-        'orangtua' => User::withoutRole('orangtua')->get(),
+        'orangtua' => User::role('orangtua')->get(),
         'breadcrumb'=> array_merge(self::BASE_BREADCRUMB,[
             [
                 'title'=> 'tambah data',
@@ -120,7 +120,7 @@ class BalitaController extends Controller
         $balita->load(['orangtua']);
         return Inertia::render('orangtua/balita/edit', [
             'balita'=> $balita,
-            'orangtua' => User::withoutRole('orangtua')->get(),
+            'orangtua' => User::role('orangtua')->get(),
             'breadcrumb'=> array_merge(self::BASE_BREADCRUMB,[
                 [
                     'title'=> 'edit data',

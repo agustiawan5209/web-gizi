@@ -65,7 +65,7 @@ export default function BalitaIndex({ balita, breadcrumb, filter }: BalitaProps)
         const cleanedSearch = search.trim();
         if (cleanedSearch.length > 0) {
             // if search query is not empty, make request to server
-            get(route('admin.balita.index', { q: cleanedSearch, per_page: filter?.per_page, order_by: filter?.order_by }), {
+            get(route('orangtua.balita.index', { q: cleanedSearch, per_page: filter?.per_page, order_by: filter?.order_by }), {
                 preserveState: true,
                 preserveScroll: true,
                 onSuccess: () => {},
@@ -79,7 +79,7 @@ export default function BalitaIndex({ balita, breadcrumb, filter }: BalitaProps)
         setSearch('');
         reset();
         // make request to server when search query is cleared
-        get(route('admin.balita.index'), {
+        get(route('orangtua.balita.index'), {
             preserveState: true,
             preserveScroll: true,
             onSuccess: () => {},
@@ -95,7 +95,7 @@ export default function BalitaIndex({ balita, breadcrumb, filter }: BalitaProps)
         const cleanedOrderBy = orderBy.trim();
         if (cleanedOrderBy.length > 0) {
             // if search query is not empty, make request to server
-            get(route('admin.balita.index', { order_by: cleanedOrderBy, per_page: filter?.per_page, q: filter?.q }), {
+            get(route('orangtua.balita.index', { order_by: cleanedOrderBy, per_page: filter?.per_page, q: filter?.q }), {
                 preserveState: true,
                 preserveScroll: true,
                 onSuccess: () => {},
@@ -115,7 +115,7 @@ export default function BalitaIndex({ balita, breadcrumb, filter }: BalitaProps)
         // Validasi nilai per_page
         if (!isNaN(numericPerPage) && numericPerPage > 0) {
             get(
-                route('admin.balita.index', {
+                route('orangtua.balita.index', {
                     per_page: numericPerPage,
                 }),
                 {
@@ -134,7 +134,7 @@ export default function BalitaIndex({ balita, breadcrumb, filter }: BalitaProps)
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
                     <div className="flex w-full flex-1 flex-row items-end justify-end gap-7 px-4 py-2 md:items-center md:justify-between">
                         <div className="flex w-full flex-1 flex-col gap-7 px-4 py-2 md:flex-row md:items-center">
-                            <Link href={route('admin.balita.create')} className="col-span-1 cursor-pointer">
+                            <Link href={route('orangtua.balita.create')} className="col-span-1 cursor-pointer">
                                 <Button variant="default" className="flex cursor-pointer items-center gap-2 bg-primary ">
                                     Tambah Data
                                 </Button>
@@ -212,10 +212,10 @@ export default function BalitaIndex({ balita, breadcrumb, filter }: BalitaProps)
                                                 <TableColumn> {item.jenis_kelamin} </TableColumn>
                                                 <TableAction
                                                     className="w-32"
-                                                    show={route('admin.balita.show', { balita: item.id })}
-                                                    edit={route('admin.balita.edit', { balita: item.id })}
+                                                    show={route('orangtua.balita.show', { balita: item.id })}
+                                                    edit={route('orangtua.balita.edit', { balita: item.id })}
                                                     delete="delete"
-                                                    url={route('admin.balita.destroy', { balita: item.id })}
+                                                    url={route('orangtua.balita.destroy', { balita: item.id })}
                                                     title={item.nama}
                                                     id={item.id}
                                                 />

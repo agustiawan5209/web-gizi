@@ -10,6 +10,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PolaMakanController;
 use App\Http\Controllers\NaiveBayesController;
 use App\Http\Controllers\PemeriksaanController;
+use App\Http\Controllers\Orangtua\BalitaController as OrangtuaBalitaController;
 
 Route::get('/', function () {
     return Inertia::render('welcome-page');
@@ -19,14 +20,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';
 
 // role for admin
 Route::prefix('admin')->as('admin.')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
 
-     // Routes for managing orangtuas
-     Route::prefix('orangtua')->as('orangtua.')->group(function () {
+    // Routes for managing orangtuas
+    Route::prefix('orangtua')->as('orangtua.')->group(function () {
         // Dataset controller
         Route::controller(OrangTuaController::class)->group(function () {
             // Show all orangtuas
@@ -106,7 +107,8 @@ Route::prefix('admin')->as('admin.')->middleware(['auth', 'verified', 'role:admi
             Route::delete('/destroy/{dataset}', 'destroy')->name('destroy');
         });
     });
-
+});
+Route::middleware(['auth', 'verified', 'role:admin,orangtua',])->group(function () {
 
     // Routes for managing pemeriksaans
     Route::prefix('pemeriksaan')->as('pemeriksaan.')->group(function () {
@@ -136,30 +138,27 @@ Route::prefix('admin')->as('admin.')->middleware(['auth', 'verified', 'role:admi
     Route::get('pola-makan/{pemeriksaan}', [PolaMakanController::class, 'create'])->name('pola-makan.index');
     Route::post('pola-makan', [PolaMakanController::class, 'store'])->name('pola-makan.store');
 });
-
 // Role For Orang Tua
 Route::prefix('orangtua')->as('orangtua.')->middleware(['auth', 'verified', 'role:orangtua'])->group(function () {
 
 
-   Route::prefix('balita')->as('balita.')->group(function () {
-       Route::controller(BalitaController::class)->group(function () {
-           Route::get('/', 'index')->name('index');
-           Route::get('/create', 'create')->name('create');
-           Route::get('/edit/{balita}', 'edit')->name('edit');
-           Route::get('/show/{balita}', 'show')->name('show');
+    Route::prefix('balita')->as('balita.')->group(function () {
+        Route::controller(OrangtuaBalitaController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/create', 'create')->name('create');
+            Route::get('/edit/{balita}', 'edit')->name('edit');
+            Route::get('/show/{balita}', 'show')->name('show');
 
-           Route::post('/store', 'store')->name('store');
-           Route::put('/update/{balita}', 'update')->name('update');
-           Route::delete('/destroy/{balita}', 'destroy')->name('destroy');
-       });
-   });
-
-
+            Route::post('/store', 'store')->name('store');
+            Route::put('/update/{balita}', 'update')->name('update');
+            Route::delete('/destroy/{balita}', 'destroy')->name('destroy');
+        });
+    });
 });
 
 // create classify with naive bayes
-Route::get('classify/', [NaiveBayesController::class,'generate'])->name('naive-bayes.generate');
-Route::get('classify-index/', [NaiveBayesController::class,'index'])->name('naive-bayes.index');
+Route::get('classify/', [NaiveBayesController::class, 'generate'])->name('naive-bayes.generate');
+Route::get('classify-index/', [NaiveBayesController::class, 'index'])->name('naive-bayes.index');
 
 
-require __DIR__.'/api.php';
+require __DIR__ . '/api.php';

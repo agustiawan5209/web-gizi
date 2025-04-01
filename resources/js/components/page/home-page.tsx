@@ -1,7 +1,11 @@
 // HomePage.tsx
 import { Link } from "@inertiajs/react";
-const HomePage = () => (
-    <div className="flex w-full items-center justify-around bg-white lg:p-8 md:h-[80vh]">
+import { cn } from "@/lib/utils";
+interface HomeProps{
+    className?:string
+}
+const HomePage = ({className, ...props}: HomeProps) => (
+    <div className={cn('flex w-full items-center justify-around bg-white lg:p-8 md:h-[80vh]', className)} {...props}>
         <div className="max-w-full lg:max-w-md">
             <h2 className="text-lg font-semibold text-gray-700 md:text-xl lg:text-2xl">Kesehatan Balita</h2>
             <h1 className="mt-2 text-3xl font-bold md:text-4xl lg:text-5xl">Aplikasi monitoring kesehatan balita yang komprehensif</h1>
@@ -21,3 +25,4 @@ const HomePage = () => (
 );
 
 export default HomePage;
+

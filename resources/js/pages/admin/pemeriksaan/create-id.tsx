@@ -79,7 +79,7 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut }: Peme
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        post(route('admin.pemeriksaan.store-id'), {
+        post(route('pemeriksaan.store-id'), {
             onError: (err) => console.log(err),
         });
     };

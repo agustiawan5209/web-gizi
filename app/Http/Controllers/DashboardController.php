@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
         $statusLabel = [
             'gizi buruk',
@@ -20,37 +20,45 @@ class DashboardController extends Controller
             'gizi lebih',
         ];
 
-        $Gizi = [];
-        foreach ($statusLabel as  $value) {
-            $Gizi[] = intval(Dataset::where('label', $value)->count());
+        if (auth()->user()->hasRole('orangtua')) {
+            return Inertia::render('user-dashboard',[
+                'balita'=> Balita::where('orang_tua_id', auth()->user()->id)->with(['orangtua', 'pemeriksaan', 'pemeriksaan.detailpemeriksaan'])->get(),
+            ]);
         }
-        $chartPemeriksaan = $this->pemeriksaan();
-        return Inertia::render('dashboard', [
-            'orangtuacount' => User::all()->count(),
-            'balitacount' => Balita::all()->count(),
-            'pemeriksaancount' => Pemeriksaan::all()->count(),
-            'datasetcount' => Dataset::all()->count(),
-            'gizi' => $Gizi,
-            'statusLabel'=> $statusLabel,
-            'chartPemeriksaan'=> $chartPemeriksaan,
+        $Gizi = Dataset::wherein('label', $statusLabel)
+            ->selectRaw('label, count(*) as count')
+            ->groupBy('label')
+            ->pluck('count')
+            ->toArray();
 
+        $chartPemeriksaan = $this->pemeriksaan();
+
+        return Inertia::render('dashboard', [
+            'orangtuacount' => User::count(),
+            'balitacount' => Balita::count(),
+            'pemeriksaancount' => Pemeriksaan::count(),
+            'datasetcount' => Dataset::count(),
+            'gizi' => $Gizi,
+            'statusLabel' => $statusLabel,
+            'chartPemeriksaan' => $chartPemeriksaan,
         ]);
     }
 
-    public function pemeriksaan() {
-        $oldPemeriksaan = Pemeriksaan::orderBy('tgl_pemeriksaan', 'desc')->first();
-        $oldPemeriksaanDate = $oldPemeriksaan ? $oldPemeriksaan->tgl_pemeriksaan : null;
-        $bulan = ['jan', 'feb', 'mar', 'apr', 'mei', 'jun', 'jul', 'agu', 'sep', 'okt', 'nov', 'des'];
+    public function pemeriksaan()
+    {
+        $pemeriksaan = Pemeriksaan::selectRaw('month(tgl_pemeriksaan) as bulan, count(*) as count')
+            ->groupByRaw('month(tgl_pemeriksaan)')
+            ->pluck('count')
+            ->toArray();
 
-        $pemeriksaan = array_fill(0, 12, 0);
-
-        for ($i = 1; $i <= 12; $i++) {
-            $pemeriksaan[$i - 1] = Pemeriksaan::whereMonth('tgl_pemeriksaan', $i)->count();
+        $bulan = array_fill(1, 12, 0);
+        foreach ($pemeriksaan as $key => $value) {
+            $bulan[$key] = $value;
         }
 
         return [
-            'label' => $bulan,
-            'data' => $pemeriksaan
+            'label' => ['jan', 'feb', 'mar', 'apr', 'mei', 'jun', 'jul', 'agu', 'sep', 'okt', 'nov', 'des'],
+            'data' => $bulan
         ];
     }
 }

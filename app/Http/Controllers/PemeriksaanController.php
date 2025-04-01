@@ -31,7 +31,7 @@ class PemeriksaanController extends Controller
         ],
         [
             'title' => 'data pemeriksaan',
-            'href' => '/admin/pemeriksaan/',
+            'href' => '/pemeriksaan/',
         ],
     ];
 
@@ -57,7 +57,13 @@ class PemeriksaanController extends Controller
             'pemeriksaan' => $pemeriksaan,
             'breadcrumb' => self::BASE_BREADCRUMB,
             'filter' => $request->only('search', 'order_by', 'date', 'q'),
-            'statusLabel' => self::STATUS_LABELS
+            'statusLabel' => self::STATUS_LABELS,
+            'can' => [
+                'add' => auth()->user()->can('add pemeriksaan'),
+                'edit' => auth()->user()->can('edit pemeriksaan'),
+                'delete' => auth()->user()->can('delete pemeriksaan'),
+                'read' => auth()->user()->can('read pemeriksaan'),
+            ]
         ]);
     }
 
@@ -98,7 +104,7 @@ class PemeriksaanController extends Controller
             'breadcrumb' => array_merge(self::BASE_BREADCRUMB, [
                 [
                     'title' => 'tambah pemeriksaan',
-                    'href' => '/admin/pemeriksaan/create',
+                    'href' => '/pemeriksaan/create',
                 ],
             ]),
         ]);
@@ -116,7 +122,7 @@ class PemeriksaanController extends Controller
             'breadcrumb' => array_merge(self::BASE_BREADCRUMB, [
                 [
                     'title' => 'tambah pemeriksaan',
-                    'href' => '/admin/pemeriksaan/create',
+                    'href' => '/pemeriksaan/create',
                 ],
             ]),
         ]);
@@ -128,34 +134,65 @@ class PemeriksaanController extends Controller
     public function store(StorePemeriksaanRequest $request)
     {
         return DB::transaction(function () use ($request) {
-            $balita = Balita::create($request->except('attribut', 'tanggal_pemeriksaan'));
+            try {
+                $balitaData = $request->except('attribut', 'tanggal_pemeriksaan');
+                $balita = Balita::create($balitaData);
 
-            $pemeriksaan = $this->createPemeriksaan($balita, $request);
+                $pemeriksaanData = [
+                    'balita_id' => $balita->id,
+                    'data_balita' => json_encode($balita),
+                    'data_pemeriksaan' => json_encode($request->input('attribut')),
+                    'tgl_pemeriksaan' => $request->input('tanggal_pemeriksaan'),
+                ];
+                $pemeriksaan = Pemeriksaan::create($pemeriksaanData);
 
-            $this->createDetailPemeriksaan($pemeriksaan, $request->input('attribut'), $balita->jenis_kelamin);
+                $this->createDetailPemeriksaan($pemeriksaan, $request->input('attribut'), $balita->jenis_kelamin);
+                $this->classifyAndUpdateLabel($pemeriksaan);
 
-            $this->classifyAndUpdateLabel($pemeriksaan);
-
-            return redirect()
-                ->route('admin.pola-makan.index', ['pemeriksaan' => $pemeriksaan->id])
-                ->with('success', 'Data pemeriksaan berhasil ditambahkan!');
+                return redirect()
+                    ->route('pola-makan.index', ['pemeriksaan' => $pemeriksaan->id])
+                    ->with('success', 'Data pemeriksaan berhasil ditambahkan!');
+            } catch (\Exception $exception) {
+                if ($pemeriksaan) {
+                    $pemeriksaan->delete();
+                }
+                $balita->delete();
+                return redirect()
+                    ->route('pemeriksaan.create')
+                    ->with('error', $exception->getMessage());
+            }
         });
     }
 
     public function storeByBalita(StorePemeriksaanBalitaIdRequest $request)
     {
-        return DB::transaction(function () use ($request) {
-            $balita = Balita::findOrFail($request->balita_id);
+        DB::transaction(function () use ($request) {
+            try {
+                $balita = Balita::findOrFail($request->balita_id);
 
-            $pemeriksaan = $this->createPemeriksaan($balita, $request);
+                $pemeriksaanData = [
+                    'balita_id' => $balita->id,
+                    'data_balita' => json_encode($balita),
+                    'data_pemeriksaan' => json_encode($request->input('attribut')),
+                    'tgl_pemeriksaan' => $request->input('tanggal_pemeriksaan'),
+                ];
+                $pemeriksaan = Pemeriksaan::create($pemeriksaanData);
 
-            $this->createDetailPemeriksaan($pemeriksaan, $request->input('attribut'), $balita->jenis_kelamin);
+                $this->createDetailPemeriksaan($pemeriksaan, $request->input('attribut'), $balita->jenis_kelamin);
+                $this->classifyAndUpdateLabel($pemeriksaan);
 
-            $this->classifyAndUpdateLabel($pemeriksaan);
-
-            return redirect()
-                ->route('admin.pola-makan.index', ['pemeriksaan' => $pemeriksaan->id])
-                ->with('success', 'Data pemeriksaan berhasil ditambahkan!');
+                return redirect()
+                    ->route('pola-makan.index', ['pemeriksaan' => $pemeriksaan->id])
+                    ->with('success', 'Data pemeriksaan berhasil ditambahkan!');
+            } catch (\Exception $exception) {
+                if ($pemeriksaan) {
+                    $pemeriksaan->delete();
+                }
+                $balita->delete();
+                return redirect()
+                    ->route('pemeriksaan.create')
+                    ->with('error', $exception->getMessage());
+            }
         });
     }
 
@@ -241,7 +278,7 @@ class PemeriksaanController extends Controller
             'breadcrumb' => array_merge(self::BASE_BREADCRUMB, [
                 [
                     'title' => 'detail pemeriksaan',
-                    'href' => '/admin/pemeriksaan/show',
+                    'href' => '/pemeriksaan/show',
                 ],
             ]),
             'polamakan' => $pemeriksaan->polamakan,
@@ -260,7 +297,7 @@ class PemeriksaanController extends Controller
             'breadcrumb' => array_merge(self::BASE_BREADCRUMB, [
                 [
                     'title' => 'edit pemeriksaan',
-                    'href' => '/admin/pemeriksaan/edit',
+                    'href' => '/pemeriksaan/edit',
                 ],
             ]),
         ]);
@@ -292,7 +329,7 @@ class PemeriksaanController extends Controller
         });
 
         return redirect()
-            ->route('admin.pemeriksaan.index')
+            ->route('pemeriksaan.index')
             ->with('success', 'Data pemeriksaan berhasil diupdate!');
     }
 
@@ -304,7 +341,7 @@ class PemeriksaanController extends Controller
         $pemeriksaan->delete();
 
         return redirect()
-            ->route('admin.pemeriksaan.index')
+            ->route('pemeriksaan.index')
             ->with('success', 'Data pemeriksaan berhasil dihapus!');
     }
 }

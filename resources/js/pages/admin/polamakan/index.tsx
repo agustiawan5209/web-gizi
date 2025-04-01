@@ -40,7 +40,7 @@ interface PemeriksaanProps {
     balita: Balita;
     pemeriksaan: Pemeriksaan;
     detail: DetailPemeriksaan[];
-    breadcrumb: { title: string; href: string }[];
+    breadcrumb?: Array<{ title: string; href: string }>;
 }
 
 type CreateForm = {
@@ -54,10 +54,9 @@ const DEFAULT_TEMPLATE = `<p>LAPORAN HASIL PEMERIKSAAN GIZI ANAK  </p><p>I. Riwa
 export default function PolaMakanShow({ pemeriksaan, balita, orangTua, detail, breadcrumb }: PemeriksaanProps) {
     // Memoize breadcrumbs to prevent unnecessary recalculations
     const breadcrumbs: BreadcrumbItem[] = useMemo(
-        () => breadcrumb.map((item) => ({ title: item.title, href: item.href })),
+        () => (breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : []),
         [breadcrumb]
     );
-
     // Memoize filtered details to avoid recalculating on every render
     const filteredDetails = useMemo(
         () => detail.filter(attr => !['jenis kelamin'].includes(attr.attribut.nama.toLowerCase())),
@@ -73,7 +72,7 @@ export default function PolaMakanShow({ pemeriksaan, balita, orangTua, detail, b
     // Optimized form submission handler
     const submit = useCallback<FormEventHandler>((e) => {
         e.preventDefault();
-        post(route('admin.pola-makan.store'));
+        post(route('pola-makan.store'));
     }, [post]);
 
     // Optimized handlers for ReactQuill changes

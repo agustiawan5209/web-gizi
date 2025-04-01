@@ -2,12 +2,11 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input, InputRadio } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
-import { Head, useForm } from '@inertiajs/react';
+import { SharedData, type BreadcrumbItem } from '@/types';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
-import { FormEventHandler, useEffect, useState, useMemo } from 'react';
+import { FormEventHandler, useMemo } from 'react';
 export interface BalitaCreaterops {
     breadcrumb?: { title: string; href: string }[];
     orangtua: {
@@ -18,7 +17,7 @@ export interface BalitaCreaterops {
     }[];
 }
 type CreateForm = {
-    orang_tua_id: string;
+    orang_tua_id: string | number;
     nama: string;
     tempat_lahir: string;
     tanggal_lahir: string;
@@ -26,14 +25,16 @@ type CreateForm = {
 };
 
 export default function BalitaCreate({ breadcrumb, orangtua }: BalitaCreaterops) {
-     // Memoize breadcrumbs to prevent unnecessary recalculations
+    const page = usePage<SharedData>();
+    const { auth } = page.props;
+    // Memoize breadcrumbs to prevent unnecessary recalculations
     const breadcrumbs: BreadcrumbItem[] = useMemo(
         () => (breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : []),
-        [breadcrumb]
+        [breadcrumb],
     );
 
-    const { data, setData, get, post, processing, progress, errors, reset } = useForm<Required<CreateForm>>({
-        orang_tua_id: '',
+    const { data, setData, post, processing, progress, errors, reset } = useForm<Required<CreateForm>>({
+        orang_tua_id: auth.user.id,
         nama: '',
         tempat_lahir: '',
         tanggal_lahir: '',
@@ -49,64 +50,10 @@ export default function BalitaCreate({ breadcrumb, orangtua }: BalitaCreaterops)
         e.preventDefault();
 
         console.log(data.jenis_kelamin);
-        post(route('admin.balita.store'), {
+        post(route('orangtua.balita.store'), {
             onError: (err) => console.log(err),
         });
     };
-
-    /** Get Data From orangtua */
-    const [listOrangtua, setListOrangtua] = useState<{ id: string; name: string; email: string } | null>(null);
-    const [idOrangTua, setIdOrangTua] = useState('');
-    /**
-     * Filters the list of orangtua by the given search string.
-     * If the search string is empty, returns the original list.
-     * If the orangtua list is empty, returns an empty list.
-     * @param {string} search - The search string to filter by.
-     * @returns {string[]} - The filtered list of orangtua.
-     */
-    const filter = (search: string): string[] => {
-        if (!orangtua) {
-            return [];
-        }
-        const filtered = orangtua
-            .filter((element: any) => {
-                if (!element || !element.name) {
-                    return false;
-                }
-                return element.name.toLowerCase().includes(search.toLowerCase());
-            })
-            .map((element: any) => element.name); // Add this line to extract the name property
-        return filtered;
-    };
-
-    const searchById = (search: string): { id: string; name: string; email: string } | null => {
-        if (!orangtua) {
-            return null;
-        }
-
-        try {
-            const filtered = orangtua
-                ?.filter((element: any) => {
-                    if (!element || !element.id) {
-                        return false;
-                    }
-
-                    return String(element.id).includes(search);
-                })
-                .map((element: any) => element);
-
-            return filtered[0] ?? null;
-        } catch (error) {
-            console.error('Error filtering orangtua by ID:', error);
-            return null;
-        }
-    };
-    useEffect(() => {
-        if (idOrangTua) {
-            setListOrangtua(searchById(idOrangTua));
-            setData('orang_tua_id', idOrangTua);
-        }
-    }, [idOrangTua]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -116,44 +63,6 @@ export default function BalitaCreate({ breadcrumb, orangtua }: BalitaCreaterops)
                     <div className="p-4 md:p-6">
                         <form className="flex flex-col gap-6" onSubmit={submit}>
                             <div className="grid gap-6">
-                                <div className="grid gap-2">
-                                    <Label htmlFor="nama">Pilih Berdasarkan Nama Orang Tua</Label>
-                                    <Select defaultValue="0" value={idOrangTua} onValueChange={(value) => setIdOrangTua(value)}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Pilih Orang Tua" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectGroup>
-                                                <SelectLabel>Pilih Orang Tua</SelectLabel>
-                                                {orangtua.map((item) => (
-                                                    <SelectItem key={item.id} value={item.id}>
-                                                        {item.name}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectGroup>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                {listOrangtua && (
-                                    <div className="block space-y-4 p-2">
-                                        <div className="flex gap-2">
-                                            <Label htmlFor="email-orangtua" className="text-muted-foreground">
-                                                Nama Orang Tua:{' '}
-                                            </Label>
-                                            <Label htmlFor="Nama-orangtua" className="font-normal">
-                                                {listOrangtua?.name}
-                                            </Label>
-                                        </div>
-                                        <div className="flex gap-2">
-                                            <Label htmlFor="email-orangtua" className="text-muted-foreground">
-                                                Email Orang Tua:{' '}
-                                            </Label>
-                                            <Label htmlFor="Nama-orangtua" className="font-normal">
-                                                {listOrangtua?.email}
-                                            </Label>
-                                        </div>
-                                    </div>
-                                )}
                                 <div className="grid gap-2">
                                     <Label htmlFor="nama">Nama</Label>
                                     <Input

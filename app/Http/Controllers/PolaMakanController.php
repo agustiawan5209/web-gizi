@@ -17,7 +17,7 @@ class PolaMakanController extends Controller
         ],
         [
             'title' => 'data pemeriksaan',
-            'href' => '/admin/pemeriksaan/',
+            'href' => '/pemeriksaan',
         ],
     ];
     /**
@@ -33,19 +33,16 @@ class PolaMakanController extends Controller
      */
     public function create(Pemeriksaan $pemeriksaan)
     {
-        $pemeriksaan->find(1);
         $pemeriksaan->load(['balita', 'balita.orangtua', 'detailpemeriksaan', 'detailpemeriksaan.attribut']);
-
-
         return Inertia::render('admin/polamakan/index', [
             'pemeriksaan' => $pemeriksaan,
             'balita' => $pemeriksaan->balita,
             'orangTua' => $pemeriksaan->balita->orangtua,
             'detail' => $pemeriksaan->detailpemeriksaan,
-            'breadcrumb' => array_merge(self::BASE_BREADCRUMB, [
+            'breadcrumb' => array_merge(self::BASE_BREADCRUMB, [[
                 'title' => 'detail pola-makan',
-                'href' => '/admin/pola-makan/create',
-            ],),
+                'href' => '/pola-makan/'. $pemeriksaan->id,
+            ]],),
         ]);
         //
     }
@@ -56,7 +53,7 @@ class PolaMakanController extends Controller
     public function store(StorePolaMakanRequest $request)
     {
         $polaMakan = PolaMakan::create($request->all());
-        return redirect()->route('admin.pemeriksaan.index')->with('success', 'data pemeriksaan berhasil ditambahkan!!');
+        return redirect()->route('pemeriksaan.index')->with('success', 'data pemeriksaan berhasil ditambahkan!!');
     }
 
     /**

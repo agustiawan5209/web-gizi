@@ -50,6 +50,12 @@ interface PemeriksaanProps {
         date: string;
     };
     statusLabel: string[];
+    can: {
+        add: boolean;
+        edit: boolean;
+        read: boolean;
+        delete: boolean;
+    };
 }
 
 type GetForm = {
@@ -59,11 +65,11 @@ type GetForm = {
     date?: string;
 };
 
-export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, statusLabel }: PemeriksaanProps) {
+export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, statusLabel, can }: PemeriksaanProps) {
     // Memoize breadcrumbs to prevent unnecessary recalculations
     const breadcrumbs: BreadcrumbItem[] = useMemo(
         () => (breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : []),
-        [breadcrumb]
+        [breadcrumb],
     );
 
     const { get, processing } = useForm<GetForm>();
@@ -76,12 +82,15 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
     const [dialogOpen, setDialogOpen] = useState(false);
 
     // Memoized route parameters to avoid recalculations
-    const routeParams = useMemo(() => ({
-        q: search.trim(),
-        per_page: perPage,
-        order_by: orderBy,
-        date: TglPemeriksaan
-    }), [search, perPage, orderBy, TglPemeriksaan]);
+    const routeParams = useMemo(
+        () => ({
+            q: search.trim(),
+            per_page: perPage,
+            order_by: orderBy,
+            date: TglPemeriksaan,
+        }),
+        [search, perPage, orderBy, TglPemeriksaan],
+    );
 
     // Optimized filter submission using useCallback
     const submitFilter = useCallback(() => {
@@ -90,8 +99,8 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
         const numericPerPage = parseInt(perPage.toString());
 
         // Only make request if there are valid changes
-        if (cleanedSearch || cleanedDate || !isNaN(numericPerPage) ){
-            get(route('admin.pemeriksaan.index', routeParams), {
+        if (cleanedSearch || cleanedDate || !isNaN(numericPerPage)) {
+            get(route('pemeriksaan.index', routeParams), {
                 preserveState: true,
                 preserveScroll: true,
                 replace: true,
@@ -100,16 +109,22 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
     }, [get, routeParams]);
 
     // Handle search submission
-    const submitSearch: FormEventHandler = useCallback((e) => {
-        e.preventDefault();
-        submitFilter();
-    }, [submitFilter]);
+    const submitSearch: FormEventHandler = useCallback(
+        (e) => {
+            e.preventDefault();
+            submitFilter();
+        },
+        [submitFilter],
+    );
 
     // Handle per page submission
-    const submitPerPage: FormEventHandler = useCallback((e) => {
-        e.preventDefault();
-        submitFilter();
-    }, [submitFilter]);
+    const submitPerPage: FormEventHandler = useCallback(
+        (e) => {
+            e.preventDefault();
+            submitFilter();
+        },
+        [submitFilter],
+    );
 
     // Handle date submission
     const submitTglPemeriksaan = useCallback(() => {
@@ -117,31 +132,37 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
     }, [submitFilter]);
 
     // Clear all filters
-    const clearSearch: FormEventHandler = useCallback((e) => {
-        e.preventDefault();
-        setSearch('');
-        setTglPemeriksaan('');
-        setPerPage('10');
-        setOrderBy('');
+    const clearSearch: FormEventHandler = useCallback(
+        (e) => {
+            e.preventDefault();
+            setSearch('');
+            setTglPemeriksaan('');
+            setPerPage('10');
+            setOrderBy('');
 
-        get(route('admin.pemeriksaan.index'), {
-            preserveState: true,
-            preserveScroll: true,
-        });
-    }, [get]);
+            get(route('pemeriksaan.index'), {
+                preserveState: true,
+                preserveScroll: true,
+            });
+        },
+        [get],
+    );
 
     // Effect for orderBy changes
     useEffect(() => {
         const cleanedOrderBy = orderBy.trim();
         if (cleanedOrderBy) {
-            get(route('admin.pemeriksaan.index', {
-                order_by: cleanedOrderBy,
-                per_page: perPage,
-                q: search
-            }), {
-                preserveState: true,
-                preserveScroll: true,
-            });
+            get(
+                route('pemeriksaan.index', {
+                    order_by: cleanedOrderBy,
+                    per_page: perPage,
+                    q: search,
+                }),
+                {
+                    preserveState: true,
+                    preserveScroll: true,
+                },
+            );
         }
     }, [orderBy, get, perPage, search]);
 
@@ -149,25 +170,30 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
     const tableRows = useMemo(() => {
         if (!pemeriksaan?.data?.length) return null;
 
-        return pemeriksaan.data.map((item, index) => (
-            <CollapsibleRow
-                key={item.id} // Using item.id as key is better than index
-                num={index + 1 + (pemeriksaan.current_page - 1) * pemeriksaan.per_page}
-                title={item.tgl_pemeriksaan}
-                columnData={[
-                    item.balita.nama,
-                    item.balita.orangtua.name,
-                    `${item.balita.tempat_lahir}/${item.balita.tanggal_lahir}`,
-                    item.label,
-                ]}
-                delete="delete"
-                url={route('admin.pemeriksaan.destroy', { pemeriksaan: item.id })}
-                id={item.id}
-                show={route('admin.pemeriksaan.show', { pemeriksaan: item.id })}
-            >
-                <DetailPemeriksaan detail={item.detailpemeriksaan} />
-            </CollapsibleRow>
-        ));
+        return pemeriksaan.data.map((item, index) => {
+            let read_url = null;
+            if (can.read) {
+                read_url = route('pemeriksaan.show', { pemeriksaan: item.id });
+            }
+            let delete_url = null;
+            if (can.delete) {
+                delete_url = read_url = route('pemeriksaan.show', { pemeriksaan: item.id });
+            }
+            return (
+                <CollapsibleRow
+                    key={item.id} // Using item.id as key is better than index
+                    num={index + 1 + (pemeriksaan.current_page - 1) * pemeriksaan.per_page}
+                    title={item.tgl_pemeriksaan}
+                    columnData={[item.balita.nama, item.balita.orangtua.name, `${item.balita.tempat_lahir}/${item.balita.tanggal_lahir}`, item.label]}
+                    delete="delete"
+                    url={delete_url ?? ''}
+                    id={item.id}
+                    show={read_url ?? ''}
+                >
+                    <DetailPemeriksaan detail={item.detailpemeriksaan} />
+                </CollapsibleRow>
+            );
+        });
     }, [pemeriksaan]);
 
     return (
@@ -175,16 +201,11 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
             <Head title="Pemeriksaan" />
             <div className="dark:bg-elevation-1 flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
-                    <div className="flex w-full flex-1 flex-col lg:flex-row items-start justify-start gap-7 px-4 py-2 lg:items-center lg:justify-between">
-                        <div className="flex w-full flex-1 flex-col gap-7 px-4 py-2 lg:flex-row md:items-start">
-                            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                    <div className="flex w-full flex-1 flex-col items-start justify-start gap-7 px-4 py-2 lg:flex-row lg:items-center lg:justify-between">
+                        <div className="flex w-full flex-1 flex-col gap-7 px-4 py-2 md:items-start lg:flex-row">
+                           {can.add &&  <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                                 <DialogTrigger asChild>
-                                    <Button
-                                        type="button"
-                                        size="lg"
-                                        tabIndex={4}
-                                        className="flex cursor-pointer items-center gap-2 bg-primary "
-                                    >
+                                    <Button type="button" size="lg" tabIndex={4} className="bg-primary flex cursor-pointer items-center gap-2">
                                         Tambah Data
                                     </Button>
                                 </DialogTrigger>
@@ -194,7 +215,7 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
                                         <section className="flex gap-4">
                                             <div className="block space-y-3 border-x p-4">
                                                 <p className="text-left">Tambah Data Dengan Memilih berdasarkan id Bayi</p>
-                                                <Link href={route('admin.pemeriksaan.create-id')} className="col-span-1 cursor-pointer">
+                                                <Link href={route('pemeriksaan.create-id')} className="col-span-1 cursor-pointer">
                                                     <Button
                                                         type="button"
                                                         className="flex w-full cursor-pointer items-center gap-2 bg-blue-500 hover:bg-blue-600"
@@ -205,7 +226,7 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
                                             </div>
                                             <div className="block space-y-3 border-x p-4">
                                                 <p>Tambah Data pemeriksaan secara langsung dengan menginputkan data bayi</p>
-                                                <Link href={route('admin.pemeriksaan.create')} className="col-span-1 cursor-pointer">
+                                                <Link href={route('pemeriksaan.create')} className="col-span-1 cursor-pointer">
                                                     <Button
                                                         type="button"
                                                         className="flex w-full cursor-pointer items-center gap-2 bg-blue-500 hover:bg-blue-600"
@@ -218,7 +239,7 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
                                     </DialogDescription>
                                     <DialogClose />
                                 </DialogContent>
-                            </Dialog>
+                            </Dialog>}
                             <div className="col-span-2 flex items-center gap-2">
                                 <label htmlFor="search" className="sr-only">
                                     Cari
@@ -289,7 +310,7 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
                             </Select>
                         </div>
                     </div>
-                    <div className="lg:w-full overflow-hidden">
+                    <div className="overflow-hidden lg:w-full">
                         <TableContainer className="max-w-[400px] md:max-w-[768px] lg:max-w-full">
                             <Table className="w-full">
                                 <TableHead>
@@ -303,12 +324,10 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
                                         <TableTh>Aksi</TableTh>
                                     </TableRow>
                                 </TableHead>
-                                <TableBody className={processing ? 'opacity-50' : ''}>
-                                    {tableRows}
-                                </TableBody>
+                                <TableBody className={processing ? 'opacity-50' : ''}>{tableRows}</TableBody>
                             </Table>
 
-                            <div className="flex flex-col md:flex-row items-center justify-between gap-7 border-x-2 border-b-2 p-2">
+                            <div className="flex flex-col items-center justify-between gap-7 border-x-2 border-b-2 p-2 md:flex-row">
                                 <div className="flex items-center gap-7 px-4 py-2">
                                     <div className="flex flex-row gap-2">
                                         <Select value={perPage} onValueChange={setPerPage}>
