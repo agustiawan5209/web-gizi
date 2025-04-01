@@ -4,6 +4,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BalitaController;
 use App\Http\Controllers\DatasetController;
+use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\AttributController;
 use App\Http\Controllers\OrangTuaController;
 use App\Http\Controllers\DashboardController;
@@ -162,3 +163,7 @@ Route::get('classify-index/', [NaiveBayesController::class, 'index'])->name('nai
 
 
 require __DIR__ . '/api.php';
+
+// Laporan
+
+Route::get('laporan/{balita}', [LaporanController::class, 'index'])->name('laporan.index');

@@ -1,9 +1,9 @@
 import GrowthChart from '@/components/chart/GrowthChart';
+import FileDownloader from '@/components/FileDownloader';
 import { Table, TableBody, TableColumn, TableContainer, TableHead, TableRow, TableTh } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
-import { SharedData } from '@/types';
+import { SharedData, type BreadcrumbItem } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
-import { type BreadcrumbItem } from '@/types';
 import { useMemo } from 'react';
 
 interface OrangTua {
@@ -48,11 +48,11 @@ export interface PemeriksaanProps {
 }
 
 export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, attribut, breadcrumb }: PemeriksaanProps) {
-     // Memoize breadcrumbs to prevent unnecessary recalculations
-        const breadcrumbs: BreadcrumbItem[] = useMemo(
-            () => (breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : []),
-            [breadcrumb]
-        );
+    // Memoize breadcrumbs to prevent unnecessary recalculations
+    const breadcrumbs: BreadcrumbItem[] = useMemo(
+        () => (breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : []),
+        [breadcrumb],
+    );
 
     const searchById = (id: string, detail: { attribut_id: string; nilai: string }[]): string => {
         if (!detail || !id) return '';
@@ -67,6 +67,17 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, attribu
     const page = usePage<SharedData>();
     const { defaultUrl } = page.props;
 
+    const handleDownloadStart = () => {
+        console.log('Download started');
+    };
+
+    const handleDownloadSuccess = () => {
+        console.log('Download completed successfully');
+    };
+
+    const handleDownloadError = (error: unknown) => {
+        console.error('Download failed:', error);
+    };
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Detail Pemeriksaan" />
@@ -79,10 +90,25 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, attribu
                             <TableContainer>
                                 <Table className="w-full border-collapse">
                                     <TableHead>
+                                       {(pemeriksaan ?? []).length > 0 && <TableRow>
+                                            <TableTh
+                                                colSpan={2}
+                                                className="text-foreground bg-blue-100 p-4 text-left text-lg font-semibold md:text-xl dark:bg-gray-800"
+                                            >
+                                                <FileDownloader
+                                                    pdfUrl={route('laporan.index', { balita: balita.id })}
+                                                    fileName="Laporan-Pemeriksaan.pdf"
+                                                    buttonText="Cetak File"
+                                                    onDownloadStart={handleDownloadStart}
+                                                    onDownloadSuccess={handleDownloadSuccess}
+                                                    onDownloadError={handleDownloadError}
+                                                />
+                                            </TableTh>
+                                        </TableRow>}
                                         <TableRow>
                                             <TableTh
                                                 colSpan={2}
-                                                className="bg-blue-100 p-4 text-left text-lg font-semibold text-foreground md:text-xl dark:bg-gray-800"
+                                                className="text-foreground bg-blue-100 p-4 text-left text-lg font-semibold md:text-xl dark:bg-gray-800"
                                             >
                                                 Data Orang Tua
                                             </TableTh>
@@ -91,13 +117,11 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, attribu
                                     <TableBody>
                                         {/* Parent Data */}
                                         <TableRow className="border-b">
-                                            <TableColumn className="w-1/3 p-3 font-medium text-foreground">
-                                                Nama Orang Tua
-                                            </TableColumn>
+                                            <TableColumn className="text-foreground w-1/3 p-3 font-medium">Nama Orang Tua</TableColumn>
                                             <TableColumn className="p-3">{orangTua.name}</TableColumn>
                                         </TableRow>
                                         <TableRow className="border-b">
-                                            <TableColumn className="p-3 font-medium text-foreground">Email Orang Tua</TableColumn>
+                                            <TableColumn className="text-foreground p-3 font-medium">Email Orang Tua</TableColumn>
                                             <TableColumn className="p-3">{orangTua.email}</TableColumn>
                                         </TableRow>
 
@@ -105,25 +129,25 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, attribu
                                         <TableRow>
                                             <TableTh
                                                 colSpan={2}
-                                                className="bg-blue-100 p-4 text-left text-lg font-semibold text-foreground md:text-xl dark:bg-gray-800"
+                                                className="text-foreground bg-blue-100 p-4 text-left text-lg font-semibold md:text-xl dark:bg-gray-800"
                                             >
                                                 Data Balita
                                             </TableTh>
                                         </TableRow>
                                         <TableRow className="border-b">
-                                            <TableColumn className="p-3 font-medium text-foreground">Nama Balita</TableColumn>
+                                            <TableColumn className="text-foreground p-3 font-medium">Nama Balita</TableColumn>
                                             <TableColumn className="p-3">{balita.nama}</TableColumn>
                                         </TableRow>
                                         <TableRow className="border-b">
-                                            <TableColumn className="p-3 font-medium text-foreground">Tempat Lahir</TableColumn>
+                                            <TableColumn className="text-foreground p-3 font-medium">Tempat Lahir</TableColumn>
                                             <TableColumn className="p-3">{balita.tempat_lahir}</TableColumn>
                                         </TableRow>
                                         <TableRow className="border-b">
-                                            <TableColumn className="p-3 font-medium text-foreground">Tanggal Lahir</TableColumn>
+                                            <TableColumn className="text-foreground p-3 font-medium">Tanggal Lahir</TableColumn>
                                             <TableColumn className="p-3">{balita.tanggal_lahir}</TableColumn>
                                         </TableRow>
                                         <TableRow className="border-b">
-                                            <TableColumn className="p-3 font-medium text-foreground">Jenis Kelamin</TableColumn>
+                                            <TableColumn className="text-foreground p-3 font-medium">Jenis Kelamin</TableColumn>
                                             <TableColumn className="p-3">{balita.jenis_kelamin}</TableColumn>
                                         </TableRow>
                                     </TableBody>
@@ -131,7 +155,7 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, attribu
                             </TableContainer>
 
                             <section className="border-x px-4">
-                                <h3 className="bg-blue-100 p-4 text-left text-lg text-foreground font-semibold md:text-xl dark:bg-gray-800">
+                                <h3 className="text-foreground bg-blue-100 p-4 text-left text-lg font-semibold md:text-xl dark:bg-gray-800">
                                     Data Pemeriksaan
                                 </h3>
                                 <TableContainer className="relative">
@@ -161,9 +185,11 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, attribu
                                     </Table>
                                 </TableContainer>
                             </section>
-                        {pemeriksaan.length > 1 && <section className="my-4">
-                            <GrowthChart url={defaultUrl + '/api/chart/balita/' + balita.id} title="perkembangan anak secara individual" />
-                        </section>}
+                            {pemeriksaan.length > 1 && (
+                                <section className="my-4">
+                                    <GrowthChart url={defaultUrl + '/api/chart/balita/' + balita.id} title="perkembangan anak secara individual" />
+                                </section>
+                            )}
                         </div>
                     </div>
                 </div>
