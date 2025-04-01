@@ -174,8 +174,8 @@ export default function BalitaIndex({ balita, breadcrumb, filter }: BalitaProps)
                                         <SelectLabel>Urutkan</SelectLabel>
                                         <SelectItem value="A-Z">A-Z</SelectItem>
                                         <SelectItem value="Z-A">Z-A</SelectItem>
-                                        <SelectItem value="asc">Terbaru</SelectItem>
-                                        <SelectItem value="desc">Terlama</SelectItem>
+                                        <SelectItem value="desc">Terbaru</SelectItem>
+                                        <SelectItem value="asc">sTerlama</SelectItem>
                                     </SelectGroup>
                                     <SelectSeparator />
                                     <SelectGroup>

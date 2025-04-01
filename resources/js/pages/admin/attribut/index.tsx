@@ -171,8 +171,8 @@ export default function AttributIndex({ attribut, breadcrumb, filter }: Attribut
                                     <SelectGroup>
                                         <SelectItem value="A-Z">A-Z</SelectItem>
                                         <SelectItem value="Z-A">Z-A</SelectItem>
-                                        <SelectItem value="asc">Terbaru</SelectItem>
-                                        <SelectItem value="desc">Terlama</SelectItem>
+                                        <SelectItem value="desc">Terbaru</SelectItem>
+                                        <SelectItem value="asc">sTerlama</SelectItem>
                                     </SelectGroup>
                                 </SelectContent>
                             </Select>
