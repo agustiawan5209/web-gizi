@@ -179,8 +179,8 @@ export default function OrangtuaIndex({ orangtua, breadcrumb, filter }: Orangtua
                             </Select>
                         </div>
                     </div>
-                    <div className="w-full min-w-full">
-                        <TableContainer className="relative">
+                    <div className="lg:w-full overflow-hidden">
+                        <TableContainer className="max-w-[400px] md:max-w-[768px] lg:max-w-full">
                             <Table className="w-full">
                                 <TableHead>
                                     <TableRow>
@@ -210,7 +210,7 @@ export default function OrangtuaIndex({ orangtua, breadcrumb, filter }: Orangtua
                                 </TableBody>
                             </Table>
 
-                            <div className="flex justify-between gap-7 border-x-2 border-b-2 p-2">
+                            <div className="flex flex-col md:flex-row items-center justify-between gap-7 border-x-2 border-b-2 p-2">
                                 <div className="flex items-center gap-7 px-4 py-2">
                                     <div className='flex flex-row gap-2'>
                                         <Select defaultValue="10" value={perPage} onValueChange={(e) => setPerPage(e.toString())}>

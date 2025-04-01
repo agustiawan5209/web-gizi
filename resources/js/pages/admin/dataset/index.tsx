@@ -156,11 +156,7 @@ export default function DatasetIndex({ dataset, breadcrumb, filter, attribut, st
                     <div className="flex w-full flex-1 flex-row items-end justify-end gap-7 px-4 py-2 md:items-center md:justify-between">
                         <div className="flex w-full flex-1 flex-col gap-7 px-4 py-2 md:flex-row md:items-center">
                             <Link href={route('admin.dataset.create')} className="col-span-1 cursor-pointer">
-                                <Button
-                                    type="button"
-                                    variant="default"
-                                    className="flex w-full cursor-pointer items-center gap-2 bg-primary"
-                                >
+                                <Button type="button" variant="default" className="bg-primary flex w-full cursor-pointer items-center gap-2">
                                     Tambah Data
                                 </Button>
                             </Link>
@@ -213,8 +209,8 @@ export default function DatasetIndex({ dataset, breadcrumb, filter, attribut, st
                             </Select>
                         </div>
                     </div>
-                    <div className="w-full min-w-full">
-                        <TableContainer className="relative">
+                    <div className="overflow-hidden lg:w-full">
+                        <TableContainer className="max-w-[400px] md:max-w-[768px] lg:max-w-full">
                             <Table className="w-full">
                                 <TableHead>
                                     <TableRow>
@@ -253,7 +249,7 @@ export default function DatasetIndex({ dataset, breadcrumb, filter, attribut, st
                                 </TableBody>
                             </Table>
 
-                            <div className="flex justify-between gap-7 border-x-2 border-b-2 p-2">
+                            <div className="flex flex-col md:flex-row items-center justify-between gap-7 border-x-2 border-b-2 p-2">
                                 <div className="flex items-center gap-7 px-4 py-2">
                                     <div className="flex flex-row gap-2">
                                         <Select defaultValue="10" value={perPage} onValueChange={(e) => setPerPage(e.toString())}>

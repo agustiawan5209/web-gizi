@@ -289,8 +289,8 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
                             </Select>
                         </div>
                     </div>
-                    <div className="lg:w-full overflow-hidden md:overflow-x-auto">
-                        <TableContainer className="md:max-w-[768px] lg:max-w-full">
+                    <div className="lg:w-full overflow-hidden">
+                        <TableContainer className="max-w-[400px] md:max-w-[768px] lg:max-w-full">
                             <Table className="w-full">
                                 <TableHead>
                                     <TableRow>
@@ -308,7 +308,7 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
                                 </TableBody>
                             </Table>
 
-                            <div className="flex justify-between gap-7 border-x-2 border-b-2 p-2">
+                            <div className="flex flex-col md:flex-row items-center justify-between gap-7 border-x-2 border-b-2 p-2">
                                 <div className="flex items-center gap-7 px-4 py-2">
                                     <div className="flex flex-row gap-2">
                                         <Select value={perPage} onValueChange={setPerPage}>
