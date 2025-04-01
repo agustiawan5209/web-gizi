@@ -23,7 +23,7 @@ require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
 
 
-Route::prefix('admin')->as('admin.')->middleware(['auth', 'verified'])->group(function () {
+Route::prefix('admin')->as('admin.')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
 
      // Routes for managing orangtuas
      Route::prefix('orangtua')->as('orangtua.')->group(function () {
