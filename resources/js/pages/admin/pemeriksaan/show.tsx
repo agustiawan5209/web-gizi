@@ -85,7 +85,7 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, detail,
                                                 className="text-foreground bg-blue-100 p-4 text-left text-lg font-semibold md:text-xl dark:bg-gray-800"
                                             >
                                                 <FileDownloader
-                                                    pdfUrl={route('laporan.index', { balita: balita.id, pemeriksaan: pemeriksaan.id })}
+                                                    pdfUrl={route('laporan.pemeriksaan', { balita: balita.id, pemeriksaan: pemeriksaan.id })}
                                                     fileName="Laporan-Pemeriksaan.pdf"
                                                     buttonText="Cetak File"
                                                     onDownloadStart={handleDownloadStart}
