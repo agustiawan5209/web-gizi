@@ -1,3 +1,4 @@
+import FileDownloader from '@/components/FileDownloader';
 import { Table, TableBody, TableColumn, TableContainer, TableHead, TableRow, TableTh } from '@/components/ui/table';
 
 import AppLayout from '@/layouts/app-layout';
@@ -12,6 +13,7 @@ interface OrangTua {
 }
 
 interface Balita {
+    id: string;
     nama: string;
     tempat_lahir: string;
     tanggal_lahir: string;
@@ -52,6 +54,18 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, detail,
         [breadcrumb]
     );
 
+    const handleDownloadStart = () => {
+        console.log('Download started');
+    };
+
+    const handleDownloadSuccess = () => {
+        console.log('Download completed successfully');
+    };
+
+    const handleDownloadError = (error: unknown) => {
+        console.error('Download failed:', error);
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Detail Pemeriksaan" />
@@ -64,6 +78,21 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, detail,
                             <TableContainer>
                             <Table className="w-full border-collapse">
                                 <TableHead>
+                                { pemeriksaan && <TableRow>
+                                            <TableTh
+                                                colSpan={2}
+                                                className="text-foreground bg-blue-100 p-4 text-left text-lg font-semibold md:text-xl dark:bg-gray-800"
+                                            >
+                                                <FileDownloader
+                                                    pdfUrl={route('laporan.index', { balita: balita.id })}
+                                                    fileName="Laporan-Pemeriksaan.pdf"
+                                                    buttonText="Cetak File"
+                                                    onDownloadStart={handleDownloadStart}
+                                                    onDownloadSuccess={handleDownloadSuccess}
+                                                    onDownloadError={handleDownloadError}
+                                                />
+                                            </TableTh>
+                                        </TableRow>}
                                     <TableRow>
                                         <TableColumn className='text-lg'>
                                             Tanggal Pemeriksaan

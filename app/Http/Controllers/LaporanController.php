@@ -43,7 +43,7 @@ class LaporanController extends Controller
             return back()->with('error', 'Belum ada data pemeriksaan');
         }
 
-        $pdf = PDF::loadView('laporan-pemeriksaan', $data);
+        $pdf = PDF::loadView('laporan-balita', $data);
 
         // return $pdf->download('laporan_pemeriksaan_balita.pdf');
 
@@ -63,5 +63,42 @@ class LaporanController extends Controller
         }
         // dd($datauji);
         return $datauji;
+    }
+
+    public function pemeriksaan(Balita $balita, Pemeriksaan $pemeriksaan)
+    {
+        $attributes = Attribut::all()->toArray();
+        // Ambil data dari database
+        $balita->with(['orangtua']);
+
+        // Hitung usia balita
+        $tanggalLahir = \Carbon\Carbon::parse($balita->tanggal_lahir);
+        $usia = $tanggalLahir->diffInMonths(\Carbon\Carbon::now());
+        $balita->usia = round($usia, 1);
+
+        $datauji = [];
+        if ($pemeriksaan && $pemeriksaan->detailpemeriksaan) {
+            $datauji = $this->setDataUji($pemeriksaan, $attributes);
+        }
+        // dd($datauji);
+        $data = [
+            'orangTua' => $balita->orangtua,
+            'balita' => $balita,
+            'pemeriksaan' => $datauji,
+            'detail' => $pemeriksaan->with(['detailpemeriksaan']),
+            'attribut' => array_map('strtolower', array_column($attributes, 'nama')),
+
+        ];
+
+        // if (empty($data['pemeriksaan'])) {
+        //     return back()->with('error', 'Belum ada data pemeriksaan');
+        // }
+
+        $pdf = PDF::loadView('laporan-pemeriksaan', $data);
+
+        // return $pdf->download('laporan_pemeriksaan_balita.pdf');
+
+        // Atau untuk preview:
+        return $pdf->stream('laporan_pemeriksaan.pdf');
     }
 }

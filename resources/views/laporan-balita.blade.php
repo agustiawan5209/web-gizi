@@ -132,11 +132,13 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    @foreach ($attribut as $item)
-                        <td style="font-size: 10px;">{{ $pemeriksaan[$item] }}</td>
-                    @endforeach
-                </tr>
+                @for ($i = 0; $i < count($pemeriksaan); $i++)
+                    <tr>
+                        @foreach ($attribut as $item)
+                            <td style="font-size: 10px;">{{ $pemeriksaan[$i][$item] }}</td>
+                        @endforeach
+                    </tr>
+                @endfor
             </tbody>
         </table>
     </div>

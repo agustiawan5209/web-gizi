@@ -167,3 +167,4 @@ require __DIR__ . '/api.php';
 // Laporan
 
 Route::get('laporan/{balita}', [LaporanController::class, 'index'])->name('laporan.index');
+Route::get('laporan/{balita}/{pemeriksaan}', [LaporanController::class, 'pemeriksaan'])->name('laporan.pemeriksaan');

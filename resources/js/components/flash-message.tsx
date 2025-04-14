@@ -14,8 +14,7 @@ function FlashMessage() {
         if (flash.success) {
             setClassAlert('bg-green-400 hover:bg-green-500');
             setMessageAlert(flash.success);
-        }
-        if (flash.error) {
+        }else if (flash.error) {
             setClassAlert('bg-red-400 hover:bg-red-500');
             setMessageAlert(flash.error);
         }

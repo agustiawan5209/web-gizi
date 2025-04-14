@@ -177,7 +177,7 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
             }
             let delete_url = null;
             if (can.delete) {
-                delete_url = read_url = route('pemeriksaan.show', { pemeriksaan: item.id });
+                delete_url = route('pemeriksaan.destroy', { pemeriksaan: item.id });
             }
             return (
                 <CollapsibleRow

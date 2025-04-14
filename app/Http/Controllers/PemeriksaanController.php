@@ -134,80 +134,48 @@ class PemeriksaanController extends Controller
     public function store(StorePemeriksaanRequest $request)
     {
         return DB::transaction(function () use ($request) {
-            try {
-                $balitaData = $request->except('attribut', 'tanggal_pemeriksaan');
-                $balita = Balita::create($balitaData);
+            $balitaData = $request->except('attribut', 'tanggal_pemeriksaan');
+            $balita = Balita::create($balitaData);
 
-                $pemeriksaanData = [
-                    'balita_id' => $balita->id,
-                    'data_balita' => json_encode($balita),
-                    'data_pemeriksaan' => json_encode($request->input('attribut')),
-                    'tgl_pemeriksaan' => $request->input('tanggal_pemeriksaan'),
-                ];
-                $pemeriksaan = Pemeriksaan::create($pemeriksaanData);
+            $pemeriksaanData = [
+                'balita_id' => $balita->id,
+                'data_balita' => json_encode($balita),
+                'data_pemeriksaan' => json_encode($request->input('attribut')),
+                'tgl_pemeriksaan' => $request->input('tanggal_pemeriksaan'),
+            ];
+            $pemeriksaan = Pemeriksaan::create($pemeriksaanData);
 
-                $this->createDetailPemeriksaan($pemeriksaan, $request->input('attribut'), $balita->jenis_kelamin);
-                $this->classifyAndUpdateLabel($pemeriksaan);
+            $this->createDetailPemeriksaan($pemeriksaan, $request->input('attribut'), $balita->jenis_kelamin);
+            $this->classifyAndUpdateLabel($pemeriksaan);
 
-                return redirect()
-                    ->route('pola-makan.index', ['pemeriksaan' => $pemeriksaan->id])
-                    ->with('success', 'Data pemeriksaan berhasil ditambahkan!');
-            } catch (\Exception $exception) {
-                if ($pemeriksaan) {
-                    $pemeriksaan->delete();
-                }
-                $balita->delete();
-                return redirect()
-                    ->route('pemeriksaan.create')
-                    ->with('error', $exception->getMessage());
-            }
+            return redirect()
+                ->route('pola-makan.index', ['pemeriksaan' => $pemeriksaan->id])
+                ->with('success', 'Data pemeriksaan berhasil ditambahkan!');
         });
     }
 
     public function storeByBalita(StorePemeriksaanBalitaIdRequest $request)
     {
         DB::transaction(function () use ($request) {
-            try {
-                $balita = Balita::findOrFail($request->balita_id);
+            $balita = Balita::findOrFail($request->balita_id);
 
-                $pemeriksaanData = [
-                    'balita_id' => $balita->id,
-                    'data_balita' => json_encode($balita),
-                    'data_pemeriksaan' => json_encode($request->input('attribut')),
-                    'tgl_pemeriksaan' => $request->input('tanggal_pemeriksaan'),
-                ];
-                $pemeriksaan = Pemeriksaan::create($pemeriksaanData);
+            $pemeriksaanData = [
+                'balita_id' => $balita->id,
+                'data_balita' => json_encode($balita),
+                'data_pemeriksaan' => json_encode($request->input('attribut')),
+                'tgl_pemeriksaan' => $request->input('tanggal_pemeriksaan'),
+            ];
+            $pemeriksaan = Pemeriksaan::create($pemeriksaanData);
 
-                $this->createDetailPemeriksaan($pemeriksaan, $request->input('attribut'), $balita->jenis_kelamin);
-                $this->classifyAndUpdateLabel($pemeriksaan);
+            $this->createDetailPemeriksaan($pemeriksaan, $request->input('attribut'), $balita->jenis_kelamin);
+            $this->classifyAndUpdateLabel($pemeriksaan);
 
-                return redirect()
-                    ->route('pola-makan.index', ['pemeriksaan' => $pemeriksaan->id])
-                    ->with('success', 'Data pemeriksaan berhasil ditambahkan!');
-            } catch (\Exception $exception) {
-                if ($pemeriksaan) {
-                    $pemeriksaan->delete();
-                }
-                $balita->delete();
-                return redirect()
-                    ->route('pemeriksaan.create')
-                    ->with('error', $exception->getMessage());
-            }
+            return redirect()
+                ->route('pola-makan.index', ['pemeriksaan' => $pemeriksaan->id])
+                ->with('success', 'Data pemeriksaan berhasil ditambahkan!');
         });
     }
 
-    /**
-     * Create pemeriksaan record
-     */
-    private function createPemeriksaan(Balita $balita, $request): Pemeriksaan
-    {
-        return Pemeriksaan::create([
-            'balita_id' => $balita->id,
-            'data_balita' => json_encode($balita),
-            'data_pemeriksaan' => json_encode($request->input('attribut')),
-            'tgl_pemeriksaan' => $request->input('tanggal_pemeriksaan'),
-        ]);
-    }
 
     /**
      * Create detail pemeriksaan records
