@@ -91,9 +91,9 @@ class LaporanController extends Controller
 
         ];
 
-        // if (empty($data['pemeriksaan'])) {
-        //     return back()->with('error', 'Belum ada data pemeriksaan');
-        // }
+        if (empty($data['pemeriksaan'])) {
+            return back()->with('error', 'Belum ada data pemeriksaan');
+        }
 
         $pdf = PDF::loadView('laporan-pemeriksaan', $data);
 
