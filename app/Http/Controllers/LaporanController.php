@@ -65,10 +65,10 @@ class LaporanController extends Controller
         return $datauji;
     }
 
-    public function pemeriksaan(Balita $balita, $pemeriksaan)
+    public function pemeriksaan(Balita $balita,Request $request)
     {
         $attributes = Attribut::all()->toArray();
-        $datapemeriksaan = Pemeriksaan::find($pemeriksaan);
+        $datapemeriksaan = Pemeriksaan::find($request->pemeriksaan);
         // Ambil data dari database
         $balita->with(['orangtua']);
 
