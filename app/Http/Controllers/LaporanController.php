@@ -16,7 +16,7 @@ class LaporanController extends Controller
     {
         $attributes = Attribut::all()->toArray();
         // Ambil data dari database
-        $balita->with(['orangtua']);
+        $balita->load(['orangtua']);
         $pemeriksaan = Pemeriksaan::with(['detailpemeriksaan'])->where('balita_id', $balita->id)->get();
 
         // Hitung usia balita
@@ -70,7 +70,7 @@ class LaporanController extends Controller
         $attributes = Attribut::all()->toArray();
         $datapemeriksaan = Pemeriksaan::find($request->pemeriksaan);
         // Ambil data dari database
-        $balita->with(['orangtua']);
+        $balita->load(['orangtua']);
 
         // Hitung usia balita
         $tanggalLahir = \Carbon\Carbon::parse($balita->tanggal_lahir);
