@@ -65,9 +65,10 @@ class LaporanController extends Controller
         return $datauji;
     }
 
-    public function pemeriksaan(Balita $balita, Pemeriksaan $pemeriksaan)
+    public function pemeriksaan(Balita $balita, $pemeriksaan)
     {
         $attributes = Attribut::all()->toArray();
+        $datapemeriksaan = Pemeriksaan::find($pemeriksaan);
         // Ambil data dari database
         $balita->with(['orangtua']);
 
@@ -77,15 +78,15 @@ class LaporanController extends Controller
         $balita->usia = round($usia, 1);
 
         $datauji = [];
-        if ($pemeriksaan && $pemeriksaan->detailpemeriksaan) {
-            $datauji = $this->setDataUji($pemeriksaan, $attributes);
+        if ($datapemeriksaan && $datapemeriksaan->detailpemeriksaan) {
+            $datauji = $this->setDataUji($datapemeriksaan, $attributes);
         }
         // dd($datauji);
         $data = [
             'orangTua' => $balita->orangtua,
             'balita' => $balita,
             'pemeriksaan' => $datauji,
-            'detail' => $pemeriksaan->with(['detailpemeriksaan']),
+            'detail' => $datapemeriksaan->with(['detailpemeriksaan']),
             'attribut' => array_map('strtolower', array_column($attributes, 'nama')),
 
         ];
