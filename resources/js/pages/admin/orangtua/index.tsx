@@ -130,10 +130,10 @@ export default function OrangtuaIndex({ orangtua, breadcrumb, filter }: Orangtua
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Orangtua" />
-            <div className="dark:bg-elevation-1 flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+            <div className="dark:bg-elevation-1 flex h-full flex-1 flex-col gap-4 rounded-xl p-1 lg:p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
-                    <div className="flex w-full flex-1 flex-row items-end justify-end gap-7 px-4 py-2 md:items-center md:justify-between">
-                        <div className="flex w-full flex-1 flex-col gap-7 px-4 py-2 md:flex-row md:items-center">
+                    <div className="flex w-full flex-1 flex-col items-start justify-end gap-2 px-1 py-1 md:flex-row md:items-center md:justify-between md:gap-7 lg:px-4 lg:py-2">
+                        <div className="flex w-full flex-1 flex-col gap-7 px-1 py-1 lg:px-4 lg:py-2 md:flex-row md:items-center">
                             <Link href={route('admin.orangtua.create')} className="col-span-1 cursor-pointer">
                                 <Button variant="default" className="flex cursor-pointer items-center gap-2 bg-primary ">
                                     Tambah Data
@@ -163,7 +163,7 @@ export default function OrangtuaIndex({ orangtua, breadcrumb, filter }: Orangtua
                                 </Button>
                             </div>
                         </div>
-                        <div className="col-span-1 px-4 py-2">
+                        <div className="col-span-1 px-1 py-1 lg:px-4 lg:py-2">
                             <Select defaultValue="" value={orderBy} onValueChange={(e) => setOrderBy(e)}>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Tampilan Status" />
@@ -210,8 +210,9 @@ export default function OrangtuaIndex({ orangtua, breadcrumb, filter }: Orangtua
                                 </TableBody>
                             </Table>
 
+                        </TableContainer>
                             <div className="flex flex-col md:flex-row items-center justify-between gap-7 border-x-2 border-b-2 p-2">
-                                <div className="flex items-center gap-7 px-4 py-2">
+                                <div className="flex items-center gap-7 px-1 py-1 lg:px-4 lg:py-2">
                                     <div className='flex flex-row gap-2'>
                                         <Select defaultValue="10" value={perPage} onValueChange={(e) => setPerPage(e.toString())}>
                                             <SelectTrigger>
@@ -237,7 +238,6 @@ export default function OrangtuaIndex({ orangtua, breadcrumb, filter }: Orangtua
                                 </div>
                                 <PaginationTable links={orangtua?.links ?? []} data={filter} />
                             </div>
-                        </TableContainer>
                     </div>
                 </div>
             </div>

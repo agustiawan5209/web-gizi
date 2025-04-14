@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StorePemeriksaanBalitaIdRequest;
+use Carbon\Carbon;
+use App\Models\User;
+use Inertia\Inertia;
+use App\Models\Balita;
+use App\Models\Attribut;
+use App\Models\Pemeriksaan;
+use Illuminate\Http\Request;
+use App\Models\DetailPemeriksaan;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StorePemeriksaanRequest;
 use App\Http\Requests\UpdatePemeriksaanRequest;
-use App\Models\Attribut;
-use App\Models\Balita;
-use App\Models\DetailPemeriksaan;
-use App\Models\Pemeriksaan;
-use App\Models\User;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Inertia\Inertia;
+use App\Http\Requests\StorePemeriksaanBalitaIdRequest;
 
 class PemeriksaanController extends Controller
 {
@@ -88,6 +89,13 @@ class PemeriksaanController extends Controller
         } elseif (in_array($request->input('order_by'), self::STATUS_LABELS)) {
             $query->where('label', $request->input('order_by'));
         }
+
+        $user = Auth::user();
+        if($user->hasRole('orangtua')){
+            $query->wherehas('balita', function($query) use($user){
+                $query->where('orang_tua_id', $user->id);
+            });
+        }
     }
 
     /**
@@ -133,7 +141,7 @@ class PemeriksaanController extends Controller
      */
     public function store(StorePemeriksaanRequest $request)
     {
-        return DB::transaction(function () use ($request) {
+        try {
             $balitaData = $request->except('attribut', 'tanggal_pemeriksaan');
             $balita = Balita::create($balitaData);
 
@@ -151,12 +159,21 @@ class PemeriksaanController extends Controller
             return redirect()
                 ->route('pola-makan.index', ['pemeriksaan' => $pemeriksaan->id])
                 ->with('success', 'Data pemeriksaan berhasil ditambahkan!');
-        });
+        } catch (\Exception $exception) {
+            $pemeriksaan = Pemeriksaan::latest()->first();
+            if ($pemeriksaan) {
+                $pemeriksaan->delete();
+            }
+            $balita->delete();
+            return redirect()
+                ->route('pemeriksaan.create')
+                ->with('error', $exception->getMessage());
+        }
     }
 
     public function storeByBalita(StorePemeriksaanBalitaIdRequest $request)
     {
-        DB::transaction(function () use ($request) {
+        try {
             $balita = Balita::findOrFail($request->balita_id);
 
             $pemeriksaanData = [
@@ -173,7 +190,16 @@ class PemeriksaanController extends Controller
             return redirect()
                 ->route('pola-makan.index', ['pemeriksaan' => $pemeriksaan->id])
                 ->with('success', 'Data pemeriksaan berhasil ditambahkan!');
-        });
+        } catch (\Exception $exception) {
+            $pemeriksaan = Pemeriksaan::latest()->first();
+            if ($pemeriksaan) {
+                $pemeriksaan->delete();
+            }
+            $balita->delete();
+            return redirect()
+                ->route('pemeriksaan.create')
+                ->with('error', $exception->getMessage());
+        }
     }
 
 

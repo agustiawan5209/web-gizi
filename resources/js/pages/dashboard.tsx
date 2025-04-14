@@ -61,7 +61,7 @@ export default function Dashboard({ orangtuacount, balitacount, datasetcount, pe
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="dark:bg-elevation-1 flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+            <div className="dark:bg-elevation-1 flex h-full flex-1 flex-col gap-4 rounded-xl p-1 lg:p-4">
                 <div className="grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-4">
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border relative overflow-hidden rounded-xl border bg-sidebar dark:bg-[#493D9E]">
                         <CardHeader className="px-4 pt-1 pb-0 text-center">

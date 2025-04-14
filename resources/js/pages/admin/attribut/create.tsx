@@ -39,7 +39,7 @@ export default function AttributCreate({ breadcrumb }: AttributCreaterops) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Create" />
-            <div className="dark:bg-elevation-1 flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+            <div className="dark:bg-elevation-1 flex h-full flex-1 flex-col gap-4 rounded-xl p-1 lg:p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
                    <div className="p-4 md:p-6">
                    <form className="flex flex-col gap-6" onSubmit={submit}>

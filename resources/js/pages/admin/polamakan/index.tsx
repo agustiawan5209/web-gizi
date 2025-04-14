@@ -89,9 +89,9 @@ export default function PolaMakanShow({ pemeriksaan, balita, orangTua, detail, b
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Pola Makan Pemeriksaan" />
-            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 dark:bg-gray-950">
+            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-0 lg:p-4 dark:bg-gray-950">
                 <div className="relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border border-gray-300 md:min-h-min dark:border-gray-700">
-                    <div className="mx-auto max-w-7xl rounded-lg bg-white p-8 shadow-lg dark:bg-gray-900 dark:text-white">
+                    <div className="mx-auto max-w-7xl rounded-lg bg-white p-1 lg:p-8 shadow-lg dark:bg-gray-900 dark:text-white">
                         <h2 className="mb-6 text-xl font-bold tracking-tight">Detail Pemeriksaan</h2>
 
                         <TableContainer>

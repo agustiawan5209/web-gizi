@@ -199,48 +199,50 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Pemeriksaan" />
-            <div className="dark:bg-elevation-1 flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+            <div className="dark:bg-elevation-1 flex h-full flex-1 flex-col gap-4 rounded-xl p-1 lg:p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
-                    <div className="flex w-full flex-1 flex-col items-start justify-start gap-7 px-4 py-2 lg:flex-row lg:items-center lg:justify-between">
-                        <div className="flex w-full flex-1 flex-col gap-7 px-4 py-2 md:items-start lg:flex-row">
-                           {can.add &&  <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                                <DialogTrigger asChild>
-                                    <Button type="button" size="lg" tabIndex={4} className="bg-primary flex cursor-pointer items-center gap-2">
-                                        Tambah Data
-                                    </Button>
-                                </DialogTrigger>
-                                <DialogContent>
-                                    <DialogTitle>Pilih Cara Penambahan Data!!</DialogTitle>
-                                    <DialogDescription>
-                                        <section className="flex gap-4">
-                                            <div className="block space-y-3 border-x p-4">
-                                                <p className="text-left">Tambah Data Dengan Memilih berdasarkan id Bayi</p>
-                                                <Link href={route('pemeriksaan.create-id')} className="col-span-1 cursor-pointer">
-                                                    <Button
-                                                        type="button"
-                                                        className="flex w-full cursor-pointer items-center gap-2 bg-blue-500 hover:bg-blue-600"
-                                                    >
-                                                        Mulai
-                                                    </Button>
-                                                </Link>
-                                            </div>
-                                            <div className="block space-y-3 border-x p-4">
-                                                <p>Tambah Data pemeriksaan secara langsung dengan menginputkan data bayi</p>
-                                                <Link href={route('pemeriksaan.create')} className="col-span-1 cursor-pointer">
-                                                    <Button
-                                                        type="button"
-                                                        className="flex w-full cursor-pointer items-center gap-2 bg-blue-500 hover:bg-blue-600"
-                                                    >
-                                                        Mulai
-                                                    </Button>
-                                                </Link>
-                                            </div>
-                                        </section>
-                                    </DialogDescription>
-                                    <DialogClose />
-                                </DialogContent>
-                            </Dialog>}
-                            <div className="col-span-2 flex items-center gap-2">
+                    <div className="flex w-full flex-1 flex-col items-start justify-start gap-4 md:gap-7 lg:px-4 lg:py-2 lg:flex-row lg:items-center lg:justify-between">
+                        <div className="flex w-full flex-1 flex-wrap gap-7 lg:px-4 lg:py-2 md:items-start lg:flex-row">
+                            {can.add && (
+                                <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                                    <DialogTrigger asChild>
+                                        <Button type="button" size="lg" tabIndex={4} className="bg-primary flex cursor-pointer items-center gap-2">
+                                            Tambah Data
+                                        </Button>
+                                    </DialogTrigger>
+                                    <DialogContent>
+                                        <DialogTitle>Pilih Cara Penambahan Data!!</DialogTitle>
+                                        <DialogDescription>
+                                            <section className="flex gap-4">
+                                                <div className="block space-y-3 border-x p-4">
+                                                    <p className="text-left">Tambah Data Dengan Memilih berdasarkan id Bayi</p>
+                                                    <Link href={route('pemeriksaan.create-id')} className="col-span-1 cursor-pointer">
+                                                        <Button
+                                                            type="button"
+                                                            className="flex w-full cursor-pointer items-center gap-2 bg-blue-500 hover:bg-blue-600"
+                                                        >
+                                                            Mulai
+                                                        </Button>
+                                                    </Link>
+                                                </div>
+                                                <div className="block space-y-3 border-x p-4">
+                                                    <p>Tambah Data pemeriksaan secara langsung dengan menginputkan data bayi</p>
+                                                    <Link href={route('pemeriksaan.create')} className="col-span-1 cursor-pointer">
+                                                        <Button
+                                                            type="button"
+                                                            className="flex w-full cursor-pointer items-center gap-2 bg-blue-500 hover:bg-blue-600"
+                                                        >
+                                                            Mulai
+                                                        </Button>
+                                                    </Link>
+                                                </div>
+                                            </section>
+                                        </DialogDescription>
+                                        <DialogClose />
+                                    </DialogContent>
+                                </Dialog>
+                            )}
+                            <div className="col-span-full lg:col-span-2 flex flex-wrap items-center gap-2">
                                 <label htmlFor="search" className="sr-only">
                                     Cari
                                 </label>
@@ -248,6 +250,7 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
                                     type="text"
                                     id="search-text"
                                     value={search}
+                                    className='max-w-max'
                                     onChange={(e) => setSearch(e.target.value)}
                                     placeholder="Cari berdasarkan nama atau keterangan"
                                 />
@@ -279,7 +282,7 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
                                 </Button>
                             </div>
                         </div>
-                        <div className="col-span-1 px-4 py-2">
+                        <div className="col-span-1 lg:px-4 lg:py-2">
                             <Select value={orderBy} onValueChange={setOrderBy}>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Tampilan Status" />
@@ -311,7 +314,8 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
                         </div>
                     </div>
                     <div className="overflow-hidden lg:w-full">
-                        <TableContainer className="max-w-[400px] md:max-w-[768px] lg:max-w-full">
+                        <TableContainer >
+                            <div className="max-w-[300px] md:max-w-[768px] lg:max-w-full">
                             <Table className="w-full">
                                 <TableHead>
                                     <TableRow>
@@ -326,40 +330,43 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
                                 </TableHead>
                                 <TableBody className={processing ? 'opacity-50' : ''}>{tableRows}</TableBody>
                             </Table>
-
-                            <div className="flex flex-col items-center justify-between gap-7 border-x-2 border-b-2 p-2 md:flex-row">
-                                <div className="flex items-center gap-7 px-4 py-2">
-                                    <div className="flex flex-row gap-2">
-                                        <Select value={perPage} onValueChange={setPerPage}>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Jumlah Data" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectGroup>
-                                                    <SelectItem value="10">10</SelectItem>
-                                                    <SelectItem value="20">20</SelectItem>
-                                                    <SelectItem value="50">50</SelectItem>
-                                                    <SelectItem value="100">100</SelectItem>
-                                                </SelectGroup>
-                                            </SelectContent>
-                                        </Select>
-                                        <Button
-                                            variant="outline"
-                                            type="button"
-                                            onClick={submitPerPage}
-                                            className="flex items-center gap-2 text-xs"
-                                            disabled={processing}
-                                        >
-                                            Tampilkan
-                                        </Button>
-                                    </div>
-                                    <div className="text-xs text-gray-600">
-                                        halaman {pemeriksaan?.from} ke {pemeriksaan?.to} dari {pemeriksaan?.total} total
-                                    </div>
-                                </div>
-                                <PaginationTable links={pemeriksaan?.links ?? []} data={filter} />
                             </div>
+
                         </TableContainer>
+                            <section className="w-full">
+                                <div className="flex flex-col items-center justify-between gap-7 border-x-2 border-b-2 p-2 md:flex-row">
+                                    <div className="flex items-center gap-7 lg:px-4 lg:py-2">
+                                        <div className="flex flex-row gap-2">
+                                            <Select value={perPage} onValueChange={setPerPage}>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Jumlah Data" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectGroup>
+                                                        <SelectItem value="10">10</SelectItem>
+                                                        <SelectItem value="20">20</SelectItem>
+                                                        <SelectItem value="50">50</SelectItem>
+                                                        <SelectItem value="100">100</SelectItem>
+                                                    </SelectGroup>
+                                                </SelectContent>
+                                            </Select>
+                                            <Button
+                                                variant="outline"
+                                                type="button"
+                                                onClick={submitPerPage}
+                                                className="flex items-center gap-2 text-xs"
+                                                disabled={processing}
+                                            >
+                                                Tampilkan
+                                            </Button>
+                                        </div>
+                                        <div className="text-xs text-gray-600">
+                                            halaman {pemeriksaan?.from} ke {pemeriksaan?.to} dari {pemeriksaan?.total} total
+                                        </div>
+                                    </div>
+                                    <PaginationTable links={pemeriksaan?.links ?? []} data={filter} />
+                                </div>
+                            </section>
                     </div>
                 </div>
             </div>
