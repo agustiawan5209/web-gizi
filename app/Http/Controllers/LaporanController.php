@@ -99,6 +99,6 @@ class LaporanController extends Controller
         // return $pdf->download('laporan_pemeriksaan_balita.pdf');
 
         // Atau untuk preview:
-        return $pdf->stream('laporan_pemeriksaan.pdf');
+        return $pdf->download('laporan_pemeriksaan.pdf');
     }
 }
