@@ -80,7 +80,7 @@ export default function BalitaCreate({ breadcrumb, orangtua }: BalitaCreaterops)
                                     <InputError message={errors.nama} className="mt-2" />
                                 </div>
 
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-1">
                                     <div className="col-span-1 grid gap-2">
                                         <Label htmlFor="tempat_lahir">Tempat</Label>
                                         <Input
