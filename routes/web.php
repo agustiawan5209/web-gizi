@@ -119,6 +119,7 @@ Route::middleware(['auth', 'verified', 'role:admin,orangtua',])->group(function 
             Route::get('/', 'index')->name('index');
             // Create a pemeriksaan
             Route::get('/create-id', 'createById')->name('create-id');
+            Route::get('/create-classfication', 'createClassification')->name('create-classification');
 
             // Edit a pemeriksaan
             Route::get('/edit/{pemeriksaan}', 'edit')->name('edit');

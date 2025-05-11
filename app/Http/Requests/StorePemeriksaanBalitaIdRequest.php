@@ -31,7 +31,8 @@ class StorePemeriksaanBalitaIdRequest extends FormRequest
             'attribut'=> 'required|array',
             'attribut.*.nilai'=> 'required|numeric',
             'attribut.*.attribut_id'=> 'required|exists:attributs,id',
-
+            'rekomendasi'=> 'required|string',
+            'label'=> 'required|string',
         ];
     }
 }

@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StorePemeriksaanRequest;
 use App\Http\Requests\UpdatePemeriksaanRequest;
 use App\Http\Requests\StorePemeriksaanBalitaIdRequest;
+use App\Models\PolaMakan;
 
 class PemeriksaanController extends Controller
 {
@@ -101,37 +102,8 @@ class PemeriksaanController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function getClassification($request){
 
-        $datauji = $request->input('attribut');
-        $detailRecords = [];
-        $attributes = Attribut::all()->toArray();
-        foreach ($attributes as $key => $value) {
-            $attributes_id = $value['id'];
-            $attributes_nama = strtolower($value['nama']);
-
-            if ($attributes_nama !== 'status') {
-
-                $filtered = array_filter($datauji, fn($val) => $val['attribut_id'] == $attributes_id);
-
-                $firstMatch = reset($filtered); // ambil elemen pertama
-
-                $detailRecords[$attributes_nama] = $firstMatch['nilai'] ?? 0;
-            }
-            if($attributes_nama === 'jenis kelamin' || $attributes_nama === 'jenkel'){
-                $detailRecords[$attributes_nama] = $request->input('jenis_kelamin');
-            }
-        }
-         $naive = new NaiveBayesController(null, $detailRecords);
-        $klasifikasi = $naive->generate();
-
-        if($klasifikasi['success']){
-            $label = $klasifikasi['hasil_prediksi'];
-            return $label;
-        }
-    }
-
-    public function createById()
+    public function createById(Request $request)
     {
         return Inertia::render('admin/pemeriksaan/create-id', [
             'attribut' => Attribut::orderBy('id')
@@ -149,34 +121,58 @@ class PemeriksaanController extends Controller
         ]);
     }
 
-    public function store(StorePemeriksaanBalitaIdRequest $request)
+    public function createClassification(Request $request)
     {
 
-        $datauji = $request->input('attribut');
-        $detailRecords = [];
-        $attributes = Attribut::all()->toArray();
-        foreach ($attributes as $key => $value) {
-            $attributes_id = $value['id'];
-            $attributes_nama = strtolower($value['nama']);
+        if ($request->filled('attribut')) {
 
-            if ($attributes_nama !== 'status') {
+            $datauji = $request->input('attribut');
+            $detailRecords = [];
+            $attributes = Attribut::all()->toArray();
+            foreach ($attributes as $key => $value) {
+                $attributes_id = $value['id'];
+                $attributes_nama = strtolower($value['nama']);
 
-                $filtered = array_filter($datauji, fn($val) => $val['attribut_id'] == $attributes_id);
+                if ($attributes_nama !== 'status') {
 
-                $firstMatch = reset($filtered); // ambil elemen pertama
+                    $filtered = array_filter($datauji, fn($val) => $val['attribut_id'] == $attributes_id);
 
-                $detailRecords[$attributes_nama] = $firstMatch['nilai'] ?? 0;
+                    $firstMatch = reset($filtered); // ambil elemen pertama
+
+                    $detailRecords[$attributes_nama] = $firstMatch['nilai'] ?? 0;
+                }
+                if ($attributes_nama === 'jenis kelamin' || $attributes_nama === 'jenkel') {
+                    $detailRecords[$attributes_nama] = $request->input('jenis_kelamin');
+                }
             }
-            if($attributes_nama === 'jenis kelamin' || $attributes_nama === 'jenkel'){
-                $detailRecords[$attributes_nama] = $request->input('jenis_kelamin');
+            $naive = new NaiveBayesController(null, $detailRecords);
+            $klasifikasi = $naive->generate();
+
+            if ($klasifikasi['success']) {
+                $label = $klasifikasi['hasil_prediksi'];
+                $rekomendasi = match ($label) {
+                    "gizi buruk" => "Tingkatkan asupan makanan bergizi tinggi, berikan makanan sumber protein seperti telur, ikan, dan daging, serta tambahkan susu, sayur, dan buah dalam porsi cukup.",
+                    "gizi kurang" => "Perbanyak makanan yang mengandung kalori dan protein, seperti nasi, tahu, tempe, telur, serta sayuran hijau dan buah-buahan untuk menambah nutrisi.",
+                    "gizi baik" => "Pertahankan pola makan seimbang dengan kombinasi karbohidrat, protein, sayur, dan buah. Pastikan cukup minum air dan tetap aktif berolahraga.",
+                    "gizi lebih" => "Kurangi makanan berlemak dan tinggi gula, berikan lebih banyak sayur dan buah, serta atur porsi makanan agar tetap seimbang.",
+                    default => "Label gizi tidak dikenali.",
+                };
+                return [
+                    'label' => $label,
+                    'rekomendasi' => $rekomendasi,
+                    'detailRecords' => $detailRecords,
+                ];
             }
         }
-         $naive = new NaiveBayesController(null, $detailRecords);
-        $klasifikasi = $naive->generate();
-        dd($detailRecords, $datauji, $klasifikasi);
+        return [
+            'label' => '',
+            'rekomendasi' => '',
+            'detailRecords' => [],
+        ];
     }
 
-    public function restore(StorePemeriksaanBalitaIdRequest $request, Pemeriksaan $pemeriksaan)
+
+    public function store(StorePemeriksaanBalitaIdRequest $request)
     {
         try {
             $balita = Balita::findOrFail($request->balita_id);
@@ -186,14 +182,18 @@ class PemeriksaanController extends Controller
                 'data_balita' => json_encode($balita),
                 'data_pemeriksaan' => json_encode($request->input('attribut')),
                 'tgl_pemeriksaan' => $request->input('tanggal_pemeriksaan'),
+                'label'=> $request->input('label')
             ];
             $pemeriksaan = Pemeriksaan::create($pemeriksaanData);
 
-            $this->createDetailPemeriksaan($pemeriksaan, $request->input('attribut'), $balita->jenis_kelamin);
-            $this->classifyAndUpdateLabel($pemeriksaan);
+            $this->createDetailPemeriksaan($pemeriksaan, $request->input('attribut'), $balita->jenis_kelamin, $request->input('label'));
+            PolaMakan::create([
+                'pemeriksaan_id' => $pemeriksaan->id,
+                'rekomendasi'=> $request->input('rekomendasi'),
+            ]);
 
             return redirect()
-                ->route('pola-makan.index', ['pemeriksaan' => $pemeriksaan->id])
+                ->route('pemeriksaan.show', ['pemeriksaan' => $pemeriksaan->id])
                 ->with('success', 'Data pemeriksaan berhasil ditambahkan!');
         } catch (\Exception $exception) {
             $pemeriksaan = Pemeriksaan::latest()->first();
@@ -206,11 +206,10 @@ class PemeriksaanController extends Controller
         }
     }
 
-
     /**
      * Create detail pemeriksaan records
      */
-    private function createDetailPemeriksaan(Pemeriksaan $pemeriksaan, array $attribut, string $jenisKelamin): void
+    private function createDetailPemeriksaan(Pemeriksaan $pemeriksaan, array $attribut, string $jenisKelamin, $label): void
     {
         $detailRecords = array_map(function ($item) use ($pemeriksaan) {
             return [
@@ -228,32 +227,17 @@ class PemeriksaanController extends Controller
                 'nilai' => $jenisKelamin,
             ];
         }
+        if ($statusAttribut = Attribut::where('nama', 'like', '%status%')->first()) {
+            $detailRecords[] = [
+                'pemeriksaan_id' => $pemeriksaan->id,
+                'attribut_id' => $statusAttribut->id,
+                'nilai' => $label,
+            ];
+        }
 
         DetailPemeriksaan::insert($detailRecords);
     }
 
-    /**
-     * Classify and update label using Naive Bayes
-     */
-    private function classifyAndUpdateLabel(Pemeriksaan $pemeriksaan): void
-    {
-        $naive = new NaiveBayesController($pemeriksaan->id);
-        $klasifikasi = $naive->generate();
-
-        if ($klasifikasi['success']) {
-            $label = $klasifikasi['hasil_prediksi'];
-            $pemeriksaan->update(['label' => $label]);
-
-            if ($statusAttribut = Attribut::where('nama', 'like', '%status%')->first()) {
-                $fullLabel = $label . " - akurasi=" . $klasifikasi['akurasi'];
-                DetailPemeriksaan::create([
-                    'pemeriksaan_id' => $pemeriksaan->id,
-                    'attribut_id' => $statusAttribut->id,
-                    'nilai' => $fullLabel,
-                ]);
-            }
-        }
-    }
 
     /**
      * Display the specified resource.

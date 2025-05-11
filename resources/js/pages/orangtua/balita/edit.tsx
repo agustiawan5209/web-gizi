@@ -117,7 +117,11 @@ export default function BalitaEdit({ breadcrumb, orangtua, balita }: BalitaCreat
             setData('orang_tua_id', idOrangTua);
         }
     }, [idOrangTua]);
-
+    // Hitung tanggal minimum: 1 tahun lalu dari hari ini
+    const today = new Date();
+    const tahunLalu = new Date(today);
+    tahunLalu.setFullYear(today.getFullYear() - 1);
+    const minDate = tahunLalu.toISOString().split('T')[0];
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Edit" />
@@ -166,6 +170,7 @@ export default function BalitaEdit({ breadcrumb, orangtua, balita }: BalitaCreat
                                             id="tanggal_lahir"
                                             type="date"
                                             required
+                                            min={minDate}
                                             tabIndex={2}
                                             autoComplete="tanggal_lahir"
                                             value={data.tanggal_lahir}

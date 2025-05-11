@@ -7,7 +7,7 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
-import { FormEventHandler, useEffect, useState, useMemo } from 'react';
+import { FormEventHandler, useEffect, useMemo, useState } from 'react';
 export interface BalitaCreaterops {
     breadcrumb?: { title: string; href: string }[];
     orangtua: {
@@ -26,10 +26,10 @@ type CreateForm = {
 };
 
 export default function BalitaCreate({ breadcrumb, orangtua }: BalitaCreaterops) {
-     // Memoize breadcrumbs to prevent unnecessary recalculations
+    // Memoize breadcrumbs to prevent unnecessary recalculations
     const breadcrumbs: BreadcrumbItem[] = useMemo(
         () => (breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : []),
-        [breadcrumb]
+        [breadcrumb],
     );
 
     const { data, setData, get, post, processing, progress, errors, reset } = useForm<Required<CreateForm>>({
@@ -107,7 +107,11 @@ export default function BalitaCreate({ breadcrumb, orangtua }: BalitaCreaterops)
             setData('orang_tua_id', idOrangTua);
         }
     }, [idOrangTua]);
-
+    // Hitung tanggal minimum: 1 tahun lalu dari hari ini
+    const today = new Date();
+    const tahunLalu = new Date(today);
+    tahunLalu.setFullYear(today.getFullYear() - 1);
+    const minDate = tahunLalu.toISOString().split('T')[0];
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Create" />
@@ -193,6 +197,7 @@ export default function BalitaCreate({ breadcrumb, orangtua }: BalitaCreaterops)
                                             id="tanggal_lahir"
                                             type="date"
                                             required
+                                            min={minDate}
                                             tabIndex={2}
                                             autoComplete="tanggal_lahir"
                                             value={data.tanggal_lahir}

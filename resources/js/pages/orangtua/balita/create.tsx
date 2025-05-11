@@ -54,7 +54,11 @@ export default function BalitaCreate({ breadcrumb, orangtua }: BalitaCreaterops)
             onError: (err) => console.log(err),
         });
     };
-
+    // Hitung tanggal minimum: 1 tahun lalu dari hari ini
+    const today = new Date();
+    const tahunLalu = new Date(today);
+    tahunLalu.setFullYear(today.getFullYear() - 1);
+    const minDate = tahunLalu.toISOString().split('T')[0];
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Create" />
@@ -102,6 +106,7 @@ export default function BalitaCreate({ breadcrumb, orangtua }: BalitaCreaterops)
                                             id="tanggal_lahir"
                                             type="date"
                                             required
+                                            min={minDate}
                                             tabIndex={2}
                                             autoComplete="tanggal_lahir"
                                             value={data.tanggal_lahir}
