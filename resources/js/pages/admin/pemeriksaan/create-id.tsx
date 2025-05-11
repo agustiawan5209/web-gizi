@@ -56,7 +56,7 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut }: Peme
         tanggal_lahir: '',
         jenis_kelamin: '',
         tanggal_pemeriksaan: '',
-        attribut: attribut.map((attr) => ({ nilai: '30', attribut_id: attr.id })),
+        attribut: attribut.map((attr) => ({ nilai: '0', attribut_id: attr.id })),
         label: '',
         rekomendasi: '',
         detail: [],
