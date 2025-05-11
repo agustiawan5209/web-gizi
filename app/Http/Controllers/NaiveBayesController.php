@@ -16,10 +16,12 @@ class NaiveBayesController extends Controller
     private $label = "label";
     private $target;
     private $pemeriksaan_id = 7;
+    private $detailRecords = [];
 
-    public function __construct($pemeriksaan_id)
+    public function __construct($pemeriksaan_id = null, $detailRecords = [])
     {
         $this->pemeriksaan_id = $pemeriksaan_id;
+        $this->detailRecords = $detailRecords;
         $this->attributes = Attribut::all()->toArray();
         $this->loadDataset();
         $this->setDataUji();
@@ -79,7 +81,10 @@ class NaiveBayesController extends Controller
 
     public function setDataUji()
     {
-        $pemeriksaan = Pemeriksaan::with(['detailpemeriksaan'])->find($this->pemeriksaan_id);
+        if($this->pemeriksaan_id == null){
+            $this->datauji = $this->detailRecords;
+        }else{
+            $pemeriksaan = Pemeriksaan::with(['detailpemeriksaan'])->find($this->pemeriksaan_id);
 
         foreach ($this->attributes as $key => $value) {
             $attributes_id = $value['id'];
@@ -88,6 +93,7 @@ class NaiveBayesController extends Controller
             if ($attributes_nama !== 'status') {
                 $this->datauji[$attributes_nama] = $pemeriksaan->detailpemeriksaan()->where('attribut_id', $attributes_id)->first()->nilai;
             }
+        }
         }
         // dd($this->datauji);
     }

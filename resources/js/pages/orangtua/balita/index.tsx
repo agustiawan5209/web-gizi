@@ -8,25 +8,7 @@ import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { FormEventHandler, useEffect, useState, useMemo } from 'react';
 export interface BalitaProps {
-    balita?: {
-        current_page: number;
-        data: string[];
-        first_page_url: string;
-        from: number;
-        last_page: number;
-        last_page_url: string;
-        next_page_url?: string;
-        path: string;
-        per_page: number;
-        prev_page_url: string;
-        to: number;
-        total: number;
-        links: {
-            url: string | null;
-            label: string;
-            active: boolean;
-        }[];
-    };
+    balita: string[];
     breadcrumb?: { title: string; href: string }[];
     filter: {
         q: string;
@@ -139,30 +121,6 @@ export default function BalitaIndex({ balita, breadcrumb, filter }: BalitaProps)
                                     Tambah Data
                                 </Button>
                             </Link>
-                            <div className="col-span-full lg:col-span-2 flex flex-wrap md:flex-row items-center gap-2">
-                                <label htmlFor="search" className="sr-only">
-                                    Cari
-                                </label>
-                                <Input
-                                    type="text"
-                                    id="search"
-                                    value={search}
-                                    onChange={(e) => setSearch(e.target.value)}
-                                    className='max-w-full'
-                                    placeholder="Cari berdasarkan nama atau keterangan"
-                                />
-                                <Button variant="secondary" type="button" onClick={submitSearch} className="flex items-center gap-2 text-xs">
-                                    Cari
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    type="button"
-                                    onClick={clearSearch}
-                                    className="flex items-center gap-2 border-red-500 text-xs"
-                                >
-                                    Clear
-                                </Button>
-                            </div>
                         </div>
                         <div className="col-span-1 px-1 py-1 lg:px-4 lg:py-2">
                             <Select defaultValue="" value={orderBy} onValueChange={(e) => setOrderBy(e)}>
@@ -202,10 +160,10 @@ export default function BalitaIndex({ balita, breadcrumb, filter }: BalitaProps)
                                     </TableRow>
                                 </TableHead>
                                 <TableBody className={processing ? 'opacity-50' : ''}>
-                                    {(balita?.data ?? []).length > 0 &&
-                                        balita?.data.map((item: any, index: number) => (
+                                    {balita.length > 0 &&
+                                        balita.map((item: any, index: number) => (
                                             <TableRow key={index}>
-                                                <TableColumn>{index + 1 + (balita?.current_page - 1) * balita?.per_page}</TableColumn>
+                                                <TableColumn>{index + 1 }</TableColumn>
                                                 <TableColumn> {item.orangtua.name} </TableColumn>
                                                 <TableColumn> {item.nama} </TableColumn>
                                                 <TableColumn> {item.tempat_lahir}/ {item.tanggal_lahir} </TableColumn>
@@ -225,33 +183,7 @@ export default function BalitaIndex({ balita, breadcrumb, filter }: BalitaProps)
                             </Table>
 
                         </TableContainer>
-                            <div className="flex flex-col md:flex-row items-center justify-between gap-7 border-x-2 border-b-2 p-2">
-                                <div className="flex items-center gap-7 px-1 py-1 lg:px-4 lg:py-2">
-                                    <div className='flex flex-row gap-2'>
-                                        <Select defaultValue="10" value={perPage} onValueChange={(e) => setPerPage(e.toString())}>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Jumlah Data" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectGroup>
-                                                    <SelectItem value="10">10</SelectItem>
-                                                    <SelectItem value="20">20</SelectItem>
-                                                    <SelectItem value="50">50</SelectItem>
-                                                    <SelectItem value="100">100</SelectItem>
-                                                </SelectGroup>
-                                            </SelectContent>
-                                        </Select>
-                                        <Button variant="outline" type="button" onClick={submitPerPage} className="flex items-center gap-2 text-xs">
-                                            Tampilkan
-                                        </Button>
-                                    </div>
-                                    <div className="text-xs text-gray-600">
-                                        {' '}
-                                        halaman {balita?.from} ke {balita?.to} dari {balita?.total} total
-                                    </div>
-                                </div>
-                                <PaginationTable links={balita?.links ?? []} data={filter} />
-                            </div>
+
                     </div>
                 </div>
             </div>

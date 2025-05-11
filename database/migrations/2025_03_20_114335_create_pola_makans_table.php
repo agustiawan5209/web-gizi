@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('pemeriksaan_id')->constrained('pemeriksaans')->cascadeOnDelete();
             $table->text('rekomendasi')->comment('rekomendasi makanan untuk anak');
-            $table->text('catatan_dokter');
+            $table->text('catatan_dokter')->nullable();
             $table->timestamps();
         });
     }

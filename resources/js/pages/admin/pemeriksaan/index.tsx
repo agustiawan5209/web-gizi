@@ -204,43 +204,12 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
                     <div className="flex w-full flex-1 flex-col items-start justify-start gap-4 md:gap-7 lg:px-4 lg:py-2 lg:flex-row lg:items-center lg:justify-between">
                         <div className="flex w-full flex-1 flex-wrap gap-7 lg:px-4 lg:py-2 md:items-start lg:flex-row">
                             {can.add && (
-                                <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                                    <DialogTrigger asChild>
+                                <Link href={route('pemeriksaan.create-id')}>
                                         <Button type="button" size="lg" tabIndex={4} className="bg-primary flex cursor-pointer items-center gap-2">
                                             Tambah Data
                                         </Button>
-                                    </DialogTrigger>
-                                    <DialogContent>
-                                        <DialogTitle>Pilih Cara Penambahan Data!!</DialogTitle>
-                                        <DialogDescription>
-                                            <section className="flex gap-4">
-                                                <div className="block space-y-3 border-x p-4">
-                                                    <p className="text-left">Tambah Data Dengan Memilih berdasarkan id Bayi</p>
-                                                    <Link href={route('pemeriksaan.create-id')} className="col-span-1 cursor-pointer">
-                                                        <Button
-                                                            type="button"
-                                                            className="flex w-full cursor-pointer items-center gap-2 bg-blue-500 hover:bg-blue-600"
-                                                        >
-                                                            Mulai
-                                                        </Button>
-                                                    </Link>
-                                                </div>
-                                                <div className="block space-y-3 border-x p-4">
-                                                    <p>Tambah Data pemeriksaan secara langsung dengan menginputkan data bayi</p>
-                                                    <Link href={route('pemeriksaan.create')} className="col-span-1 cursor-pointer">
-                                                        <Button
-                                                            type="button"
-                                                            className="flex w-full cursor-pointer items-center gap-2 bg-blue-500 hover:bg-blue-600"
-                                                        >
-                                                            Mulai
-                                                        </Button>
-                                                    </Link>
-                                                </div>
-                                            </section>
-                                        </DialogDescription>
-                                        <DialogClose />
-                                    </DialogContent>
-                                </Dialog>
+
+                                </Link>
                             )}
                             <div className="col-span-full lg:col-span-2 flex flex-wrap items-center gap-2">
                                 <label htmlFor="search" className="sr-only">

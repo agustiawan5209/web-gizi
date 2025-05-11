@@ -118,7 +118,6 @@ Route::middleware(['auth', 'verified', 'role:admin,orangtua',])->group(function 
             // Show all pemeriksaans
             Route::get('/', 'index')->name('index');
             // Create a pemeriksaan
-            Route::get('/create', 'create')->name('create');
             Route::get('/create-id', 'createById')->name('create-id');
 
             // Edit a pemeriksaan
@@ -128,7 +127,6 @@ Route::middleware(['auth', 'verified', 'role:admin,orangtua',])->group(function 
 
             // Store a pemeriksaan
             Route::post('/store', 'store')->name('store');
-            Route::post('/store-id', 'storeByBalita')->name('store-id');
             // Update a pemeriksaan
             Route::put('/update/{pemeriksaan}', 'update')->name('update');
             // Delete a pemeriksaan

@@ -91,8 +91,8 @@ class PemeriksaanController extends Controller
         }
 
         $user = Auth::user();
-        if($user->hasRole('orangtua')){
-            $query->wherehas('balita', function($query) use($user){
+        if ($user->hasRole('orangtua')) {
+            $query->wherehas('balita', function ($query) use ($user) {
                 $query->where('orang_tua_id', $user->id);
             });
         }
@@ -101,21 +101,34 @@ class PemeriksaanController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        return Inertia::render('admin/pemeriksaan/create', [
-            'attribut' => Attribut::orderBy('id')
-                ->whereNotIn('nama', ['jenis kelamin', 'status'])
-                ->get(),
-            'orangtua' => User::withoutRole('admin')->get(),
-            'label' => array_map(fn($label) => ['nama' => $label], self::STATUS_LABELS),
-            'breadcrumb' => array_merge(self::BASE_BREADCRUMB, [
-                [
-                    'title' => 'tambah pemeriksaan',
-                    'href' => '/pemeriksaan/create',
-                ],
-            ]),
-        ]);
+    public function getClassification($request){
+
+        $datauji = $request->input('attribut');
+        $detailRecords = [];
+        $attributes = Attribut::all()->toArray();
+        foreach ($attributes as $key => $value) {
+            $attributes_id = $value['id'];
+            $attributes_nama = strtolower($value['nama']);
+
+            if ($attributes_nama !== 'status') {
+
+                $filtered = array_filter($datauji, fn($val) => $val['attribut_id'] == $attributes_id);
+
+                $firstMatch = reset($filtered); // ambil elemen pertama
+
+                $detailRecords[$attributes_nama] = $firstMatch['nilai'] ?? 0;
+            }
+            if($attributes_nama === 'jenis kelamin' || $attributes_nama === 'jenkel'){
+                $detailRecords[$attributes_nama] = $request->input('jenis_kelamin');
+            }
+        }
+         $naive = new NaiveBayesController(null, $detailRecords);
+        $klasifikasi = $naive->generate();
+
+        if($klasifikasi['success']){
+            $label = $klasifikasi['hasil_prediksi'];
+            return $label;
+        }
     }
 
     public function createById()
@@ -136,42 +149,34 @@ class PemeriksaanController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StorePemeriksaanRequest $request)
+    public function store(StorePemeriksaanBalitaIdRequest $request)
     {
-        try {
-            $balitaData = $request->except('attribut', 'tanggal_pemeriksaan');
-            $balita = Balita::create($balitaData);
 
-            $pemeriksaanData = [
-                'balita_id' => $balita->id,
-                'data_balita' => json_encode($balita),
-                'data_pemeriksaan' => json_encode($request->input('attribut')),
-                'tgl_pemeriksaan' => $request->input('tanggal_pemeriksaan'),
-            ];
-            $pemeriksaan = Pemeriksaan::create($pemeriksaanData);
+        $datauji = $request->input('attribut');
+        $detailRecords = [];
+        $attributes = Attribut::all()->toArray();
+        foreach ($attributes as $key => $value) {
+            $attributes_id = $value['id'];
+            $attributes_nama = strtolower($value['nama']);
 
-            $this->createDetailPemeriksaan($pemeriksaan, $request->input('attribut'), $balita->jenis_kelamin);
-            $this->classifyAndUpdateLabel($pemeriksaan);
+            if ($attributes_nama !== 'status') {
 
-            return redirect()
-                ->route('pola-makan.index', ['pemeriksaan' => $pemeriksaan->id])
-                ->with('success', 'Data pemeriksaan berhasil ditambahkan!');
-        } catch (\Exception $exception) {
-            $pemeriksaan = Pemeriksaan::latest()->first();
-            if ($pemeriksaan) {
-                $pemeriksaan->delete();
+                $filtered = array_filter($datauji, fn($val) => $val['attribut_id'] == $attributes_id);
+
+                $firstMatch = reset($filtered); // ambil elemen pertama
+
+                $detailRecords[$attributes_nama] = $firstMatch['nilai'] ?? 0;
             }
-            $balita->delete();
-            return redirect()
-                ->route('pemeriksaan.create')
-                ->with('error', $exception->getMessage());
+            if($attributes_nama === 'jenis kelamin' || $attributes_nama === 'jenkel'){
+                $detailRecords[$attributes_nama] = $request->input('jenis_kelamin');
+            }
         }
+         $naive = new NaiveBayesController(null, $detailRecords);
+        $klasifikasi = $naive->generate();
+        dd($detailRecords, $datauji, $klasifikasi);
     }
 
-    public function storeByBalita(StorePemeriksaanBalitaIdRequest $request)
+    public function restore(StorePemeriksaanBalitaIdRequest $request, Pemeriksaan $pemeriksaan)
     {
         try {
             $balita = Balita::findOrFail($request->balita_id);
@@ -195,9 +200,8 @@ class PemeriksaanController extends Controller
             if ($pemeriksaan) {
                 $pemeriksaan->delete();
             }
-            $balita->delete();
             return redirect()
-                ->route('pemeriksaan.create')
+                ->route('pemeriksaan.create-id')
                 ->with('error', $exception->getMessage());
         }
     }

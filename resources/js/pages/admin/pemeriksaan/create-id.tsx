@@ -53,7 +53,7 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut }: Peme
         tanggal_lahir: '',
         jenis_kelamin: '',
         tanggal_pemeriksaan: '',
-        attribut: attribut.map((attr) => ({ nilai: '', attribut_id: attr.id })),
+        attribut: attribut.map((attr) => ({ nilai: '11', attribut_id: attr.id })),
     });
 
     const [idBalita, setIdBalita] = useState('');
@@ -79,7 +79,7 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut }: Peme
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        post(route('pemeriksaan.store-id'), {
+        post(route('pemeriksaan.store'), {
             onError: (err) => console.log(err),
         });
     };

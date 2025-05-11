@@ -36,29 +36,12 @@ class BalitaController extends Controller
 
         if ($request->filled('order_by')) {
             $orderBy = $request->input('order_by');
-            if (in_array($orderBy, ['asc', 'desc'])) {
-                $query->orderBy('created_at', $orderBy);
-            } else if(in_array($orderBy, ['A-Z', 'Z-A'])) {
-                if($orderBy == 'A-Z') {
-                    $query->orderBy('name', 'asc');
-                }else {
-                    $query->orderBy('name', 'desc');
-                }
-            }else if(in_array($orderBy, ['Laki-laki','Perempuan'])){
+            if(in_array($orderBy, ['Laki-laki','Perempuan'])){
                 $query->searchByJenkel($orderBy);
-            }
-            else {
-                // Handle invalid order_by value
-                return redirect()->back()->withErrors(['order_by' => 'Invalid order_by value']);
             }
         }
 
-        try {
-            $balita = $query->with(['orangtua'])->paginate($request->input('per_page', 10));
-        } catch (\Exception $e) {
-            // Handle pagination error
-            return redirect()->back()->withErrors(['pagination' => 'Pagination failed: ' . $e->getMessage()]);
-        }
+        $balita = $query->with(['orangtua'])->get();
 
         return Inertia::render('orangtua/balita/index', [
             'balita' => $balita,
