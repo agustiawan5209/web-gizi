@@ -137,6 +137,10 @@
                         <td style="font-size: 10px;">{{ $pemeriksaan[$item] }}</td>
                     @endforeach
                 </tr>
+                <tr>
+                    <th  style="font-size: 10px;" colspan="1">Rekomendasi</th>
+                    <td  style="font-size: 10px;" colspan="{{ count($attribut) - 1 }}">{!! $polamakan['rekomendasi'] !!}</td>
+                </tr>
             </tbody>
         </table>
     </div>

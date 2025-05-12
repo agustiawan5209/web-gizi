@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Balita;
 use App\Models\Attribut;
+use App\Models\PolaMakan;
 use App\Models\Pemeriksaan;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -69,6 +70,7 @@ class LaporanController extends Controller
     {
         $attributes = Attribut::all()->toArray();
         $datapemeriksaan = Pemeriksaan::find($request->pemeriksaan);
+        $polaMakan = PolaMakan::where('pemeriksaan_id', $request->pemeriksaan)->first();
         // Ambil data dari database
         $balita->load(['orangtua']);
 
@@ -86,6 +88,7 @@ class LaporanController extends Controller
             'orangTua' => $balita->orangtua,
             'balita' => $balita,
             'pemeriksaan' => $datauji,
+            'polamakan' => $polaMakan,
             'detail' => $datapemeriksaan->with(['detailpemeriksaan']),
             'attribut' => array_map('strtolower', array_column($attributes, 'nama')),
 
@@ -100,6 +103,6 @@ class LaporanController extends Controller
         // return $pdf->download('laporan_pemeriksaan_balita.pdf');
 
         // Atau untuk preview:
-        return $pdf->download('laporan_pemeriksaan.pdf');
+        return $pdf->stream('laporan_pemeriksaan.pdf');
     }
 }

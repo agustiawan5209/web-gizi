@@ -205,7 +205,7 @@ export default function BalitaEdit({ breadcrumb, orangtua , balita}: BalitaCreat
                                             id="tanggal_lahir"
                                             type="date"
                                             required
-                                            min={minDate}
+                                            max={minDate}
                                             tabIndex={2}
                                             autoComplete="tanggal_lahir"
                                             value={data.tanggal_lahir}
