@@ -75,7 +75,7 @@
 <body>
     <div class="header">
         <h1>LAPORAN PEMERIKSAAN BALITA</h1>
-        <p>Posyandu Sehat Bahagia</p>
+        <p>Posyandu Bungung Barana Selatan, Desa Bontomatene Kec. Turatea Kab. Jeneponto</p>
     </div>
 
     <!-- Data Orang Tua -->
@@ -110,12 +110,8 @@
                 <td>{{ \Carbon\Carbon::parse($balita->tanggal_lahir)->format('d F Y') }}</td>
             </tr>
             <tr>
-                <th>Usia</th>
-                <td>{{ $balita->usia }} bulan</td>
-            </tr>
-            <tr>
                 <th>Jenis Kelamin</th>
-                <td>{{ $balita->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</td>
+                <td>{{ $balita->jenis_kelamin }}</td>
             </tr>
         </table>
     </div>
