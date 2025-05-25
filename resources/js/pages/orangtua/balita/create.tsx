@@ -22,6 +22,7 @@ type CreateForm = {
     tempat_lahir: string;
     tanggal_lahir: string;
     jenis_kelamin: string;
+    alamat: string;
 };
 
 export default function BalitaCreate({ breadcrumb, orangtua }: BalitaCreaterops) {
@@ -39,6 +40,7 @@ export default function BalitaCreate({ breadcrumb, orangtua }: BalitaCreaterops)
         tempat_lahir: '',
         tanggal_lahir: '',
         jenis_kelamin: '',
+        alamat: '',
     });
 
     /**
@@ -138,6 +140,21 @@ export default function BalitaCreate({ breadcrumb, orangtua }: BalitaCreaterops)
                                         labelClassName="text-gray-800 dark:text-white"
                                     />
                                     <InputError message={errors.jenis_kelamin} />
+                                </div>
+                                <div className="col-span-1 grid gap-2">
+                                    <Label htmlFor="alamat">Alamat</Label>
+                                    <Input
+                                        id="alamat"
+                                        type="text"
+                                        required
+                                        tabIndex={2}
+                                        autoComplete="alamat"
+                                        value={data.alamat}
+                                        onChange={(e) => setData('alamat', e.target.value)}
+                                        disabled={processing}
+                                        placeholder="alamat......."
+                                    />
+                                    <InputError message={errors.alamat} />
                                 </div>
 
                                 <Button type="submit" variant={'secondary'} className="mt-2 w-full" tabIndex={5} disabled={processing}>

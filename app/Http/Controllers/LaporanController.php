@@ -87,9 +87,9 @@ class LaporanController extends Controller
         $data = [
             'orangTua' => $balita->orangtua,
             'balita' => $balita,
-            'pemeriksaan' => $datauji,
+            'pemeriksaan' => $datapemeriksaan,
             'polamakan' => $polaMakan,
-            'detail' => $datapemeriksaan->with(['detailpemeriksaan']),
+            'detail' => $datauji,
             'attribut' => array_map('strtolower', array_column($attributes, 'nama')),
 
         ];

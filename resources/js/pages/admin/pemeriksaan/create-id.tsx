@@ -10,16 +10,22 @@ import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import axios from 'axios';
 import { LoaderCircle, SquareCheck } from 'lucide-react';
-import { FormEventHandler, useEffect, useMemo, useState } from 'react';
+import React, { FormEventHandler, HTMLAttributes, useMemo, useState } from 'react';
+export interface BalitaTypes {
+    id: string;
+    nama: string;
+    tanggal_lahir: string;
+    tempat_lahir: string;
+    orangtua: {
+        name: string;
+    };
+    jenis_kelamin: string;
+    alamat: string;
+}
+
 export interface PemeriksaanCreateProps {
     breadcrumb?: { title: string; href: string }[];
-    balita: {
-        id: string;
-        nama: string;
-        tanggal_lahir: string;
-        tempat_lahir: string;
-        jenis_kelamin: string;
-    }[];
+    balita: BalitaTypes[];
     attribut: {
         id: string;
         nama: string;
@@ -63,25 +69,18 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut }: Peme
     });
 
     const [idBalita, setIdBalita] = useState('');
-
-    const searchById = (search: string): PemeriksaanCreateProps['balita'][0] | null => {
-        if (!balita || !search) return null;
-        return balita.find((element) => String(element.id).includes(search)) ?? null;
-    };
-
-    useEffect(() => {
-        if (idBalita) {
-            const listbalita = searchById(idBalita);
-
-            setData('balita_id', idBalita);
-            if (listbalita) {
-                setData('nama', listbalita.nama);
-                setData('tempat_lahir', listbalita.tempat_lahir);
-                setData('tanggal_lahir', listbalita.tanggal_lahir);
-                setData('jenis_kelamin', listbalita.jenis_kelamin);
-            }
+    const [listBalita, setListBalita] = useState<BalitaTypes | null>(null);
+    const searchById = (search: string): void => {
+        const data = balita.find((element) => String(element.id).includes(search)) ?? null;
+        if (data) {
+            setData('balita_id', data.id);
+            setListBalita(data as BalitaTypes);
+            setData('nama', data.nama);
+            setData('tempat_lahir', data.tempat_lahir);
+            setData('tanggal_lahir', data.tanggal_lahir);
+            setData('jenis_kelamin', data.jenis_kelamin);
         }
-    }, [idBalita]);
+    };
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
@@ -96,7 +95,8 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut }: Peme
         setOpenDialog(true);
     };
     const [isLoading, setIsLoading] = useState(false);
-    const submitClass = async () => {
+    const submitClass = async (e: React.FormEvent) => {
+        e.preventDefault();
         setIsLoading(true);
         await axios
             .get(route('pemeriksaan.create-classification'), {
@@ -144,11 +144,11 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut }: Peme
             <div className="dark:bg-elevation-1 flex h-full flex-1 flex-col gap-4 rounded-xl p-1 lg:p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
                     <div className="p-4 md:p-6">
-                        <form className="flex flex-col gap-6">
+                        <form onSubmit={submitClass} className="flex flex-col gap-6">
                             <div className="grid gap-6">
                                 <div className="grid gap-2">
                                     <Label htmlFor="nama">Pilih Berdasarkan Nama Balita</Label>
-                                    <Select value={idBalita} onValueChange={(value) => setIdBalita(value)} disabled={isLoading}>
+                                    <Select value={idBalita} onValueChange={(value) => searchById(value)} disabled={isLoading}>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Pilih Balita" />
                                         </SelectTrigger>
@@ -165,142 +165,154 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut }: Peme
                                     </Select>
                                     <InputError message={errors.balita_id} className="mt-2" />
                                 </div>
+                                <div className="flex items-center gap-4 border-b">
+                                    <Label htmlFor="tanggal_pemeriksaan">Tanggal Pemeriksaan</Label>
 
-                                <div className="grid gap-2">
-                                    <Label htmlFor="nama">Nama</Label>
-                                    <Input
-                                        id="nama"
-                                        type="text"
-                                        required
-                                        autoFocus
-                                        tabIndex={1}
-                                        autoComplete="nama"
-                                        value={data.nama}
-                                        onChange={(e) => setData('nama', e.target.value)}
-                                        readOnly={true}
-                                        disabled={isLoading}
-                                        placeholder="Nama Balita"
-                                    />
-                                    <InputError message={errors.nama} className="mt-2" />
-                                </div>
-
-                                <div className="flex items-center gap-2">
-                                    <div className="col-span-1 grid gap-2">
-                                        <Label htmlFor="tempat_lahir">Tempat</Label>
+                                    <div className="block">
                                         <Input
-                                            id="tempat_lahir"
-                                            type="text"
-                                            required
-                                            tabIndex={2}
-                                            autoComplete="tempat_lahir"
-                                            value={data.tempat_lahir}
-                                            disabled={isLoading}
-                                            onChange={(e) => setData('tempat_lahir', e.target.value)}
-                                            readOnly={true}
-                                            placeholder="Tempat lahir"
-                                        />
-                                        <InputError message={errors.tempat_lahir} />
-                                    </div>
-                                    <div className="col-span-2 grid gap-2">
-                                        <Label htmlFor="tanggal_lahir">Tanggal Lahir</Label>
-                                        <Input
-                                            id="tanggal_lahir"
+                                            id="tanggal_pemeriksaan"
                                             type="date"
+                                            className="w-max"
                                             required
                                             tabIndex={2}
-                                            autoComplete="tanggal_lahir"
-                                            value={data.tanggal_lahir}
+                                            autoComplete="tanggal_pemeriksaan"
+                                            value={data.tanggal_pemeriksaan}
+                                            onChange={(e) => setData('tanggal_pemeriksaan', e.target.value)}
                                             disabled={isLoading}
-                                            onChange={(e) => setData('tanggal_lahir', e.target.value)}
-                                            readOnly={true}
                                         />
-                                        <InputError message={errors.tanggal_lahir} />
+                                        <InputError message={errors.tanggal_pemeriksaan} />
                                     </div>
                                 </div>
+                                <TableContainer>
+                                    <Table>
+                                        <TableBody>
+                                            <TableRow>
+                                                <TableColumn>
+                                                    <Label htmlFor="nama">Nama</Label>
+                                                    <Input
+                                                        id="nama"
+                                                        type="text"
+                                                        required
+                                                        autoFocus
+                                                        tabIndex={1}
+                                                        autoComplete="nama"
+                                                        value={data.nama}
+                                                        onChange={(e) => setData('nama', e.target.value)}
+                                                        readOnly={true}
+                                                        disabled={isLoading}
+                                                        placeholder="Nama Balita"
+                                                    />
+                                                    <InputError message={errors.nama} className="mt-2" />
+                                                </TableColumn>
+                                                <TableColumn>
+                                                    <Label htmlFor="jenis_kelamin">Jenis Kelamin</Label>
+                                                    <Input
+                                                        id="jenis_kelamin"
+                                                        type="text"
+                                                        required
+                                                        tabIndex={2}
+                                                        autoComplete="jenis_kelamin"
+                                                        value={data.jenis_kelamin}
+                                                        disabled={isLoading}
+                                                        onChange={(e) => setData('jenis_kelamin', e.target.value)}
+                                                        readOnly={true}
+                                                    />
+                                                    <InputError message={errors.jenis_kelamin} />
+                                                </TableColumn>
 
-                                <div className="grid gap-2">
-                                    <Label htmlFor="jenis_kelamin">Jenis Kelamin</Label>
-                                    <Input
-                                        id="jenis_kelamin"
-                                        type="text"
-                                        required
-                                        tabIndex={2}
-                                        autoComplete="jenis_kelamin"
-                                        value={data.jenis_kelamin}
-                                        disabled={isLoading}
-                                        onChange={(e) => setData('jenis_kelamin', e.target.value)}
-                                        readOnly={true}
-                                    />
-                                    <InputError message={errors.jenis_kelamin} />
-                                </div>
-                                <div className="block py-2">
-                                    <TableContainer>
-                                        <Table>
-                                            <TableHead>
-                                                <TableRow>
-                                                    <TableTh>Attribut</TableTh>
-                                                    <TableTh>Input</TableTh>
-                                                </TableRow>
-                                            </TableHead>
-                                            <TableBody>
-                                                <TableRow>
-                                                    <TableColumn>
-                                                        <Label htmlFor="tanggal_pemeriksaan">Tanggal Pemeriksaan</Label>
-                                                    </TableColumn>
-                                                    <TableColumn>
-                                                        <Input
-                                                            id="tanggal_pemeriksaan"
-                                                            type="date"
-                                                            className="w-max"
-                                                            required
-                                                            tabIndex={2}
-                                                            autoComplete="tanggal_pemeriksaan"
-                                                            value={data.tanggal_pemeriksaan}
-                                                            onChange={(e) => setData('tanggal_pemeriksaan', e.target.value)}
-                                                            disabled={isLoading}
-                                                        />
-                                                        <InputError message={errors.tanggal_pemeriksaan} />
-                                                    </TableColumn>
-                                                </TableRow>
-                                                {attribut
-                                                    .filter((item) => !['jenis kelamin', 'status'].includes(item.nama.toLowerCase()))
-                                                    .map((item, index) => (
-                                                        <TableRow key={item.id}>
-                                                            <TableColumn>{item.nama}</TableColumn>
-                                                            <TableColumn>
+                                                <TableColumn>
+                                                    <div className="col-span-1 block">
+                                                        <Label htmlFor="tempat_lahir">Tempat/Tanggal Lahir</Label>
+                                                        <div className="item-center flex gap-0">
+                                                            <div>
                                                                 <Input
-                                                                    type="number"
-                                                                    id={`kriteria.${index}`}
-                                                                    value={data.attribut[index].nilai}
+                                                                    id="tempat_lahir"
+                                                                    type="text"
+                                                                    required
+                                                                    tabIndex={2}
+                                                                    autoComplete="tempat_lahir"
+                                                                    value={data.tempat_lahir}
                                                                     disabled={isLoading}
-                                                                    onChange={(e) =>
-                                                                        setData(
-                                                                            'attribut',
-                                                                            data.attribut.map((val, i) =>
-                                                                                i === index ? { nilai: e.target.value, attribut_id: item.id } : val,
-                                                                            ),
-                                                                        )
-                                                                    }
+                                                                    onChange={(e) => setData('tempat_lahir', e.target.value)}
+                                                                    readOnly={true}
+                                                                    placeholder="Tempat lahir"
                                                                 />
-                                                                <InputError message={(errors as any)[`attribut.${index}.nilai`]} />
-                                                                <InputError message={(errors as any)[`attribut.${index}.attribut_id`]} />
-                                                            </TableColumn>
-                                                        </TableRow>
-                                                    ))}
-                                            </TableBody>
-                                        </Table>
-                                    </TableContainer>
-                                </div>
+                                                                <InputError message={errors.tempat_lahir} />
+                                                            </div>
+                                                            <div className="col-span-2 grid gap-2">
+                                                                <Input
+                                                                    id="tanggal_lahir"
+                                                                    type="date"
+                                                                    required
+                                                                    tabIndex={2}
+                                                                    autoComplete="tanggal_lahir"
+                                                                    value={data.tanggal_lahir}
+                                                                    disabled={isLoading}
+                                                                    onChange={(e) => setData('tanggal_lahir', e.target.value)}
+                                                                    readOnly={true}
+                                                                />
+                                                                <InputError message={errors.tanggal_lahir} />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </TableColumn>
+                                            </TableRow>
 
+                                            <TableRow>
+                                                <TableColumn className='font-normal text-base'>Nama OrangTua </TableColumn>
+                                                <TableColumn className='font-normal text-base'>:{listBalita?.orangtua.name}</TableColumn>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableColumn className='font-normal text-base'>Alamat </TableColumn>
+                                                <TableColumn className='font-normal text-base'>:{listBalita?.alamat}</TableColumn>
+                                            </TableRow>
+                                        </TableBody>
+                                    </Table>
+                                    <Table>
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableTh colSpan={2} className="text-center">
+                                                    Data Antropometri:
+                                                </TableTh>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {attribut
+                                                .filter((item) => !['jenis kelamin', 'status'].includes(item.nama.toLowerCase()))
+                                                .map((item, index) => (
+                                                    <TableRow key={item.id}>
+                                                        <TableColumn>{item.nama}</TableColumn>
+                                                        <TableColumn>
+                                                            <Input
+                                                                type="number"
+                                                                id={`kriteria.${index}`}
+                                                                value={data.attribut[index].nilai}
+                                                                disabled={isLoading}
+                                                                onChange={(e) =>
+                                                                    setData(
+                                                                        'attribut',
+                                                                        data.attribut.map((val, i) =>
+                                                                            i === index ? { nilai: e.target.value, attribut_id: item.id } : val,
+                                                                        ),
+                                                                    )
+                                                                }
+                                                            />
+                                                            <InputError message={(errors as any)[`attribut.${index}.nilai`]} />
+                                                            <InputError message={(errors as any)[`attribut.${index}.attribut_id`]} />
+                                                        </TableColumn>
+                                                    </TableRow>
+                                                ))}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
                                 <Button
-                                    type="button"
-                                    onClick={submitClass}
+                                    type="submit"
                                     variant="secondary"
                                     className="mt-2 w-full"
                                     tabIndex={5}
                                     disabled={isLoading}
                                 >
-                                    {isLoading && <LoaderCircle className="h-4 w-4 animate-spin" />} Simpan
+                                    {isLoading && <LoaderCircle className="h-4 w-4 animate-spin" />} Proses Klasifikasi
                                 </Button>
                             </div>
                         </form>

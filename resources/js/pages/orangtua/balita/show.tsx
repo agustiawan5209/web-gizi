@@ -1,9 +1,10 @@
 import GrowthChart from '@/components/chart/GrowthChart';
 import FileDownloader from '@/components/FileDownloader';
+import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableColumn, TableContainer, TableHead, TableRow, TableTh } from '@/components/ui/table';
-import AppLayout from '@/layouts/app-layout';
+import GuestLayout from '@/layouts/guest-layout';
 import { SharedData, type BreadcrumbItem } from '@/types';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { useMemo } from 'react';
 
 interface OrangTua {
@@ -18,6 +19,7 @@ interface Balita {
     tanggal_lahir: string;
     usia: string;
     jenis_kelamin: string;
+    alamat: string;
 }
 
 interface Pemeriksaan {
@@ -79,32 +81,38 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, attribu
         console.error('Download failed:', error);
     };
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <GuestLayout head="detail">
             <Head title="Detail Pemeriksaan" />
             <div className="dark:bg-elevation-1 flex h-full flex-1 flex-col gap-4 rounded-xl p-1 lg:p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
                     <div className="mx-auto max-w-full rounded-lg bg-white p-2 shadow-lg dark:bg-gray-900 dark:text-white">
-                        <h2 className="mb-6 text-xl font-bold tracking-tight">Detail Pemeriksaan</h2>
-
+                        <div className="flex w-full items-center justify-start pb-5">
+                            <Link href={route('dashboard')}>
+                                <Button variant="secondary">Kembali</Button>
+                            </Link>
+                        </div>
+                        <h2 className="text-center text-2xl font-bold tracking-tight">Detail Pemeriksaan</h2>
                         <div className="grid grid-cols-1 gap-8 md:gap-4">
                             <TableContainer>
                                 <Table className="w-full border-collapse">
                                     <TableHead>
-                                       {(pemeriksaan ?? []).length > 0 && <TableRow>
-                                            <TableTh
-                                                colSpan={2}
-                                                className="text-foreground bg-blue-100 p-4 text-left text-lg font-semibold md:text-xl dark:bg-gray-800"
-                                            >
-                                                <FileDownloader
-                                                    pdfUrl={route('laporan.index', { balita: balita.id })}
-                                                    fileName="Laporan-Pemeriksaan.pdf"
-                                                    buttonText="Cetak File"
-                                                    onDownloadStart={handleDownloadStart}
-                                                    onDownloadSuccess={handleDownloadSuccess}
-                                                    onDownloadError={handleDownloadError}
-                                                />
-                                            </TableTh>
-                                        </TableRow>}
+                                        {(pemeriksaan ?? []).length > 0 && (
+                                            <TableRow>
+                                                <TableTh
+                                                    colSpan={2}
+                                                    className="text-foreground bg-blue-100 p-4 text-left text-lg font-semibold md:text-xl dark:bg-gray-800"
+                                                >
+                                                    <FileDownloader
+                                                        pdfUrl={route('laporan.index', { balita: balita.id })}
+                                                        fileName="Laporan-Pemeriksaan.pdf"
+                                                        buttonText="Cetak File"
+                                                        onDownloadStart={handleDownloadStart}
+                                                        onDownloadSuccess={handleDownloadSuccess}
+                                                        onDownloadError={handleDownloadError}
+                                                    />
+                                                </TableTh>
+                                            </TableRow>
+                                        )}
                                         <TableRow>
                                             <TableTh
                                                 colSpan={2}
@@ -123,6 +131,10 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, attribu
                                         <TableRow className="border-b">
                                             <TableColumn className="text-foreground p-3 font-medium">Email Orang Tua</TableColumn>
                                             <TableColumn className="p-3">{orangTua.email}</TableColumn>
+                                        </TableRow>
+                                        <TableRow className="border-b">
+                                            <TableColumn className="text-foreground p-3 font-medium">Alamat</TableColumn>
+                                            <TableColumn className="p-3">{balita.alamat}</TableColumn>
                                         </TableRow>
 
                                         {/* Child Data */}
@@ -165,6 +177,7 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, attribu
                                                 <TableTh className="w-10">No.</TableTh>
                                                 <TableTh className="px-0">Tanggal Pemeriksaan</TableTh>
                                                 {attribut.length > 0 && attribut.map((item) => <TableTh key={item.id}> {item.nama}</TableTh>)}
+                                                <TableTh>Cetak</TableTh>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
@@ -179,6 +192,19 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, attribu
                                                                     {searchById(attributs.id, item.detailpemeriksaan)}
                                                                 </TableColumn>
                                                             ))}
+                                                        <TableColumn>
+                                                            <FileDownloader
+                                                                pdfUrl={route('laporan.pemeriksaan', {
+                                                                    balita: balita.id,
+                                                                    pemeriksaan: item.id,
+                                                                })}
+                                                                fileName="Laporan-Pemeriksaan.pdf"
+                                                                buttonText="Cetak File"
+                                                                onDownloadStart={handleDownloadStart}
+                                                                onDownloadSuccess={handleDownloadSuccess}
+                                                                onDownloadError={handleDownloadError}
+                                                            />
+                                                        </TableColumn>
                                                     </TableRow>
                                                 ))}
                                         </TableBody>
@@ -194,6 +220,6 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, attribu
                     </div>
                 </div>
             </div>
-        </AppLayout>
+        </GuestLayout>
     );
 }

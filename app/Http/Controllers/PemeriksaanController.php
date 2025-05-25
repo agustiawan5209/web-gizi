@@ -110,7 +110,7 @@ class PemeriksaanController extends Controller
                 ->whereNotIn('nama', ['jenis kelamin', 'status'])
                 ->get(),
             'orangtua' => User::withoutRole('admin')->get(),
-            'balita' => Balita::orderBy('id')->get(),
+            'balita' => Balita::orderBy('id')->with(['orangtua'])->get(),
             'label' => array_map(fn($label) => ['nama' => $label], self::STATUS_LABELS),
             'breadcrumb' => array_merge(self::BASE_BREADCRUMB, [
                 [

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('tempat_lahir');
             $table->date('tanggal_lahir');
             $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan']);
+            $table->text('alamat')->nullable();
             $table->foreignId('orang_tua_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });

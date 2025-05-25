@@ -18,6 +18,7 @@ interface Balita {
     tanggal_lahir: string;
     usia: string;
     jenis_kelamin: string;
+    alamat: string;
 }
 
 interface Pemeriksaan {
@@ -123,6 +124,10 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, attribu
                                         <TableRow className="border-b">
                                             <TableColumn className="text-foreground p-3 font-medium">Email Orang Tua</TableColumn>
                                             <TableColumn className="p-3">{orangTua.email}</TableColumn>
+                                        </TableRow>
+                                          <TableRow className="border-b">
+                                            <TableColumn className="text-foreground p-3 font-medium">Alamat</TableColumn>
+                                            <TableColumn className="p-3">{balita.alamat}</TableColumn>
                                         </TableRow>
 
                                         {/* Child Data */}

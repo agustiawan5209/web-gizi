@@ -198,6 +198,7 @@ export default function BalitaIndex({ balita, breadcrumb, filter }: BalitaProps)
                                         <TableTh>Nama</TableTh>
                                         <TableTh>Tempat/Tanggal Lahir</TableTh>
                                         <TableTh>Jenis Kelamin</TableTh>
+                                        <TableTh>Alamat</TableTh>
                                         <TableTh>Aksi</TableTh>
                                     </TableRow>
                                 </TableHead>
@@ -210,6 +211,7 @@ export default function BalitaIndex({ balita, breadcrumb, filter }: BalitaProps)
                                                 <TableColumn> {item.nama} </TableColumn>
                                                 <TableColumn> {item.tempat_lahir}/ {item.tanggal_lahir} </TableColumn>
                                                 <TableColumn> {item.jenis_kelamin} </TableColumn>
+                                                <TableColumn> {item.alamat} </TableColumn>
                                                 <TableAction
                                                     className="w-32"
                                                     show={route('admin.balita.show', { balita: item.id })}

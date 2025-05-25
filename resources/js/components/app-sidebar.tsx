@@ -14,17 +14,17 @@ const adminNavItems: NavItem[] = [
         icon: LucideHome,
     },
     {
-        title: 'orangtua',
+        title: 'Manajemen User',
         href: '/admin/orangtua/',
         icon: Folder,
     },
     {
-        title: 'Attribut',
+        title: 'Attribut Kriteria',
         href: '/admin/attribut/',
         icon: LayoutGrid,
     },
     {
-        title: 'Balita',
+        title: 'Kelola Balita',
         href: '/admin/balita/',
         icon: BookUser,
     },
@@ -34,7 +34,7 @@ const adminNavItems: NavItem[] = [
         icon: PlaySquare,
     },
     {
-        title: 'Dataset',
+        title: 'Implementasi Naive Bayes',
         href: '/admin/dataset/',
         icon: Table2Icon,
     },

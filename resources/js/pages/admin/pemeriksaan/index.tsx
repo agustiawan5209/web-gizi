@@ -206,7 +206,7 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
                             {can.add && (
                                 <Link href={route('pemeriksaan.create-id')}>
                                         <Button type="button" size="lg" tabIndex={4} className="bg-primary flex cursor-pointer items-center gap-2">
-                                            Tambah Data
+                                            Pemeriksaan Gizi
                                         </Button>
 
                                 </Link>

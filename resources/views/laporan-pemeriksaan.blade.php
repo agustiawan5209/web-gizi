@@ -24,7 +24,7 @@
         }
 
         .section {
-            margin-bottom: 25px;
+            margin-bottom: 10px;
             padding: 15px;
             border: 1px solid #eee;
             border-radius: 5px;
@@ -78,22 +78,18 @@
         <p>Posyandu Bungung Barana Selatan, Desa Bontomatene Kec. Turatea Kab. Jeneponto</p>
     </div>
 
-    <!-- Data Orang Tua -->
-    <div class="section">
-        <div class="section-title">DATA ORANG TUA</div>
-        <table class="data-table">
-            <tr>
-                <th width="30%">Nama Orang Tua</th>
-                <td>{{ $orangTua->name }}</td>
-            </tr>
-            <tr>
-                <th>Email</th>
-                <td>{{ $orangTua->email }}</td>
-            </tr>
-        </table>
-    </div>
-
     <!-- Data Balita -->
+    <table>
+        <tbody>
+            <tr>
+                <td>Tanggal Pemeriksaan : {{ $pemeriksaan['tgl_pemeriksaan'] }}</td>
+
+            </tr>
+            <tr>
+                <td>Alamat : {{ $balita->alamat }}</td>
+            </tr>
+        </tbody>
+    </table>
     <div class="section">
         <div class="section-title">DATA BALITA</div>
         <table class="data-table">
@@ -115,6 +111,21 @@
             </tr>
         </table>
     </div>
+    <!-- Data Orang Tua -->
+    <div class="section">
+        <div class="section-title">DATA ORANG TUA</div>
+        <table class="data-table">
+            <tr>
+                <th width="30%">Nama Orang Tua</th>
+                <td>{{ $orangTua->name }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ $orangTua->email }}</td>
+            </tr>
+        </table>
+    </div>
+
 
     <!-- Data Pemeriksaan -->
     <div class="section">
@@ -130,12 +141,16 @@
             <tbody>
                 <tr>
                     @foreach ($attribut as $item)
-                        <td style="font-size: 10px;">{{ $pemeriksaan[$item] }}</td>
+                        <td style="font-size: 10px;">{{ $detail[$item] }}</td>
                     @endforeach
                 </tr>
                 <tr>
-                    <th  style="font-size: 10px;" colspan="1">Rekomendasi</th>
-                    <td  style="font-size: 10px;" colspan="{{ count($attribut) - 1 }}">{!! $polamakan['rekomendasi'] !!}</td>
+                    <th style="font-size: 10px;" colspan="2">Hasil Klasifikasi (Status Gizi)</th>
+                    <td style="font-size: 10px;" colspan="{{ count($attribut) - 2 }}">{!! $pemeriksaan['label'] !!}</td>
+                </tr>
+                <tr>
+                    <th style="font-size: 10px;" colspan="2">Rekomendasi</th>
+                    <td style="font-size: 10px;" colspan="{{ count($attribut) - 2 }}">{!! $polamakan['rekomendasi'] !!}</td>
                 </tr>
             </tbody>
         </table>

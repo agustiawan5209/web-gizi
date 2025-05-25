@@ -26,6 +26,7 @@ class UpdateBalitaRequest extends FormRequest
             "tempat_lahir"=> "required|string|max:100",
             "tanggal_lahir"=> "required|date",
             "jenis_kelamin"=> "required|string|in:Laki-laki,Perempuan",
+             "alamat"=> "required|string|max:1000",
         ];
     }
 }
