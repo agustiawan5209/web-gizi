@@ -1,7 +1,7 @@
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
+import { Input, InputRadio } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableColumn, TableContainer, TableHead, TableRow, TableTh } from '@/components/ui/table';
@@ -10,7 +10,14 @@ import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import axios from 'axios';
 import { LoaderCircle, SquareCheck } from 'lucide-react';
-import React, { FormEventHandler, HTMLAttributes, useMemo, useState } from 'react';
+import React, { FormEventHandler, useCallback, useEffect, useMemo, useState } from 'react';
+interface OrangTua {
+    id: string;
+    name: string;
+    email: string;
+    password: string;
+}
+
 export interface BalitaTypes {
     id: string;
     nama: string;
@@ -30,14 +37,16 @@ export interface PemeriksaanCreateProps {
         id: string;
         nama: string;
     }[];
+    orangtua: OrangTua[];
 }
 
 type CreateForm = {
-    balita_id: string;
+    orang_tua_id: string;
     nama: string;
     tempat_lahir: string;
     tanggal_lahir: string;
     jenis_kelamin: string;
+    alamat: string;
     tanggal_pemeriksaan: string;
     attribut: {
         nilai: string;
@@ -48,7 +57,7 @@ type CreateForm = {
     detail: string[];
 };
 
-export default function PemeriksaanCreate({ breadcrumb, balita, attribut }: PemeriksaanCreateProps) {
+export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangtua }: PemeriksaanCreateProps) {
     // Memoize breadcrumbs to prevent unnecessary recalculations
     const breadcrumbs: BreadcrumbItem[] = useMemo(
         () => (breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : []),
@@ -56,31 +65,39 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut }: Peme
     );
 
     const { data, setData, get, post, processing, errors } = useForm<CreateForm>({
-        balita_id: '',
+        orang_tua_id: '',
         nama: '',
         tempat_lahir: '',
         tanggal_lahir: '',
         jenis_kelamin: '',
+        alamat: '',
         tanggal_pemeriksaan: '',
         attribut: attribut.map((attr) => ({ nilai: '0', attribut_id: attr.id })),
         label: '',
         rekomendasi: '',
         detail: [],
     });
+    // State for selected parent
+    const [selectedOrangtua, setSelectedOrangtua] = useState<OrangTua | null>(null);
+    const [idOrangTua, setIdOrangTua] = useState('');
+    // Optimized parent search function
+    const searchById = useCallback(
+        (search: string): OrangTua | null => {
+            if (!orangtua?.length || !search) return null;
+            return orangtua.find((element) => element.name === search) ?? null;
+        },
+        [orangtua],
+    );
 
-    const [idBalita, setIdBalita] = useState('');
-    const [listBalita, setListBalita] = useState<BalitaTypes | null>(null);
-    const searchById = (search: string): void => {
-        const data = balita.find((element) => String(element.id).includes(search)) ?? null;
-        if (data) {
-            setData('balita_id', data.id);
-            setListBalita(data as BalitaTypes);
-            setData('nama', data.nama);
-            setData('tempat_lahir', data.tempat_lahir);
-            setData('tanggal_lahir', data.tanggal_lahir);
-            setData('jenis_kelamin', data.jenis_kelamin);
+    // Effect for handling parent selection
+    useEffect(() => {
+        if (idOrangTua) {
+            const foundParent = searchById(idOrangTua);
+            console.log(foundParent);
+            setSelectedOrangtua(foundParent);
+            if (foundParent) setData('orang_tua_id', foundParent.id);
         }
-    };
+    }, [idOrangTua, searchById, setData]);
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
@@ -137,7 +154,11 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut }: Peme
 
         return `${tahun} tahun, ${bulan} bulan, ${hari} hari`;
     }
-
+    // Hitung tanggal minimum: 1 tahun lalu dari hari ini
+    const today = new Date();
+    const tahunLalu = new Date(today);
+    tahunLalu.setFullYear(today.getFullYear() - 1);
+    const minDate = tahunLalu.toISOString().split('T')[0];
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Create" />
@@ -146,24 +167,39 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut }: Peme
                     <div className="p-4 md:p-6">
                         <form onSubmit={submitClass} className="flex flex-col gap-6">
                             <div className="grid gap-6">
-                                <div className="grid gap-2">
-                                    <Label htmlFor="nama">Pilih Berdasarkan Nama Balita</Label>
-                                    <Select value={idBalita} onValueChange={(value) => searchById(value)} disabled={isLoading}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Pilih Balita" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectGroup>
-                                                <SelectLabel>Nama Balita</SelectLabel>
-                                                {balita.map((item) => (
-                                                    <SelectItem key={item.id} value={item.id}>
-                                                        {item.nama}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectGroup>
-                                        </SelectContent>
-                                    </Select>
-                                    <InputError message={errors.balita_id} className="mt-2" />
+                                <div className="grid gap-6">
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="orang_tua">Pilih Berdasarkan Nama Orang Tua</Label>
+                                        <Select value={idOrangTua} onValueChange={setIdOrangTua} disabled={processing}>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Pilih Orang Tua" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    <SelectLabel>Orang Tua</SelectLabel>
+                                                    {orangtua.map((item) => (
+                                                        <SelectItem key={item.id} value={item.name}>
+                                                            {item.name}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
+                                        <InputError message={errors.orang_tua_id} />
+                                    </div>
+
+                                    {selectedOrangtua && (
+                                        <div className="block space-y-4 rounded-lg border p-2">
+                                            <div className="flex gap-2">
+                                                <Label className="text-muted-foreground">Nama Orang Tua:</Label>
+                                                <Label className="font-normal">{selectedOrangtua.name}</Label>
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <Label className="text-muted-foreground">Email Orang Tua:</Label>
+                                                <Label className="font-normal">{selectedOrangtua.email}</Label>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="flex items-center gap-4 border-b">
                                     <Label htmlFor="tanggal_pemeriksaan">Tanggal Pemeriksaan</Label>
@@ -188,7 +224,8 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut }: Peme
                                         <TableBody>
                                             <TableRow>
                                                 <TableColumn>
-                                                    <Label htmlFor="nama">Nama</Label>
+                                                    <div className="grid gap-2">
+                                                        <Label htmlFor="nama">Nama</Label>
                                                     <Input
                                                         id="nama"
                                                         type="text"
@@ -198,26 +235,38 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut }: Peme
                                                         autoComplete="nama"
                                                         value={data.nama}
                                                         onChange={(e) => setData('nama', e.target.value)}
-                                                        readOnly={true}
+
                                                         disabled={isLoading}
                                                         placeholder="Nama Balita"
                                                     />
                                                     <InputError message={errors.nama} className="mt-2" />
+                                                    </div>
                                                 </TableColumn>
                                                 <TableColumn>
-                                                    <Label htmlFor="jenis_kelamin">Jenis Kelamin</Label>
-                                                    <Input
-                                                        id="jenis_kelamin"
-                                                        type="text"
-                                                        required
-                                                        tabIndex={2}
-                                                        autoComplete="jenis_kelamin"
-                                                        value={data.jenis_kelamin}
-                                                        disabled={isLoading}
-                                                        onChange={(e) => setData('jenis_kelamin', e.target.value)}
-                                                        readOnly={true}
-                                                    />
+                                                  <div className="grid gap-2">
+                                                      <Label htmlFor="jenis_kelamin">Jenis Kelamin</Label>
+                                                    <div className="flex gap-2">
+                                                        <InputRadio
+                                                            id="jenis1"
+                                                            name="jenis_kelaim"
+                                                            label="Laki-laki"
+                                                            value="Laki-laki"
+                                                            onChange={(e) => setData('jenis_kelamin', e.target.value)}
+                                                            className="border-red-500"
+                                                            labelClassName="text-gray-800 dark:text-white"
+                                                        />
+                                                        <InputRadio
+                                                            id="jenis2"
+                                                            name="jenis_kelaim"
+                                                            label="Perempuan"
+                                                            value="Perempuan"
+                                                            onChange={(e) => setData('jenis_kelamin', e.target.value)}
+                                                            className="border-red-500"
+                                                            labelClassName="text-gray-800 dark:text-white"
+                                                        />
+                                                    </div>
                                                     <InputError message={errors.jenis_kelamin} />
+                                                  </div>
                                                 </TableColumn>
 
                                                 <TableColumn>
@@ -233,8 +282,9 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut }: Peme
                                                                     autoComplete="tempat_lahir"
                                                                     value={data.tempat_lahir}
                                                                     disabled={isLoading}
+
                                                                     onChange={(e) => setData('tempat_lahir', e.target.value)}
-                                                                    readOnly={true}
+
                                                                     placeholder="Tempat lahir"
                                                                 />
                                                                 <InputError message={errors.tempat_lahir} />
@@ -248,8 +298,9 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut }: Peme
                                                                     autoComplete="tanggal_lahir"
                                                                     value={data.tanggal_lahir}
                                                                     disabled={isLoading}
+                                                                    max={minDate}
                                                                     onChange={(e) => setData('tanggal_lahir', e.target.value)}
-                                                                    readOnly={true}
+
                                                                 />
                                                                 <InputError message={errors.tanggal_lahir} />
                                                             </div>
@@ -257,14 +308,26 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut }: Peme
                                                     </div>
                                                 </TableColumn>
                                             </TableRow>
+                                            <TableRow>
+                                                <TableColumn>
+                                                 <div className="grid gap-2">
+                                                       <Label htmlFor="alamat">alamat</Label>
+                                                    <Input
+                                                        id="alamat"
+                                                        type="text"
+                                                        required
+                                                        autoFocus
+                                                        tabIndex={1}
+                                                        autoComplete="alamat"
+                                                        value={data.alamat}
+                                                        onChange={(e) => setData('alamat', e.target.value)}
 
-                                            <TableRow>
-                                                <TableColumn className='font-normal text-base'>Nama OrangTua </TableColumn>
-                                                <TableColumn className='font-normal text-base'>:{listBalita?.orangtua.name}</TableColumn>
-                                            </TableRow>
-                                            <TableRow>
-                                                <TableColumn className='font-normal text-base'>Alamat </TableColumn>
-                                                <TableColumn className='font-normal text-base'>:{listBalita?.alamat}</TableColumn>
+                                                        disabled={isLoading}
+                                                        placeholder="alamat Balita"
+                                                    />
+                                                    <InputError message={errors.alamat} className="mt-2" />
+                                                 </div>
+                                                </TableColumn>
                                             </TableRow>
                                         </TableBody>
                                     </Table>
@@ -305,13 +368,7 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut }: Peme
                                         </TableBody>
                                     </Table>
                                 </TableContainer>
-                                <Button
-                                    type="submit"
-                                    variant="secondary"
-                                    className="mt-2 w-full"
-                                    tabIndex={5}
-                                    disabled={isLoading}
-                                >
+                                <Button type="submit" variant="secondary" className="mt-2 w-full" tabIndex={5} disabled={isLoading}>
                                     {isLoading && <LoaderCircle className="h-4 w-4 animate-spin" />} Proses Klasifikasi
                                 </Button>
                             </div>

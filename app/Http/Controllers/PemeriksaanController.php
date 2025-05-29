@@ -175,21 +175,22 @@ class PemeriksaanController extends Controller
     public function store(StorePemeriksaanBalitaIdRequest $request)
     {
         try {
-            $balita = Balita::findOrFail($request->balita_id);
+            $balitaData = $request->except('attribut', 'tanggal_pemeriksaan');
+            $balita = Balita::create($balitaData);
 
             $pemeriksaanData = [
                 'balita_id' => $balita->id,
                 'data_balita' => json_encode($balita),
                 'data_pemeriksaan' => json_encode($request->input('attribut')),
                 'tgl_pemeriksaan' => $request->input('tanggal_pemeriksaan'),
-                'label'=> $request->input('label')
+                'label' => $request->input('label')
             ];
             $pemeriksaan = Pemeriksaan::create($pemeriksaanData);
 
             $this->createDetailPemeriksaan($pemeriksaan, $request->input('attribut'), $balita->jenis_kelamin, $request->input('label'));
             PolaMakan::create([
                 'pemeriksaan_id' => $pemeriksaan->id,
-                'rekomendasi'=> $request->input('rekomendasi'),
+                'rekomendasi' => $request->input('rekomendasi'),
             ]);
 
             return redirect()

@@ -23,11 +23,11 @@ const adminNavItems: NavItem[] = [
         href: '/admin/attribut/',
         icon: LayoutGrid,
     },
-    {
-        title: 'Kelola Balita',
-        href: '/admin/balita/',
-        icon: BookUser,
-    },
+    // {
+    //     title: 'Kelola Balita',
+    //     href: '/admin/balita/',
+    //     icon: BookUser,
+    // },
     {
         title: 'Pemeriksaan',
         href: '/pemeriksaan/',

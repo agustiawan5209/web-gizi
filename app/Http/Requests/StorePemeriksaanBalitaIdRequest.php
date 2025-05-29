@@ -22,7 +22,7 @@ class StorePemeriksaanBalitaIdRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "balita_id"=> "required|integer|exists:balitas,id",
+            "orang_tua_id"=> "required|integer|exists:users,id",
             "nama"=> "required|string|max:100",
             "tempat_lahir"=> "required|string|max:100",
             "tanggal_lahir"=> "required|date",
