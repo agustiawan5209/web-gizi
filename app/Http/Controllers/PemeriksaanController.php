@@ -321,7 +321,9 @@ class PemeriksaanController extends Controller
      */
     public function destroy(Pemeriksaan $pemeriksaan)
     {
+        Balita::find($pemeriksaan->balita_id)->delete();
         $pemeriksaan->delete();
+
 
         return redirect()
             ->route('pemeriksaan.index')
