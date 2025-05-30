@@ -134,14 +134,18 @@
             <thead>
                 <tr>
                     @foreach ($attribut as $item)
-                        <th style="font-size: 10px;">{{ $item }}</th>
+                        @if ($item !== 'label')
+                            <th style="font-size: 10px;">{{ $item }}</th>
+                        @endif
                     @endforeach
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     @foreach ($attribut as $item)
-                        <td style="font-size: 10px;">{{ $detail[$item] }}</td>
+                        @if ($item !== 'label')
+                            <td style="font-size: 10px;">{{ $detail[$item] }}</td>
+                        @endif
                     @endforeach
                 </tr>
                 <tr>
