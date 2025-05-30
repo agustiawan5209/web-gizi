@@ -21,8 +21,20 @@ class DashboardController extends Controller
         ];
 
         if (auth()->user()->hasRole('orangtua')) {
-            return Inertia::render('user-dashboard',[
-                'balita'=> Balita::where('orang_tua_id', auth()->user()->id)->with(['orangtua', 'pemeriksaan', 'pemeriksaan.detailpemeriksaan'])->get(),
+            $pemeriksaanQuery = Pemeriksaan::with([
+                'balita',
+                'balita.orangtua',
+                'detailpemeriksaan',
+                'detailpemeriksaan.attribut',
+                'polamakan'
+            ])->whereHas('balita', function($query){
+                $query->where('orang_tua_id', auth()->user()->id);
+            });
+
+
+            $pemeriksaan = $pemeriksaanQuery->get();
+            return Inertia::render('user-dashboard', [
+                'pemeriksaan' => $pemeriksaan,
             ]);
         }
         $Gizi = Dataset::wherein('label', $statusLabel)

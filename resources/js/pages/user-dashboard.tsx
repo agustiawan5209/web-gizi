@@ -1,10 +1,12 @@
+import CollapsibleRow from '@/components/collapsible-table';
+import DetailPemeriksaan from '@/components/detail-pemeriksaan';
 import NaiveBayesNutritionExplanation from '@/components/page/naive-bayes';
 import { Button } from '@/components/ui/button';
 import { Table, TableAction, TableBody, TableColumn, TableContainer, TableHead, TableRow, TableTh } from '@/components/ui/table';
 import GuestLayout from '@/layouts/guest-layout';
 import { SharedData, type BreadcrumbItem } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 export interface DashboardProps {
     balita?: {
         id: string;
@@ -24,9 +26,21 @@ export interface DashboardProps {
             };
         }[];
     }[];
+    pemeriksaan: {
+        id: string;
+        tgl_pemeriksaan: string;
+        label: string;
+        balita: {
+            nama: string;
+            orangtua: { name: string };
+            tempat_lahir: string;
+            tanggal_lahir: string;
+        };
+        detailpemeriksaan: any;
+    }[];
 }
 
-export default function Dashboard({ balita }: DashboardProps) {
+export default function Dashboard({ balita, pemeriksaan }: DashboardProps) {
     const { auth } = usePage<SharedData>().props;
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -64,7 +78,28 @@ export default function Dashboard({ balita }: DashboardProps) {
     ];
 
     const [currentPage, setCurrentPage] = useState('');
+  // Memoize table rows to prevent unnecessary re-renders
+    const tableRows = useMemo(() => {
+        if (!pemeriksaan?.length) return null;
 
+        return pemeriksaan.map((item, index) => {
+            let read_url = null;
+
+            return (
+                <CollapsibleRow
+                    key={item.id} // Using item.id as key is better than index
+                    num={index + 1 }
+                    title={item.tgl_pemeriksaan}
+                    columnData={[item.balita.nama, item.balita.orangtua.name, `${item.balita.tempat_lahir}/${item.balita.tanggal_lahir}`, item.label]}
+                    delete="delete"
+                    show={route('orangtua.balita.show', { pemeriksaan: item.id })}
+                    id={item.id}
+                >
+                    <DetailPemeriksaan detail={item.detailpemeriksaan} />
+                </CollapsibleRow>
+            );
+        });
+    }, [pemeriksaan]);
     return (
         <GuestLayout head="Dashboard">
             <Head title="Dashboard" />
@@ -75,7 +110,7 @@ export default function Dashboard({ balita }: DashboardProps) {
                         <div className="item-start flex w-full flex-col justify-between gap-4 md:flex-row md:items-center">
                             <div>
                                 <h1 className="text-2xl font-bold text-black md:text-3xl">Welcome, {auth.user.name}!</h1>
-                                <p className="mt-1 text-black">Selamat datang di sistem klasifikasi anak menggunakan metode naive bayes</p>
+                                us <p className="mt-1 text-black">Selamat datang di sistem klasifikasi anak menggunakan metode naive bayes</p>
                             </div>
 
                             {/* Stats section */}
@@ -103,37 +138,24 @@ export default function Dashboard({ balita }: DashboardProps) {
                 {currentPage === 'algoritma' && <NaiveBayesNutritionExplanation />}
                 {currentPage === 'pemeriksaan' && (
                     <div>
-                        <TableContainer className="max-w-[400px] md:max-w-[768px] lg:max-w-full">
-                            {balita && (
-                                <Table className="w-full">
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableTh className="w-10">No.</TableTh>
-                                            <TableTh>Orang Tua</TableTh>
-                                            <TableTh>Nama</TableTh>
-                                            <TableTh>Tempat/Tanggal Lahir</TableTh>
-                                            <TableTh>Jenis Kelamin</TableTh>
-                                            <TableTh></TableTh>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {balita.length > 0 &&
-                                            balita.map((item: any, index: number) => (
-                                                <TableRow key={index}>
-                                                    <TableColumn>{index + 1}</TableColumn>
-                                                    <TableColumn> {item.orangtua.name} </TableColumn>
-                                                    <TableColumn> {item.nama} </TableColumn>
-                                                    <TableColumn>
-                                                        {' '}
-                                                        {item.tempat_lahir}/ {item.tanggal_lahir}{' '}
-                                                    </TableColumn>
-                                                    <TableColumn> {item.jenis_kelamin} </TableColumn>
-                                                    <TableAction className="w-32" show={route('orangtua.balita.show', { balita: item.id })} />
-                                                </TableRow>
-                                            ))}
-                                    </TableBody>
-                                </Table>
-                            )}
+                         <TableContainer >
+                            <div className="max-w-[300px] md:max-w-[768px] lg:max-w-full">
+                            <Table className="w-full">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableTh className="w-10">No.</TableTh>
+                                        <TableTh>Tanggal Pemeriksaan</TableTh>
+                                        <TableTh>Nama Balita</TableTh>
+                                        <TableTh>Nama Orang Tua</TableTh>
+                                        <TableTh>Tempat/Tanggal Lahir</TableTh>
+                                        <TableTh>Hasil Pemeriksaan Gizi</TableTh>
+                                        <TableTh>Aksi</TableTh>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>{tableRows}</TableBody>
+                            </Table>
+                            </div>
+
                         </TableContainer>
                     </div>
                 )}

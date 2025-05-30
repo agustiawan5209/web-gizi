@@ -147,7 +147,7 @@ Route::prefix('orangtua')->as('orangtua.')->middleware(['auth', 'verified', 'rol
             Route::get('/', 'index')->name('index');
             Route::get('/create', 'create')->name('create');
             Route::get('/edit/{balita}', 'edit')->name('edit');
-            Route::get('/show/{balita}', 'show')->name('show');
+            Route::get('/show/{pemeriksaan}', 'show')->name('show');
 
             Route::post('/store', 'store')->name('store');
             Route::put('/update/{balita}', 'update')->name('update');

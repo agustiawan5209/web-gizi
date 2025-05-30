@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreBalitaRequest;
 use App\Http\Requests\UpdateBalitaRequest;
+use App\Models\Pemeriksaan;
 
 class BalitaController extends Controller
 {
@@ -36,7 +37,7 @@ class BalitaController extends Controller
 
         if ($request->filled('order_by')) {
             $orderBy = $request->input('order_by');
-            if(in_array($orderBy, ['Laki-laki','Perempuan'])){
+            if (in_array($orderBy, ['Laki-laki', 'Perempuan'])) {
                 $query->searchByJenkel($orderBy);
             }
         }
@@ -55,15 +56,15 @@ class BalitaController extends Controller
      */
     public function create()
     {
-    return Inertia::render('orangtua/balita/create', [
-        'orangtua' => User::role('orangtua')->get(),
-        'breadcrumb'=> array_merge(self::BASE_BREADCRUMB,[
-            [
-                'title'=> 'tambah data',
-                'href'=> '/orangtua/balita/create',
-            ],
-        ])
-    ]);
+        return Inertia::render('orangtua/balita/create', [
+            'orangtua' => User::role('orangtua')->get(),
+            'breadcrumb' => array_merge(self::BASE_BREADCRUMB, [
+                [
+                    'title' => 'tambah data',
+                    'href' => '/orangtua/balita/create',
+                ],
+            ])
+        ]);
     }
 
     /**
@@ -72,26 +73,33 @@ class BalitaController extends Controller
     public function store(StoreBalitaRequest $request)
     {
         $balita = Balita::create($request->all());
-        return redirect()->route('orangtua.balita.index')->with('success','Balita berhasil ditambahkan!!');
+        return redirect()->route('orangtua.balita.index')->with('success', 'Balita berhasil ditambahkan!!');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Balita $balita)
+    public function show(Pemeriksaan $pemeriksaan)
     {
-        $balita->load(['orangtua', 'pemeriksaan', 'pemeriksaan.detailpemeriksaan']);
+        $pemeriksaan->load([
+            'balita',
+            'balita.orangtua',
+            'detailpemeriksaan',
+            'detailpemeriksaan.attribut',
+            'polamakan'
+        ]);
         return Inertia::render('orangtua/balita/show', [
-            'balita'=> $balita,
-            'pemeriksaan'=> $balita->pemeriksaan,
-            'orangTua'=> $balita->orangtua,
-            'attribut'=> Attribut::orderBy('id', 'asc')->get(),
-            'breadcrumb'=> array_merge(self::BASE_BREADCRUMB,[
+            'pemeriksaan' => $pemeriksaan,
+            'balita' => $pemeriksaan->balita,
+            'orangTua' => $pemeriksaan->balita->orangtua,
+            'detail' => $pemeriksaan->detailpemeriksaan,
+            'breadcrumb' => array_merge(self::BASE_BREADCRUMB, [
                 [
-                    'title'=> 'detail data',
-                    'href'=> '/orangtua/balita/show',
+                    'title' => 'detail pemeriksaan',
+                    'href' => '/pemeriksaan/show',
                 ],
-            ])
+            ]),
+            'polamakan' => $pemeriksaan->polamakan,
         ]);
     }
 
@@ -102,12 +110,12 @@ class BalitaController extends Controller
     {
         $balita->load(['orangtua']);
         return Inertia::render('orangtua/balita/edit', [
-            'balita'=> $balita,
+            'balita' => $balita,
             'orangtua' => User::role('orangtua')->get(),
-            'breadcrumb'=> array_merge(self::BASE_BREADCRUMB,[
+            'breadcrumb' => array_merge(self::BASE_BREADCRUMB, [
                 [
-                    'title'=> 'edit data',
-                    'href'=> '/orangtua/balita/edit',
+                    'title' => 'edit data',
+                    'href' => '/orangtua/balita/edit',
                 ],
             ])
         ]);
@@ -119,7 +127,7 @@ class BalitaController extends Controller
     public function update(UpdateBalitaRequest $request, Balita $balita)
     {
         $balita->update($request->all());
-        return redirect()->route('orangtua.balita.index')->with('success','Balita berhasil diupdate!!');
+        return redirect()->route('orangtua.balita.index')->with('success', 'Balita berhasil diupdate!!');
     }
 
     /**
@@ -128,6 +136,6 @@ class BalitaController extends Controller
     public function destroy(Balita $balita)
     {
         $balita->delete();
-        return redirect()->route('orangtua.balita.index')->with('success','Balita berhasil dihapus!!');
+        return redirect()->route('orangtua.balita.index')->with('success', 'Balita berhasil dihapus!!');
     }
 }
