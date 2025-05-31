@@ -185,7 +185,7 @@ export default function OrangtuaIndex({ orangtua, breadcrumb, filter }: Orangtua
                                 <TableHead>
                                     <TableRow>
                                         <TableTh className="w-10">No.</TableTh>
-                                        <TableTh>Nama</TableTh>
+                                        <TableTh>Nama Orang Tua</TableTh>
                                         <TableTh>Email</TableTh>
                                         <TableTh>Aksi</TableTh>
                                     </TableRow>

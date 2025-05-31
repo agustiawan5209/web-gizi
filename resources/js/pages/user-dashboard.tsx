@@ -110,7 +110,7 @@ export default function Dashboard({ balita, pemeriksaan }: DashboardProps) {
                         <div className="item-start flex w-full flex-col justify-between gap-4 md:flex-row md:items-center">
                             <div>
                                 <h1 className="text-2xl font-bold text-black md:text-3xl">Welcome, {auth.user.name}!</h1>
-                                us <p className="mt-1 text-black">Selamat datang di sistem klasifikasi anak menggunakan metode naive bayes</p>
+                                 <p className="mt-1 text-black">Selamat datang di sistem klasifikasi anak menggunakan metode naive bayes</p>
                             </div>
 
                             {/* Stats section */}

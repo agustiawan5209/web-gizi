@@ -163,7 +163,7 @@ export default function AttributIndex({ attribut, breadcrumb, filter }: Attribut
                                 </Button>
                             </div>
                         </div>
-                        <div className="col-span-1 px-1 py-1 lg:px-4 lg:py-2">
+                        {/* <div className="col-span-1 px-1 py-1 lg:px-4 lg:py-2">
                             <Select defaultValue="" value={orderBy} onValueChange={(e) => setOrderBy(e)}>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Tampilan Status" />
@@ -177,7 +177,7 @@ export default function AttributIndex({ attribut, breadcrumb, filter }: Attribut
                                     </SelectGroup>
                                 </SelectContent>
                             </Select>
-                        </div>
+                        </div> */}
                     </div>
                     <div className="lg:w-full overflow-hidden">
                         <TableContainer className="max-w-[400px] md:max-w-[768px] lg:max-w-full">
