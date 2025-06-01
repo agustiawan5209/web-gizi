@@ -48,7 +48,7 @@ class AttributController extends Controller
         }
 
         try {
-            $attribut = $query->paginate($request->input('per_page', 10));
+            $attribut = $query->where('keterangan' ,'!=', 'label')->paginate($request->input('per_page', 10));
         } catch (\Exception $e) {
             // Handle pagination error
             return redirect()->back()->withErrors(['pagination' => 'Pagination failed: ' . $e->getMessage()]);
