@@ -189,9 +189,9 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
                             <div className="grid gap-6">
                                 <div className="grid gap-6">
                                     <div className="grid gap-2">
-                                        <Label htmlFor="orang_tua">Pilih Berdasarkan Nama Orang Tua</Label>
+                                        <Label htmlFor="orang_tua">Nama Orang Tua</Label>
                                         <div className="relative w-full p-2">
-                                            <Input type="search" id="orang_tua" required value={searchTerm} onChange={(e) => handleSearchUser(e)} />
+                                            <Input type="search" id="orang_tua" placeholder="cari berdasarkan nama terdaftar" required value={searchTerm} onChange={(e) => handleSearchUser(e)} />
                                             {showlist && (
                                                 <div className="absolute top-10 rounded-xl bg-white p-2 shadow-lg">
                                                     <ul>
