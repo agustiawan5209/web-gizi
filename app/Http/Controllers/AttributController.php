@@ -6,6 +6,8 @@ use Inertia\Inertia;
 use App\Models\Attribut;
 use App\Http\Requests\StoreAttributRequest;
 use App\Http\Requests\UpdateAttributRequest;
+use App\Models\DetailPemeriksaan;
+use App\Models\Pemeriksaan;
 use Illuminate\Http\Request;
 
 class AttributController extends Controller
@@ -82,6 +84,16 @@ class AttributController extends Controller
     public function store(StoreAttributRequest $request)
     {
         $attribut = Attribut::create($request->all());
+
+        $pemeriksaan = Pemeriksaan::all();
+
+        foreach($pemeriksaan  as $key => $value){
+            DetailPemeriksaan::create([
+                'pemeriksaan_id'=> $value->id,
+                'attribut_id'=> $attribut->id,
+                'nilai'=> 0,
+            ]);
+        }
         return redirect()->route('admin.attribut.index')->with('success','data attribut berhasil ditambahkan!!');
     }
 
