@@ -74,7 +74,7 @@
 
 <body>
     <div class="header">
-        <h2>LAPORAN PEMERIKSAAN BALITA</h2>
+        <h2>LAPORAN PEMERIKSAAN GIZI BALITA</h2>
         <p>Posyandu Bungung Barana Selatan, Desa Bontomatene Kec. Turatea Kab. Jeneponto</p>
     </div>
 

@@ -10,8 +10,7 @@ const HomePage = ({className, ...props}: HomeProps) => (
             <h2 className="text-lg font-semibold text-gray-700 md:text-xl lg:text-2xl">Sistem Klasifikasi </h2>
             <h1 className="mt-2 text-3xl font-bold md:text-4xl lg:text-5xl">Gizi Anak Balita Berbasis Web Menggunakan Algoritma Naive Bayes</h1>
             <p className="mt-4 text-sm text-gray-600 md:text-base lg:text-lg">
-                Aplikasi ini membantu Anda memantau kesehatan balita Anda dengan lebih mudah dan efektif. Dari data kesehatan hingga perawatan - Semua
-                ada di sini.
+                Aplikasi ini dibangun menggunakan pendekatan naive bayes classifier untuk menentukan status gizi anak berdasarkan ata antropometri
             </p>
             <Link href="/login">
                 <button className="mt-6 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Coba Sekarang</button>

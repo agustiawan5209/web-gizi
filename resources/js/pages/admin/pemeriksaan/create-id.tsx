@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input, InputRadio } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableColumn, TableContainer, TableHead, TableRow, TableTh } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
@@ -84,18 +83,38 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
     const searchById = useCallback(
         (search: string): OrangTua | null => {
             if (!orangtua?.length || !search) return null;
-            return orangtua.find((element) => element.name === search) ?? null;
+            return orangtua.find((element) => element.id === search) ?? null;
         },
         [orangtua],
     );
+
+    const [searchTerm, setSearchTerm] = useState('');
+    const [listOrangTua, setListOrangTua] = useState<OrangTua[]>([]);
+    const [showlist, setShowList] = useState(false);
+    const handleSearchUser = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const input = e.target.value;
+        setSearchTerm(input);
+        if (input.length > 2) {
+            const filteredList = orangtua.filter((orangtua) => orangtua.name.toLowerCase().includes(input.toLowerCase()));
+            setListOrangTua(filteredList);
+            if(filteredList.length > 0){
+                setShowList(true);
+            }
+        }else{
+            setListOrangTua([]);
+            setShowList(false);
+        }
+    };
 
     // Effect for handling parent selection
     useEffect(() => {
         if (idOrangTua) {
             const foundParent = searchById(idOrangTua);
-            console.log(foundParent);
             setSelectedOrangtua(foundParent);
-            if (foundParent) setData('orang_tua_id', foundParent.id);
+            if (foundParent) {
+                setShowList(false);
+                setData('orang_tua_id', foundParent.id);
+            }
         }
     }, [idOrangTua, searchById, setData]);
 
@@ -159,6 +178,7 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
     const tahunLalu = new Date(today);
     tahunLalu.setFullYear(today.getFullYear() - 1);
     const minDate = tahunLalu.toISOString().split('T')[0];
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Create" />
@@ -170,21 +190,24 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
                                 <div className="grid gap-6">
                                     <div className="grid gap-2">
                                         <Label htmlFor="orang_tua">Pilih Berdasarkan Nama Orang Tua</Label>
-                                        <Select value={idOrangTua} onValueChange={setIdOrangTua} disabled={processing}>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Pilih Orang Tua" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectGroup>
-                                                    <SelectLabel>Orang Tua</SelectLabel>
-                                                    {orangtua.map((item) => (
-                                                        <SelectItem key={item.id} value={item.name}>
-                                                            {item.name}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectGroup>
-                                            </SelectContent>
-                                        </Select>
+                                        <div className="relative w-full p-2">
+                                            <Input type="search" id="orang_tua" required value={searchTerm} onChange={(e) => handleSearchUser(e)} />
+                                            {showlist && (
+                                                <div className="absolute top-10 rounded-xl bg-white p-2 shadow-lg">
+                                                    <ul>
+                                                        {listOrangTua.map((orangtua) => (
+                                                            <li
+                                                                key={orangtua.id}
+                                                                onClick={() => setIdOrangTua(orangtua.id)}
+                                                                className="cursor-pointer p-2 hover:bg-gray-200"
+                                                            >
+                                                                {orangtua.name}
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            )}
+                                        </div>
                                         <InputError message={errors.orang_tua_id} />
                                     </div>
 
@@ -226,47 +249,46 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
                                                 <TableColumn>
                                                     <div className="grid gap-2">
                                                         <Label htmlFor="nama">Nama</Label>
-                                                    <Input
-                                                        id="nama"
-                                                        type="text"
-                                                        required
-                                                        autoFocus
-                                                        tabIndex={1}
-                                                        autoComplete="nama"
-                                                        value={data.nama}
-                                                        onChange={(e) => setData('nama', e.target.value)}
-
-                                                        disabled={isLoading}
-                                                        placeholder="Nama Balita"
-                                                    />
-                                                    <InputError message={errors.nama} className="mt-2" />
+                                                        <Input
+                                                            id="nama"
+                                                            type="text"
+                                                            required
+                                                            autoFocus
+                                                            tabIndex={1}
+                                                            autoComplete="nama"
+                                                            value={data.nama}
+                                                            onChange={(e) => setData('nama', e.target.value)}
+                                                            disabled={isLoading}
+                                                            placeholder="Nama Balita"
+                                                        />
+                                                        <InputError message={errors.nama} className="mt-2" />
                                                     </div>
                                                 </TableColumn>
                                                 <TableColumn>
-                                                  <div className="grid gap-2">
-                                                      <Label htmlFor="jenis_kelamin">Jenis Kelamin</Label>
-                                                    <div className="flex gap-2">
-                                                        <InputRadio
-                                                            id="jenis1"
-                                                            name="jenis_kelaim"
-                                                            label="Laki-laki"
-                                                            value="Laki-laki"
-                                                            onChange={(e) => setData('jenis_kelamin', e.target.value)}
-                                                            className="border-red-500"
-                                                            labelClassName="text-gray-800 dark:text-white"
-                                                        />
-                                                        <InputRadio
-                                                            id="jenis2"
-                                                            name="jenis_kelaim"
-                                                            label="Perempuan"
-                                                            value="Perempuan"
-                                                            onChange={(e) => setData('jenis_kelamin', e.target.value)}
-                                                            className="border-red-500"
-                                                            labelClassName="text-gray-800 dark:text-white"
-                                                        />
+                                                    <div className="grid gap-2">
+                                                        <Label htmlFor="jenis_kelamin">Jenis Kelamin</Label>
+                                                        <div className="flex gap-2">
+                                                            <InputRadio
+                                                                id="jenis1"
+                                                                name="jenis_kelaim"
+                                                                label="Laki-laki"
+                                                                value="Laki-laki"
+                                                                onChange={(e) => setData('jenis_kelamin', e.target.value)}
+                                                                className="border-red-500"
+                                                                labelClassName="text-gray-800 dark:text-white"
+                                                            />
+                                                            <InputRadio
+                                                                id="jenis2"
+                                                                name="jenis_kelaim"
+                                                                label="Perempuan"
+                                                                value="Perempuan"
+                                                                onChange={(e) => setData('jenis_kelamin', e.target.value)}
+                                                                className="border-red-500"
+                                                                labelClassName="text-gray-800 dark:text-white"
+                                                            />
+                                                        </div>
+                                                        <InputError message={errors.jenis_kelamin} />
                                                     </div>
-                                                    <InputError message={errors.jenis_kelamin} />
-                                                  </div>
                                                 </TableColumn>
 
                                                 <TableColumn>
@@ -282,9 +304,7 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
                                                                     autoComplete="tempat_lahir"
                                                                     value={data.tempat_lahir}
                                                                     disabled={isLoading}
-
                                                                     onChange={(e) => setData('tempat_lahir', e.target.value)}
-
                                                                     placeholder="Tempat lahir"
                                                                 />
                                                                 <InputError message={errors.tempat_lahir} />
@@ -300,7 +320,6 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
                                                                     disabled={isLoading}
                                                                     max={minDate}
                                                                     onChange={(e) => setData('tanggal_lahir', e.target.value)}
-
                                                                 />
                                                                 <InputError message={errors.tanggal_lahir} />
                                                             </div>
@@ -310,23 +329,22 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
                                             </TableRow>
                                             <TableRow>
                                                 <TableColumn>
-                                                 <div className="grid gap-2">
-                                                       <Label htmlFor="alamat">alamat</Label>
-                                                    <Input
-                                                        id="alamat"
-                                                        type="text"
-                                                        required
-                                                        autoFocus
-                                                        tabIndex={1}
-                                                        autoComplete="alamat"
-                                                        value={data.alamat}
-                                                        onChange={(e) => setData('alamat', e.target.value)}
-
-                                                        disabled={isLoading}
-                                                        placeholder="alamat Balita"
-                                                    />
-                                                    <InputError message={errors.alamat} className="mt-2" />
-                                                 </div>
+                                                    <div className="grid gap-2">
+                                                        <Label htmlFor="alamat">alamat</Label>
+                                                        <Input
+                                                            id="alamat"
+                                                            type="text"
+                                                            required
+                                                            autoFocus
+                                                            tabIndex={1}
+                                                            autoComplete="alamat"
+                                                            value={data.alamat}
+                                                            onChange={(e) => setData('alamat', e.target.value)}
+                                                            disabled={isLoading}
+                                                            placeholder="alamat Balita"
+                                                        />
+                                                        <InputError message={errors.alamat} className="mt-2" />
+                                                    </div>
                                                 </TableColumn>
                                             </TableRow>
                                         </TableBody>
