@@ -9,7 +9,7 @@ import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import axios from 'axios';
 import { LoaderCircle, SquareCheck } from 'lucide-react';
-import React, { FormEventHandler, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FormEventHandler, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 interface OrangTua {
     id: string;
     name: string;
@@ -62,7 +62,8 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
         () => (breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : []),
         [breadcrumb],
     );
-
+    const today = new Date();
+    const day = today.toISOString().split('T')[0];
     const { data, setData, get, post, processing, errors } = useForm<CreateForm>({
         orang_tua_id: '',
         nama: '',
@@ -70,7 +71,7 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
         tanggal_lahir: '',
         jenis_kelamin: '',
         alamat: '',
-        tanggal_pemeriksaan: '',
+        tanggal_pemeriksaan: day,
         attribut: attribut.map((attr) => ({ nilai: '0', attribut_id: attr.id })),
         label: '',
         rekomendasi: '',
@@ -97,10 +98,10 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
         if (input.length > 2) {
             const filteredList = orangtua.filter((orangtua) => orangtua.name.toLowerCase().includes(input.toLowerCase()));
             setListOrangTua(filteredList);
-            if(filteredList.length > 0){
+            if (filteredList.length > 0) {
                 setShowList(true);
             }
-        }else{
+        } else {
             setListOrangTua([]);
             setShowList(false);
         }
@@ -174,11 +175,32 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
         return `${tahun} tahun, ${bulan} bulan, ${hari} hari`;
     }
     // Hitung tanggal minimum: 1 tahun lalu dari hari ini
-    const today = new Date();
     const tahunLalu = new Date(today);
     tahunLalu.setFullYear(today.getFullYear() - 1);
     const minDate = tahunLalu.toISOString().split('T')[0];
 
+    const tanggalLahirRef = useRef<HTMLInputElement>(null);
+    const [usiaState, setUsiaState] = useState<number>(0);
+    useEffect(() => {
+        if (tanggalLahirRef && tanggalLahirRef.current) {
+            const tgl = tanggalLahirRef.current.value;
+            const birthDate = new Date(tgl);
+            const today = new Date();
+            let usia = today.getFullYear() - birthDate.getFullYear();
+            let bulan = today.getMonth() - birthDate.getMonth();
+
+            if (bulan < 0) {
+                usia--;
+                bulan += 12;
+            }
+            if(usia > 0){
+                usia *= 12;
+                usia += bulan
+            }
+            console.log(usia)
+            setUsiaState(usia)
+        }
+    }, [data.tanggal_lahir, setData]);
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Create" />
@@ -191,7 +213,14 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
                                     <div className="grid gap-2">
                                         <Label htmlFor="orang_tua">Nama Orang Tua</Label>
                                         <div className="relative w-full p-2">
-                                            <Input type="search" id="orang_tua" placeholder="cari berdasarkan nama terdaftar" required value={searchTerm} onChange={(e) => handleSearchUser(e)} />
+                                            <Input
+                                                type="search"
+                                                id="orang_tua"
+                                                placeholder="cari berdasarkan nama yang terdaftar"
+                                                required
+                                                value={searchTerm}
+                                                onChange={(e) => handleSearchUser(e)}
+                                            />
                                             {showlist && (
                                                 <div className="absolute top-10 rounded-xl bg-white p-2 shadow-lg">
                                                     <ul>
@@ -313,6 +342,7 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
                                                                 <Input
                                                                     id="tanggal_lahir"
                                                                     type="date"
+                                                                    ref={tanggalLahirRef}
                                                                     required
                                                                     tabIndex={2}
                                                                     autoComplete="tanggal_lahir"
@@ -364,7 +394,24 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
                                                     <TableRow key={item.id}>
                                                         <TableColumn>{item.nama}</TableColumn>
                                                         <TableColumn>
-                                                            <Input
+                                                            {item.nama.toLowerCase() == 'usia balita (bulan)' ? (
+                                                                <Input
+                                                                type="number"
+                                                                id={`kriteria.${index}`}
+                                                                value={usiaState}
+                                                                readOnly
+                                                                disabled={isLoading}
+                                                                onChange={(e) =>
+                                                                    setData(
+                                                                        'attribut',
+                                                                        data.attribut.map((val, i) =>
+                                                                            i === index ? { nilai: e.target.value, attribut_id: item.id } : val,
+                                                                        ),
+                                                                    )
+                                                                }
+                                                            />
+                                                            ):(
+                                                                <Input
                                                                 type="number"
                                                                 id={`kriteria.${index}`}
                                                                 value={data.attribut[index].nilai}
@@ -378,6 +425,7 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
                                                                     )
                                                                 }
                                                             />
+                                                            )}
                                                             <InputError message={(errors as any)[`attribut.${index}.nilai`]} />
                                                             <InputError message={(errors as any)[`attribut.${index}.attribut_id`]} />
                                                         </TableColumn>

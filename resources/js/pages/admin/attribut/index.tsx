@@ -133,7 +133,7 @@ export default function AttributIndex({ attribut, breadcrumb, filter }: Attribut
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
                     <div className="flex w-full flex-1 flex-col items-start justify-end gap-2 px-1 py-1 md:flex-row md:items-center md:justify-between md:gap-7 lg:px-4 lg:py-2">
                         <div className="flex w-full flex-1 flex-col gap-7 px-1 py-1 lg:px-4 lg:py-2 md:flex-row md:items-center">
-                            <Link href={route('admin.attribut.create')} className="col-span-1 cursor-pointer">
+                            {/* <Link href={route('admin.attribut.create')} className="col-span-1 cursor-pointer">
                                 <Button variant="default" className="flex cursor-pointer items-center gap-2 bg-primary ">
                                     Tambah Data
                                 </Button>
@@ -161,7 +161,7 @@ export default function AttributIndex({ attribut, breadcrumb, filter }: Attribut
                                 >
                                     Clear
                                 </Button>
-                            </div>
+                            </div> */}
                         </div>
                         {/* <div className="col-span-1 px-1 py-1 lg:px-4 lg:py-2">
                             <Select defaultValue="" value={orderBy} onValueChange={(e) => setOrderBy(e)}>
@@ -187,7 +187,7 @@ export default function AttributIndex({ attribut, breadcrumb, filter }: Attribut
                                         <TableTh className="w-10">No.</TableTh>
                                         <TableTh>Nama</TableTh>
                                         <TableTh>Keterangan</TableTh>
-                                        <TableTh>Aksi</TableTh>
+                                        {/* <TableTh>Aksi</TableTh> */}
                                     </TableRow>
                                 </TableHead>
                                 <TableBody className={processing ? 'opacity-50' : ''}>
@@ -197,21 +197,21 @@ export default function AttributIndex({ attribut, breadcrumb, filter }: Attribut
                                                 <TableColumn>{index + 1 + (attribut?.current_page - 1) * attribut?.per_page}</TableColumn>
                                                 <TableColumn> {item.nama} </TableColumn>
                                                 <TableColumn> {item.keterangan} </TableColumn>
-                                                <TableAction
+                                                {/* <TableAction
                                                     className="w-32"
                                                     edit={route('admin.attribut.edit', { attribut: item.id })}
                                                     delete="delete"
                                                     url={route('admin.attribut.destroy', { attribut: item.id })}
                                                     title={item.nama}
                                                     id={item.id}
-                                                />
+                                                /> */}
                                             </TableRow>
                                         ))}
                                 </TableBody>
                             </Table>
 
                         </TableContainer>
-                            <div className="flex flex-col md:flex-row items-center justify-between gap-7 border-x-2 border-b-2 p-2 w-full">
+                            {/* <div className="flex flex-col md:flex-row items-center justify-between gap-7 border-x-2 border-b-2 p-2 w-full">
                                 <div className="flex items-center gap-7 px-1 py-1 lg:px-4 lg:py-2">
                                     <div className="flex flex-row gap-2">
                                         <Select defaultValue="10" value={perPage} onValueChange={(e) => setPerPage(e.toString())}>
@@ -237,7 +237,7 @@ export default function AttributIndex({ attribut, breadcrumb, filter }: Attribut
                                     </div>
                                 </div>
                                 <PaginationTable links={attribut?.links ?? []} data={filter} />
-                            </div>
+                            </div> */}
                     </div>
                 </div>
             </div>
