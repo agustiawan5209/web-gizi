@@ -50,9 +50,11 @@ type CreateForm = {
     attribut: {
         nilai: string;
         attribut_id: string;
+        name: string;
     }[];
     label: string;
     rekomendasi: string;
+    usia_balita: string;
     detail: string[];
 };
 
@@ -72,9 +74,10 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
         jenis_kelamin: '',
         alamat: '',
         tanggal_pemeriksaan: day,
-        attribut: attribut.map((attr) => ({ nilai: '0', attribut_id: attr.id })),
+        attribut: attribut.map((attr) => ({ nilai: '0', attribut_id: attr.id, name: attr.nama })),
         label: '',
         rekomendasi: '',
+        usia_balita: '',
         detail: [],
     });
     // State for selected parent
@@ -198,6 +201,12 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
                 usia += bulan
             }
             console.log(usia)
+            setData('attribut', data.attribut.map((val) => {
+                if (val.name === 'Usia Balita (bulan)') {
+                    return { ...val, nilai: usia.toString() };
+                }
+                return val;
+            }));
             setUsiaState(usia)
         }
     }, [data.tanggal_lahir, setData]);
@@ -394,24 +403,7 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
                                                     <TableRow key={item.id}>
                                                         <TableColumn>{item.nama}</TableColumn>
                                                         <TableColumn>
-                                                            {item.nama.toLowerCase() == 'usia balita (bulan)' ? (
-                                                                <Input
-                                                                type="number"
-                                                                id={`kriteria.${index}`}
-                                                                value={usiaState}
-                                                                readOnly
-                                                                disabled={isLoading}
-                                                                onChange={(e) =>
-                                                                    setData(
-                                                                        'attribut',
-                                                                        data.attribut.map((val, i) =>
-                                                                            i === index ? { nilai: e.target.value, attribut_id: item.id } : val,
-                                                                        ),
-                                                                    )
-                                                                }
-                                                            />
-                                                            ):(
-                                                                <Input
+                                                             <Input
                                                                 type="number"
                                                                 id={`kriteria.${index}`}
                                                                 value={data.attribut[index].nilai}
@@ -420,12 +412,11 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
                                                                     setData(
                                                                         'attribut',
                                                                         data.attribut.map((val, i) =>
-                                                                            i === index ? { nilai: e.target.value, attribut_id: item.id } : val,
+                                                                            i === index ? { nilai: e.target.value, attribut_id: item.id, name: item.nama } : val,
                                                                         ),
                                                                     )
                                                                 }
                                                             />
-                                                            )}
                                                             <InputError message={(errors as any)[`attribut.${index}.nilai`]} />
                                                             <InputError message={(errors as any)[`attribut.${index}.attribut_id`]} />
                                                         </TableColumn>

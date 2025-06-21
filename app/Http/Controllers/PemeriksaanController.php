@@ -174,6 +174,8 @@ class PemeriksaanController extends Controller
 
     public function store(StorePemeriksaanBalitaIdRequest $request)
     {
+        // dd($request->all());
+        // Validate the request
         try {
             $balitaData = $request->except('attribut', 'tanggal_pemeriksaan');
             $balita = Balita::create($balitaData);
