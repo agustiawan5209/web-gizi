@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Inertia\Inertia;
-use App\Models\Balita;
+use App\Models\Attribut;
 use App\Models\Dataset;
 use App\Models\Pemeriksaan;
 use Illuminate\Http\Request;
@@ -47,7 +47,7 @@ class DashboardController extends Controller
 
         return Inertia::render('dashboard', [
             'orangtuacount' => User::count(),
-            'balitacount' => Balita::count(),
+            'attributcount' => Attribut::count(),
             'pemeriksaancount' => Pemeriksaan::count(),
             'datasetcount' => Dataset::count(),
             'gizi' => $Gizi,

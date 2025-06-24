@@ -8,7 +8,7 @@ const HomePage = ({className, ...props}: HomeProps) => (
     <div className={cn('flex w-full items-center justify-around bg-white lg:p-8 md:h-[80vh]', className)} {...props}>
         <div className="max-w-full lg:max-w-md">
             <h2 className="text-lg font-semibold text-gray-700 md:text-xl lg:text-2xl">Sistem Klasifikasi </h2>
-            <h1 className="mt-2 text-3xl font-bold md:text-4xl lg:text-5xl">Gizi Anak Balita Berbasis Web Menggunakan Algoritma Naive Bayes</h1>
+            <h1 className="mt-2 text-xl font-bold md:text-4xl lg:text-3xl text-justify">Gizi Anak Balita Berbasis Web Menggunakan Algoritma Naive Bayes</h1>
             <p className="mt-4 text-sm text-gray-600 md:text-base lg:text-lg">
                 Aplikasi ini dibangun menggunakan pendekatan naive bayes classifier untuk menentukan status gizi anak berdasarkan data antropometri
             </p>

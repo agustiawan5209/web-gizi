@@ -7,7 +7,7 @@ import { Head } from '@inertiajs/react';
 
 export interface DashboardProps {
     orangtuacount?: number | string;
-    balitacount?: number | string;
+    attributcount?: number | string;
     datasetcount?: number | string;
     pemeriksaancount?: number | string;
     gizi?: number[];
@@ -18,7 +18,7 @@ export interface DashboardProps {
     };
 }
 
-export default function Dashboard({ orangtuacount, balitacount, datasetcount, pemeriksaancount, gizi, chartPemeriksaan, statusLabel }: DashboardProps) {
+export default function Dashboard({ orangtuacount, attributcount, datasetcount, pemeriksaancount, gizi, chartPemeriksaan, statusLabel }: DashboardProps) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Dashboard',
@@ -71,8 +71,8 @@ export default function Dashboard({ orangtuacount, balitacount, datasetcount, pe
                     </Card>
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border relative overflow-hidden rounded-xl border bg-sidebar dark:bg-[#493D9E]">
                         <CardHeader className="px-4 pt-1 pb-0 text-center">
-                            <CardTitle className="text-base md:text-lg lg:text-xl text-white">Data Balita</CardTitle>
-                            <CardDescription className="text-white">{balitacount}</CardDescription>
+                            <CardTitle className="text-base md:text-lg lg:text-xl text-white">Data Kriteria</CardTitle>
+                            <CardDescription className="text-white">{attributcount}</CardDescription>
                         </CardHeader>
                     </Card>
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border relative overflow-hidden rounded-xl border bg-sidebar dark:bg-[#493D9E]">
