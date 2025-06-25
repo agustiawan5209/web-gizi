@@ -74,7 +74,12 @@ class NaiveBayesController extends Controller
                 $attributes_id = $value['id'];
                 $attributes_nama = strtolower($value['nama']);
 
-                $this->dataset[$key_dataset][$attributes_nama] = $value_dataset->fiturdataset()->where('attribut_id', $attributes_id)->first()->nilai;
+                // $this->dataset[$key_dataset][$attributes_nama] = $value_dataset->fiturdataset()->where('attribut_id', $attributes_id)->first()->nilai;
+                if($value_dataset->fiturdataset()->where('attribut_id', $attributes_id)->first() == null){
+                    $this->dataset[$key_dataset][$attributes_nama] = 0;
+                }else{
+                    $this->dataset[$key_dataset][$attributes_nama] = $value_dataset->fiturdataset()->where('attribut_id', $attributes_id)->first()->nilai;
+                }
             }
         }
     }
