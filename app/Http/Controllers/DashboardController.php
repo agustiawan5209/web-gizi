@@ -37,7 +37,7 @@ class DashboardController extends Controller
                 'pemeriksaan' => $pemeriksaan,
             ]);
         }
-        $Gizi = Dataset::wherein('label', $statusLabel)
+        $Gizi = Pemeriksaan::wherein('label', $statusLabel)
             ->selectRaw('label, count(*) as count')
             ->groupBy('label')
             ->pluck('count')
@@ -72,5 +72,24 @@ class DashboardController extends Controller
             'label' => ['jan', 'feb', 'mar', 'apr', 'mei', 'jun', 'jul', 'agu', 'sep', 'okt', 'nov', 'des'],
             'data' => $bulan
         ];
+    }
+    public function pemeriksaanGizi(){
+        $pemeriksaan = Pemeriksaan::with('balita')->get();
+
+        $gizi = [
+            'gizi_buruk' => 0,
+            'gizi_kurang' => 0,
+            'gizi_baik' => 0,
+            'gizi_lebih' => 0,
+        ];
+
+        foreach ($pemeriksaan as $item) {
+            $status = $item->balita->status_gizi;
+            if (array_key_exists($status, $gizi)) {
+                $gizi[$status]++;
+            }
+        }
+
+        return response()->json($gizi);
     }
 }

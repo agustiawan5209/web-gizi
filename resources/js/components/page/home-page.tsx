@@ -13,7 +13,7 @@ const HomePage = ({className, ...props}: HomeProps) => (
                 Aplikasi ini dibangun menggunakan pendekatan naive bayes classifier untuk menentukan status gizi anak berdasarkan data antropometri
             </p>
             <Link href="/login">
-                <button className="mt-6 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Coba Sekarang</button>
+                <button className="mt-6 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Mulai Pemeriksaan Gizi</button>
             </Link>
         </div>
         <div className="hidden w-1/4 md:block">

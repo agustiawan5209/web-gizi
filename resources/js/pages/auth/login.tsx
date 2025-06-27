@@ -36,7 +36,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
     };
 
     return (
-        <AuthLayout title="Welcome Back" description="Masuk untuk lanjutkan ke akun">
+        <AuthLayout title="Posyandu " description="Bungung Barana Selatan">
             <Head title="Log in" />
 
             <div className="mx-auto w-full max-w-md space-y-6">

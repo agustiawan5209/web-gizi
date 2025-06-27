@@ -99,7 +99,7 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
         const input = e.target.value;
         setSearchTerm(input);
         if (input.length > 2) {
-            const filteredList = orangtua.filter((orangtua) => orangtua.name.toLowerCase().includes(input.toLowerCase()));
+            const filteredList = orangtua.filter((orangtua) => orangtua.name.toLowerCase().includes(input.toLowerCase()) || orangtua.email.toLowerCase().includes(input.toLowerCase()));
             setListOrangTua(filteredList);
             if (filteredList.length > 0) {
                 setShowList(true);
@@ -271,6 +271,7 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
                                             type="date"
                                             className="w-max"
                                             required
+                                            readOnly
                                             tabIndex={2}
                                             autoComplete="tanggal_pemeriksaan"
                                             value={data.tanggal_pemeriksaan}
@@ -408,6 +409,8 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
                                                                 id={`kriteria.${index}`}
                                                                 value={data.attribut[index].nilai}
                                                                 disabled={isLoading}
+                                                                max={item.nama.toLowerCase() === 'Lingkar Kepala (CM)' ? 60 : 200}
+                                                                readOnly={item.nama.toLowerCase() === 'usia balita (bulan)'}
                                                                 onChange={(e) =>
                                                                     setData(
                                                                         'attribut',
