@@ -409,7 +409,8 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
                                                                 id={`kriteria.${index}`}
                                                                 value={data.attribut[index].nilai}
                                                                 disabled={isLoading}
-                                                                max={item.nama.toLowerCase() === 'Lingkar Kepala (CM)' ? 60 : 200}
+                                                                max={item.nama.toLowerCase() === 'lingkar kepala (cm)' ? 60 : 200}
+                                                                min={0}
                                                                 readOnly={item.nama.toLowerCase() === 'usia balita (bulan)'}
                                                                 onChange={(e) =>
                                                                     setData(

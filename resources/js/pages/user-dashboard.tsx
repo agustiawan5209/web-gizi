@@ -1,6 +1,7 @@
 import CollapsibleRow from '@/components/collapsible-table';
 import DetailPemeriksaan from '@/components/detail-pemeriksaan';
 import NaiveBayesNutritionExplanation from '@/components/page/naive-bayes';
+import TipsGizi from '@/components/page/tipsGizi';
 import { Button } from '@/components/ui/button';
 import { Table, TableAction, TableBody, TableColumn, TableContainer, TableHead, TableRow, TableTh } from '@/components/ui/table';
 import GuestLayout from '@/layouts/guest-layout';
@@ -158,6 +159,9 @@ export default function Dashboard({ balita, pemeriksaan }: DashboardProps) {
 
                         </TableContainer>
                     </div>
+                )}
+                {currentPage === '' && (
+                   <TipsGizi  />
                 )}
             </div>
         </GuestLayout>

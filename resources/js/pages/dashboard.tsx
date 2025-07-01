@@ -1,3 +1,4 @@
+import LineChart from '@/components/chart/LineChart';
 import PieChart from '@/components/chart/PieChart';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
@@ -35,19 +36,12 @@ export default function Dashboard({
     const LineChartData = {
         labels: chartPemeriksaan.label,
         datasets: [
-            // {
-            //     label: 'Jumlah Pemeriksaan',
-            //     backgroundColor: ['rgba(75,192,192,0.4)'], // note the array
-            //     borderColor: ['rgba(75,192,192,1)'], // note the array
-            //     borderWidth: 1,
-            //     data: chartPemeriksaan.data,
-            // },
             {
                 label: 'Data Pemeriksaan',
                 backgroundColor: ['rgba(21,150,0,0.4)'], // note the array
                 borderColor: ['rgba(21,150,0,1)'], // note the array
                 borderWidth: 1,
-                data: [65, 59, 80, 81, 56, 55, 40],
+                data: chartPemeriksaan.data, // Use the dynamic data from chartPemeriksaan
             },
         ],
     };
@@ -130,30 +124,33 @@ export default function Dashboard({
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
                     <div className="grid h-full grid-cols-1 gap-4 align-middle md:grid-cols-12">
                         <div className="col-span-full w-full p-4 md:col-span-12 lg:col-span-8 dark:bg-white">
-                            <table className='table-fixed w-full border-collapse border border-gray-300 dark:border-gray-700'>
+                            <table className="w-full table-fixed border-collapse border border-gray-300 dark:border-gray-700">
                                 <thead>
                                     <tr>
-                                        <th className='text-xs w-20'>Kategori Gizi</th>
-                                        <th className='text-xs'>Attribut yang Mempengaruhi</th>
-                                        <th className='text-xs'>Kondisi Data Balita </th>
-                                        <th className='text-xs'>Keterangan</th>
+                                        <th className="w-20 text-xs">Kategori Gizi</th>
+                                        <th className="text-xs">Attribut yang Mempengaruhi</th>
+                                        <th className="text-xs">Kondisi Data Balita </th>
+                                        <th className="text-xs">Keterangan</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {keteranganGizi.map((item, index) => (
                                         <tr key={index}>
-                                            <td className='text-xs border text-justify p-1.5'>{item.kategori}</td>
-                                            <td className='text-xs border text-justify p-1.5'>{item.attribut}</td>
-                                            <td className='text-xs border text-justify p-1.5'>{item.kondisi}</td>
-                                            <td className='text-xs border text-justify p-1.5'>{item.keterangan}</td>
+                                            <td className="border p-1.5 text-justify text-xs">{item.kategori}</td>
+                                            <td className="border p-1.5 text-justify text-xs">{item.attribut}</td>
+                                            <td className="border p-1.5 text-justify text-xs">{item.kondisi}</td>
+                                            <td className="border p-1.5 text-justify text-xs">{item.keterangan}</td>
                                         </tr>
                                     ))}
                                 </tbody>
                             </table>
                         </div>
                         <div className="col-span-full max-h-full w-full border p-4 md:col-span-12 lg:col-span-4 dark:bg-white">
-                            <h4 className='font-semibold text-center'>Pemeriksaan Gizi Bulan {currentMonth} </h4>
+                            <h4 className="text-center font-semibold">Pemeriksaan Gizi Bulan {currentMonth} </h4>
                             <PieChart data={PieChartData} title="Jumlah Pemeriksaan Gizi" />
+                            <div className="col-span-full w-full p-4 md:col-span-12 lg:col-span-7 dark:bg-white">
+                                <LineChart data={LineChartData} title="Jumlah Pemeriksaan" />
+                            </div>
                         </div>
                     </div>
                 </div>

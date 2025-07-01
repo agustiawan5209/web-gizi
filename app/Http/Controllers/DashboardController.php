@@ -58,9 +58,10 @@ class DashboardController extends Controller
 
     public function pemeriksaan()
     {
-        $pemeriksaan = Pemeriksaan::selectRaw('month(tgl_pemeriksaan) as bulan, count(*) as count')
-            ->groupByRaw('month(tgl_pemeriksaan)')
-            ->pluck('count')
+        $pemeriksaan = Pemeriksaan::selectRaw('MONTH(tgl_pemeriksaan) as bulan, COUNT(*) as count')
+            ->whereYear('tgl_pemeriksaan', date('Y'))
+            ->groupByRaw('MONTH(tgl_pemeriksaan)')
+            ->pluck('count', 'bulan')
             ->toArray();
 
         $bulan = array_fill(1, 12, 0);
@@ -68,10 +69,12 @@ class DashboardController extends Controller
             $bulan[$key] = $value;
         }
 
-        return [
+        $result = [
             'label' => ['jan', 'feb', 'mar', 'apr', 'mei', 'jun', 'jul', 'agu', 'sep', 'okt', 'nov', 'des'],
-            'data' => $bulan
+            'data' => array_values($bulan)
         ];
+
+        return $result;
     }
     public function pemeriksaanGizi(){
         $pemeriksaan = Pemeriksaan::with('balita')->get();
