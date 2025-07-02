@@ -16,8 +16,8 @@ class DashboardController extends Controller
         $statusLabel = [
             'gizi buruk',
             'gizi kurang',
-            'gizi baik',
             'gizi lebih',
+            'gizi baik',
         ];
 
         if (auth()->user()->hasRole('orangtua')) {

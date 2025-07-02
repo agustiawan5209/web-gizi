@@ -225,7 +225,7 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
                                             <Input
                                                 type="search"
                                                 id="orang_tua"
-                                                placeholder="cari berdasarkan nama yang terdaftar"
+                                                placeholder="cari berdasarkan nama atau email yang terdaftar"
                                                 required
                                                 value={searchTerm}
                                                 onChange={(e) => handleSearchUser(e)}
@@ -405,7 +405,7 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
                                                         <TableColumn>{item.nama}</TableColumn>
                                                         <TableColumn>
                                                              <Input
-                                                                type="number"
+                                                                type="text"
                                                                 id={`kriteria.${index}`}
                                                                 value={data.attribut[index].nilai}
                                                                 disabled={isLoading}
