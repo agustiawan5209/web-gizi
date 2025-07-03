@@ -99,7 +99,9 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
         const input = e.target.value;
         setSearchTerm(input);
         if (input.length > 2) {
-            const filteredList = orangtua.filter((orangtua) => orangtua.name.toLowerCase().includes(input.toLowerCase()) || orangtua.email.toLowerCase().includes(input.toLowerCase()));
+            const filteredList = orangtua.filter(
+                (orangtua) => orangtua.name.toLowerCase().includes(input.toLowerCase()) || orangtua.email.toLowerCase().includes(input.toLowerCase()),
+            );
             setListOrangTua(filteredList);
             if (filteredList.length > 0) {
                 setShowList(true);
@@ -186,28 +188,32 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
     const [usiaState, setUsiaState] = useState<number>(0);
     useEffect(() => {
         if (tanggalLahirRef && tanggalLahirRef.current) {
-            const tgl = tanggalLahirRef.current.value;
-            const birthDate = new Date(tgl);
-            const today = new Date();
-            let usia = today.getFullYear() - birthDate.getFullYear();
-            let bulan = today.getMonth() - birthDate.getMonth();
+            if (tanggalLahirRef.current.value) {
+                const tgl = tanggalLahirRef.current.value;
+                const birthDate = new Date(tgl);
+                const today = new Date();
+                let usia = today.getFullYear() - birthDate.getFullYear();
+                let bulan = today.getMonth() - birthDate.getMonth();
 
-            if (bulan < 0) {
-                usia--;
-                bulan += 12;
-            }
-            if(usia > 0){
-                usia *= 12;
-                usia += bulan
-            }
-            console.log(usia)
-            setData('attribut', data.attribut.map((val) => {
-                if (val.name === 'Usia Balita (bulan)') {
-                    return { ...val, nilai: usia.toString() };
+                if (bulan < 0) {
+                    usia--;
+                    bulan += 12;
                 }
-                return val;
-            }));
-            setUsiaState(usia)
+                if (usia > 0) {
+                    usia *= 12;
+                    usia += bulan;
+                }
+                setData(
+                    'attribut',
+                    data.attribut.map((val) => {
+                        if (val.name === 'Usia Balita (bulan)') {
+                            return { ...val, nilai: usia.toString() };
+                        }
+                        return val;
+                    }),
+                );
+                setUsiaState(usia);
+            }
         }
     }, [data.tanggal_lahir, setData]);
     return (
@@ -404,11 +410,12 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
                                                     <TableRow key={item.id}>
                                                         <TableColumn>{item.nama}</TableColumn>
                                                         <TableColumn>
-                                                             <Input
+                                                            <Input
                                                                 type="text"
                                                                 id={`kriteria.${index}`}
                                                                 value={data.attribut[index].nilai}
                                                                 disabled={isLoading}
+                                                                defaultValue={0}
                                                                 max={item.nama.toLowerCase() === 'lingkar kepala (cm)' ? 60 : 200}
                                                                 min={0}
                                                                 readOnly={item.nama.toLowerCase() === 'usia balita (bulan)'}
@@ -416,7 +423,9 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
                                                                     setData(
                                                                         'attribut',
                                                                         data.attribut.map((val, i) =>
-                                                                            i === index ? { nilai: e.target.value, attribut_id: item.id, name: item.nama } : val,
+                                                                            i === index
+                                                                                ? { nilai: e.target.value, attribut_id: item.id, name: item.nama }
+                                                                                : val,
                                                                         ),
                                                                     )
                                                                 }
