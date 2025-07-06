@@ -53,10 +53,17 @@ type CreateForm = {
         name: string;
     }[];
     label: string;
+    alasan: string;
     rekomendasi: string;
     usia_balita: string;
     detail: string[];
 };
+const alasan = [
+    {gizi: 'gizi buruk', alasan: "Anak termasuk gizi buruk karena berat badan dan tinggi badannya jauh di bawah standar usia menurut WHO (kurang dari -3 SD). Kondisi ini biasanya disebabkan oleh kurangnya asupan energi dan protein dalam jangka waktu lama."},
+    {gizi: 'gizikurang', alasan: "Anak termasuk gizi kurang karena berat badan dan tinggi badannya berada di bawah standar usia menurut WHO (-3 SD sampai < -2 SD). Kondisi ini umumnya disebabkan oleh kurangnya konsumsi makanan berprotein seperti telur, ikan, dan daging."},
+    {gizi: 'gizi baik', alasan: "Anak termasuk gizi baik karena berat badan dan tinggi badannya berada dalam standar usia menurut WHO (-2 SD sampai +2 SD). Hal ini menunjukkan asupan makanannya sudah cukup dan seimbang."},
+    {gizi: "gizi lebih", alasan:"Anak termasuk gizi lebih karena berat badan dan tinggi badannya melebihi standar usia menurut WHO (lebih dari +2 SD). Kondisi ini biasanya disebabkan oleh kelebihan konsumsi makanan berkalori tinggi seperti makanan manis dan berlemak."},
+]
 
 export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangtua }: PemeriksaanCreateProps) {
     // Memoize breadcrumbs to prevent unnecessary recalculations
@@ -76,6 +83,7 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
         tanggal_pemeriksaan: day,
         attribut: attribut.map((attr) => ({ nilai: '0', attribut_id: attr.id, name: attr.nama })),
         label: '',
+        alasan: '',
         rekomendasi: '',
         usia_balita: '',
         detail: [],
@@ -147,10 +155,11 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
                     jenis_kelamin: data.jenis_kelamin,
                 },
             })
-            .then((response) => {
+            .then((response :any) => {
                 if (response.status === 200) {
                     const { label, rekomendasi, detail } = response.data;
                     setData('label', label);
+                    setData('alasan', alasan.find((item) => item.gizi === label)?.alasan || '');
                     setData('rekomendasi', rekomendasi);
                     setData('detail', detail);
                     setOpenDialog(true);
@@ -216,6 +225,37 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
             }
         }
     }, [data.tanggal_lahir, setData]);
+
+    const HandleChangeInputValue = (
+        e: React.ChangeEvent<HTMLInputElement>,
+        index: number,
+        item: {
+            id: string;
+            nama: string;
+        },
+    ) => {
+        let input = e.target.value;
+        // Validasi input untuk memastikan hanya angka yang diizinkan
+        if (!/^\d*\.?\d*$/.test(input)) {
+            return;
+        } else {
+            if(item.nama.toLowerCase() === 'lingkar kepala (cm)' ||  item.nama.toLowerCase() === 'lingkar lengan (cm)'){
+                if(Number(input) > 60){
+                    input = '60';
+                }
+            }
+            if(item.nama.toLowerCase() === 'tinggi badan (cm)'){
+                if(Number(input) > 200){
+                    input = '200';
+                }
+            }
+            setData(
+                'attribut',
+                data.attribut.map((val, i) => (i === index ? { nilai: input, attribut_id: item.id, name: item.nama } : val)),
+            );
+        }
+        // Jika atribut adalah "Usia Balita (bulan)", hitung usia berdasarkan tanggal lah
+    };
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Create" />
@@ -418,17 +458,9 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
                                                                 defaultValue={0}
                                                                 max={item.nama.toLowerCase() === 'lingkar kepala (cm)' ? 60 : 200}
                                                                 min={0}
+                                                                required
                                                                 readOnly={item.nama.toLowerCase() === 'usia balita (bulan)'}
-                                                                onChange={(e) =>
-                                                                    setData(
-                                                                        'attribut',
-                                                                        data.attribut.map((val, i) =>
-                                                                            i === index
-                                                                                ? { nilai: e.target.value, attribut_id: item.id, name: item.nama }
-                                                                                : val,
-                                                                        ),
-                                                                    )
-                                                                }
+                                                                onChange={(e) => HandleChangeInputValue(e, index, item)}
                                                             />
                                                             <InputError message={(errors as any)[`attribut.${index}.nilai`]} />
                                                             <InputError message={(errors as any)[`attribut.${index}.attribut_id`]} />
@@ -472,6 +504,10 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
                                 <div className="flex gap-3">
                                     <span className="text-foreground font-semibold">Status Gizi:</span>
                                     <span className="text-foreground/90 font-normal">{data.label}</span>
+                                </div>
+                                <div className="flex gap-3">
+                                    <span className="text-foreground font-semibold whitespace-nowrap">Alasan Gizi:</span>
+                                    <span className="text-foreground/90 font-normal">{data.alasan}</span>
                                 </div>
                                 <div className="flex gap-3">
                                     <span className="text-foreground font-semibold">Rekomendasi:</span>

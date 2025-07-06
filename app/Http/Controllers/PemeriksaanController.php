@@ -185,7 +185,8 @@ class PemeriksaanController extends Controller
                 'data_balita' => json_encode($balita),
                 'data_pemeriksaan' => json_encode($request->input('attribut')),
                 'tgl_pemeriksaan' => $request->input('tanggal_pemeriksaan'),
-                'label' => $request->input('label')
+                'label' => $request->input('label'),
+                'alasan' => $request->input('alasan'),
             ];
             $pemeriksaan = Pemeriksaan::create($pemeriksaanData);
 
@@ -250,6 +251,8 @@ class PemeriksaanController extends Controller
         $pemeriksaan->load([
             'balita',
             'balita.orangtua',
+            'balita.pemeriksaan',
+            'balita.pemeriksaan.detailpemeriksaan',
             'detailpemeriksaan',
             'detailpemeriksaan.attribut',
             'polamakan'
@@ -260,6 +263,7 @@ class PemeriksaanController extends Controller
             'balita' => $pemeriksaan->balita,
             'orangTua' => $pemeriksaan->balita->orangtua,
             'detail' => $pemeriksaan->detailpemeriksaan,
+            'dataPemeriksaanBalita' => $pemeriksaan->balita->pemeriksaan,
             'breadcrumb' => array_merge(self::BASE_BREADCRUMB, [
                 [
                     'title' => 'detail pemeriksaan',
@@ -267,6 +271,7 @@ class PemeriksaanController extends Controller
                 ],
             ]),
             'polamakan' => $pemeriksaan->polamakan,
+            'attribut' => Attribut::orderBy('id', 'asc')->get(),
         ]);
     }
 

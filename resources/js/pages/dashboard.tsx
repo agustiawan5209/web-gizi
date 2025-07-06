@@ -47,12 +47,16 @@ export default function Dashboard({
     };
 
     // Data yang akan dikirim ke PieChart
+    const label = Object.keys(gizi ?? {});
+    const data = Object.values(gizi ?? {});
+    console.log('Label:', label);
+    console.log('data:', data);
     const PieChartData = {
-        labels: statusLabel ?? [], // provide a default value if statusLabel is undefined or empty
+        labels: label ?? [], // provide a default value if statusLabel is undefined or empty
         datasets: [
             {
                 label: 'Jumlah',
-                data: gizi, // Data dinamis
+                data: data, // Data dinamis
                 backgroundColor: ['rgba(222, 22, 0, 0.2)', 'rgba(194, 182, 0,0.2)', 'rgba(37, 255, 0, 0.2)', 'rgba(0, 134, 255, 0.2)'],
                 borderColor: ['rgba(222, 22, 0,1)', 'rgba(194, 182, 0,1)', 'rgba(37, 255, 0, 1)', 'rgba(0, 134, 255, 1)'],
                 borderWidth: 1,

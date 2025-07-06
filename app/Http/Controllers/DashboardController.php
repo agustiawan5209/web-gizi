@@ -14,9 +14,9 @@ class DashboardController extends Controller
     public function index()
     {
         $statusLabel = [
+            'gizi lebih',
             'gizi buruk',
             'gizi kurang',
-            'gizi lebih',
             'gizi baik',
         ];
 
@@ -27,7 +27,7 @@ class DashboardController extends Controller
                 'detailpemeriksaan',
                 'detailpemeriksaan.attribut',
                 'polamakan'
-            ])->whereHas('balita', function($query){
+            ])->whereHas('balita', function ($query) {
                 $query->where('orang_tua_id', auth()->user()->id);
             });
 
@@ -37,12 +37,25 @@ class DashboardController extends Controller
                 'pemeriksaan' => $pemeriksaan,
             ]);
         }
+        // Hitung jumlah pemeriksaan berdasarkan label gizi dalam bulan ini
+        // Query pemeriksaan berdasarkan label gizi dalam bulan ini
+        // 1. Pilih pemeriksaan yang memiliki label gizi dalam array $statusLabel
+        // 2. Filter pemeriksaan berdasarkan bulan sekarang
+        // 3. Ambil kolom label dan hitung jumlah pemeriksaan untuk setiap label
+        // 4. Group hasil query berdasarkan label
+        // 5. Ambil hasil query dalam bentuk array asosiatif dengan key label dan value jumlah pemeriksaan
         $Gizi = Pemeriksaan::wherein('label', $statusLabel)
+            ->whereMonth('tgl_pemeriksaan', date('m'))
             ->selectRaw('label, count(*) as count')
             ->groupBy('label')
-            ->pluck('count')
+            ->pluck('count', 'label')
             ->toArray();
-
+        // Jika tidak ada data, inisialisasi dengan nol untuk setiap label
+        foreach ($statusLabel as $label) {
+            if (!array_key_exists($label, $Gizi)) {
+                $Gizi[$label] = 0;
+            }
+        }
         $chartPemeriksaan = $this->pemeriksaan();
 
         return Inertia::render('dashboard', [
@@ -76,7 +89,8 @@ class DashboardController extends Controller
 
         return $result;
     }
-    public function pemeriksaanGizi(){
+    public function pemeriksaanGizi()
+    {
         $pemeriksaan = Pemeriksaan::with('balita')->get();
 
         $gizi = [

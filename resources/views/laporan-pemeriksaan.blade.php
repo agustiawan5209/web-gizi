@@ -90,6 +90,22 @@
             </tr>
         </tbody>
     </table>
+       <!-- Data Orang Tua -->
+    <div class="section">
+        <div class="section-title">DATA ORANG TUA</div>
+        <table class="data-table">
+            <tr>
+                <th width="30%">Nama Orang Tua</th>
+                <td>{{ $orangTua->name }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ $orangTua->email }}</td>
+            </tr>
+        </table>
+    </div>
+
+
     <div class="section">
         <div class="section-title">DATA BALITA</div>
         <table class="data-table">
@@ -111,21 +127,6 @@
             </tr>
         </table>
     </div>
-    <!-- Data Orang Tua -->
-    <div class="section">
-        <div class="section-title">DATA ORANG TUA</div>
-        <table class="data-table">
-            <tr>
-                <th width="30%">Nama Orang Tua</th>
-                <td>{{ $orangTua->name }}</td>
-            </tr>
-            <tr>
-                <th>Email</th>
-                <td>{{ $orangTua->email }}</td>
-            </tr>
-        </table>
-    </div>
-
 
     <!-- Data Pemeriksaan -->
     <div class="section">
@@ -149,12 +150,16 @@
                     @endforeach
                 </tr>
                 <tr>
-                    <th style="font-size: 10px;" colspan="2">Hasil Klasifikasi (Status Gizi)</th>
-                    <td style="font-size: 10px;" colspan="{{ count($attribut) - 2 }}">{!! $pemeriksaan['label'] !!}</td>
+                    <th style="font-size: 10px;" colspan="3">Hasil Klasifikasi (Status Gizi)</th>
+                    <td style="font-size: 10px;" colspan="{{ count($attribut) -4 }}">{!! $pemeriksaan['label'] !!}</td>
                 </tr>
                 <tr>
-                    <th style="font-size: 10px;" colspan="2">Rekomendasi</th>
-                    <td style="font-size: 10px;" colspan="{{ count($attribut) - 2 }}">{!! $polamakan['rekomendasi'] !!}</td>
+                    <th style="font-size: 10px;" colspan="3">Alasan Klasifikasi (Status Gizi)</th>
+                    <td style="font-size: 10px;" colspan="{{ count($attribut) -4 }}">{!! $pemeriksaan['alasan'] !!}</td>
+                </tr>
+                <tr>
+                    <th style="font-size: 10px;" colspan="3">Rekomendasi</th>
+                    <td style="font-size: 10px;" colspan="{{ count($attribut) -4 }}">{!! $polamakan['rekomendasi'] !!}</td>
                 </tr>
             </tbody>
         </table>

@@ -16,6 +16,7 @@ class Pemeriksaan extends Model
         "tgl_pemeriksaan",
         "data_pemeriksaan",
         "label",
+        "alasan",
     ];
 
     protected $casts = [
