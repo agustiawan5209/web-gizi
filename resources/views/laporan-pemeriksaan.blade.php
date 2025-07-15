@@ -90,7 +90,7 @@
             </tr>
         </tbody>
     </table>
-       <!-- Data Orang Tua -->
+    <!-- Data Orang Tua -->
     <div class="section">
         <div class="section-title">DATA ORANG TUA</div>
         <table class="data-table">
@@ -135,7 +135,7 @@
             <thead>
                 <tr>
                     @foreach ($attribut as $item)
-                        @if ($item !== 'status')
+                        @if ($item !== 'status' || $item !== 'jenis kelamin')
                             <th style="font-size: 10px;">{{ $item }}</th>
                         @endif
                     @endforeach
@@ -144,22 +144,71 @@
             <tbody>
                 <tr>
                     @foreach ($attribut as $item)
-                        @if ($item !== 'status')
+                        @if ($item !== 'status' || $item !== 'jenis kelamin')
                             <td style="font-size: 10px;">{{ $detail[$item] }}</td>
                         @endif
                     @endforeach
                 </tr>
                 <tr>
                     <th style="font-size: 10px;" colspan="3">Hasil Klasifikasi (Status Gizi)</th>
-                    <td style="font-size: 10px;" colspan="{{ count($attribut) -4 }}">{!! $pemeriksaan['label'] !!}</td>
+                    <td style="font-size: 10px;" colspan="{{ count($attribut) - 3 }}">{!! $pemeriksaan['label'] !!}</td>
                 </tr>
                 <tr>
                     <th style="font-size: 10px;" colspan="3">Alasan Klasifikasi (Status Gizi)</th>
-                    <td style="font-size: 10px;" colspan="{{ count($attribut) -4 }}">{!! $pemeriksaan['alasan'] !!}</td>
+                    <td style="font-size: 10px;" colspan="{{ count($attribut) - 3 }}">{!! $pemeriksaan['alasan'] !!}</td>
                 </tr>
                 <tr>
-                    <th style="font-size: 10px;" colspan="3">Rekomendasi</th>
-                    <td style="font-size: 10px;" colspan="{{ count($attribut) -4 }}">{!! $polamakan['rekomendasi'] !!}</td>
+                    <th style="font-size: 10px;" colspan="3">Rekomendasi Makanan</th>
+                    <td style="font-size: 10px;" colspan="{{ count($attribut) - 3 }}">{!! $polamakan['rekomendasi'] !!}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+    @php
+        function searchByID($id_attributes, $detailPemeriksaan)
+        {
+            foreach ($detailPemeriksaan as $key => $value) {
+                if ($value['attribut_id'] == $id_attributes) {
+                    return $value['nilai'];
+                }
+            }
+        }
+    @endphp
+    {{-- Riwayat Perkembangan Gizi Balita --}}
+    <div class="section">
+        <div class="section-title">Riwayat Perkembangan Gizi Balita</div>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th style="font-size: 10px;">No</th>
+                    <th style="font-size: 10px;">Tanggal Pemeriksaan</th>
+
+                    @foreach ($attributes as $item)
+                        @if (strtolower($item['nama']) !== 'status')
+                            <th style="font-size: 10px;">{{ $item['nama'] }}</th>
+                        @endif
+                    @endforeach
+                    <th>Status</th>
+                    <th>Alasan</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    @foreach ($dataPemeriksaanBalita as $item)
+                        <td style="font-size: 10px;">{{ $loop->iteration }}</td>
+                        <td style="font-size: 10px;">
+                            {{ \Carbon\Carbon::parse($item->tgl_pemeriksaan)->format('d F Y') }}</td>
+                        {{-- Loop through each detail pemeriksaan --}}
+                        @foreach ($attributes as $key => $value)
+                            @if ($value['nama'] !== 'status')
+                                <td style="font-size: 10px;">{{ searchByID($value['id'], $item->detailPemeriksaan) }}
+                                </td>
+                            @endif
+                        @endforeach
+                        <td style="font-size: 10px;">{{ $item->alasan }}</td>
+                    @endforeach
                 </tr>
             </tbody>
         </table>

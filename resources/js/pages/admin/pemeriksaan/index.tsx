@@ -25,6 +25,7 @@ interface PemeriksaanProps {
                 tanggal_lahir: string;
             };
             detailpemeriksaan: any;
+            alasan: string;
         }>;
         first_page_url: string;
         from: number;
@@ -190,7 +191,7 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
                     id={item.id}
                     show={read_url ?? ''}
                 >
-                    <DetailPemeriksaan detail={item.detailpemeriksaan} />
+                    <DetailPemeriksaan pemeriksaan={item} detail={item.detailpemeriksaan} />
                 </CollapsibleRow>
             );
         });

@@ -197,7 +197,7 @@ export default function PemeriksaanShow({
                                                 <>
                                                     <TableRow>
                                                         <TableColumn className="text-foreground w-1/3 font-normal">
-                                                            Alasan {pemeriksaan.label}
+                                                            Alasan
                                                         </TableColumn>
                                                         <TableColumn
                                                             className="ql-editor p-3"
@@ -223,7 +223,7 @@ export default function PemeriksaanShow({
                             <br />
                             <section className="border px-4">
                                 <h3 className="text-foreground  p-4 text-left text-lg font-semibold md:text-xl dark:bg-gray-800">
-                                    Riwayat Pemeriksaan
+                                    Riwayat Perkembangan Gizi Balita
                                 </h3>
                                 <TableContainer className="relative">
                                     <Table className="w-full">

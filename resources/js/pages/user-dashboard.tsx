@@ -38,6 +38,7 @@ export interface DashboardProps {
             tanggal_lahir: string;
         };
         detailpemeriksaan: any;
+        alasan: string;
     }[];
 }
 
@@ -96,7 +97,7 @@ export default function Dashboard({ balita, pemeriksaan }: DashboardProps) {
                     show={route('orangtua.balita.show', { pemeriksaan: item.id })}
                     id={item.id}
                 >
-                    <DetailPemeriksaan detail={item.detailpemeriksaan} />
+                    <DetailPemeriksaan pemeriksaan={item} detail={item.detailpemeriksaan} />
                 </CollapsibleRow>
             );
         });

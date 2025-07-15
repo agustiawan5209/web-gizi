@@ -72,7 +72,7 @@ class LaporanController extends Controller
         $datapemeriksaan = Pemeriksaan::find($request->pemeriksaan);
         $polaMakan = PolaMakan::where('pemeriksaan_id', $request->pemeriksaan)->first();
         // Ambil data dari database
-        $balita->load(['orangtua']);
+        $balita->load(['orangtua', 'pemeriksaan', 'pemeriksaan.detailpemeriksaan',]);
 
         // Hitung usia balita
         $tanggalLahir = \Carbon\Carbon::parse($balita->tanggal_lahir);
@@ -83,14 +83,18 @@ class LaporanController extends Controller
         if ($datapemeriksaan && $datapemeriksaan->detailpemeriksaan) {
             $datauji = $this->setDataUji($datapemeriksaan, $attributes);
         }
-        // dd($datauji);
+        $attr = array_map('strtolower', array_column(array_filter($attributes, function($item) {
+            return strtolower($item['nama']) !== 'status' && strtolower($item['nama']) !== 'jenis kelamin';
+        }), 'nama'));
         $data = [
             'orangTua' => $balita->orangtua,
             'balita' => $balita,
             'pemeriksaan' => $datapemeriksaan,
             'polamakan' => $polaMakan,
             'detail' => $datauji,
-            'attribut' => array_map('strtolower', array_column($attributes, 'nama')),
+            'dataPemeriksaanBalita' => $balita->pemeriksaan,
+            'attribut' => $attr,
+            'attributes' => $attributes,
 
         ];
 

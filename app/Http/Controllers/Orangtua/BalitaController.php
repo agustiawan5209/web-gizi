@@ -84,6 +84,8 @@ class BalitaController extends Controller
         $pemeriksaan->load([
             'balita',
             'balita.orangtua',
+            'balita.pemeriksaan',
+            'balita.pemeriksaan.detailpemeriksaan',
             'detailpemeriksaan',
             'detailpemeriksaan.attribut',
             'polamakan'
@@ -93,6 +95,7 @@ class BalitaController extends Controller
             'balita' => $pemeriksaan->balita,
             'orangTua' => $pemeriksaan->balita->orangtua,
             'detail' => $pemeriksaan->detailpemeriksaan,
+            'dataPemeriksaanBalita' => $pemeriksaan->balita->pemeriksaan,
             'breadcrumb' => array_merge(self::BASE_BREADCRUMB, [
                 [
                     'title' => 'detail pemeriksaan',
@@ -100,6 +103,7 @@ class BalitaController extends Controller
                 ],
             ]),
             'polamakan' => $pemeriksaan->polamakan,
+            'attribut' => Attribut::orderBy('id', 'asc')->get(),
         ]);
     }
 

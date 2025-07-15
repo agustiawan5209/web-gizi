@@ -1,10 +1,11 @@
+import GrowthChart from '@/components/chart/GrowthChart';
 import FileDownloader from '@/components/FileDownloader';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableColumn, TableContainer, TableHead, TableRow, TableTh } from '@/components/ui/table';
 
 import GuestLayout from '@/layouts/guest-layout';
-import { type BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/react';
+import { SharedData, type BreadcrumbItem } from '@/types';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { useMemo } from 'react';
 
 interface OrangTua {
@@ -23,8 +24,11 @@ interface Balita {
 }
 
 interface Pemeriksaan {
-    id: string;
+   id: string;
     tgl_pemeriksaan: string;
+    label: string;
+    alasan: string;
+    detailPemeriksaan: DetailPemeriksaan[];
 }
 
 interface DetailPemeriksaan {
@@ -46,10 +50,17 @@ export interface PemeriksaanProps {
     pemeriksaan: Pemeriksaan;
     detail: DetailPemeriksaan[];
     polamakan: PolaMakan;
+    attribut: Attribut[];
+     dataPemeriksaanBalita: Pemeriksaan[];
     breadcrumb: { title: string; href: string }[];
 }
-
-export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, detail, polamakan, breadcrumb }: PemeriksaanProps) {
+interface Attribut {
+    id: string;
+    nama: string;
+}
+export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, detail, attribut,
+    polamakan,
+    dataPemeriksaanBalita, breadcrumb }: PemeriksaanProps) {
     // Memoize breadcrumbs to prevent unnecessary recalculations
     const breadcrumbs: BreadcrumbItem[] = useMemo(
         () => (breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : []),
@@ -68,8 +79,20 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, detail,
         console.error('Download failed:', error);
     };
 
+    const searchById = (id: string, detail: { attribut_id: string; nilai: string }[]): string => {
+        if (!detail || !id) return '';
+        try {
+            const foundElement = detail.find((element) => String(element.attribut_id).includes(id));
+            return foundElement?.nilai ?? '';
+        } catch (error) {
+            console.error('Error in searchById:', error);
+            return '';
+        }
+    };
+     const page = usePage<SharedData>();
+        const { defaultUrl } = page.props;
     return (
-        <GuestLayout head='title'>
+        <GuestLayout head="title">
             <Head title="Detail Pemeriksaan" />
             <div className="dark:bg-elevation-1 flex h-full flex-1 flex-col gap-4 rounded-xl p-0 lg:p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
@@ -125,7 +148,7 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, detail,
                                             <TableColumn className="text-foreground p-3 font-medium">Email Orang Tua</TableColumn>
                                             <TableColumn className="p-3">{orangTua.email}</TableColumn>
                                         </TableRow>
-                                          <TableRow className="border-b">
+                                        <TableRow className="border-b">
                                             <TableColumn className="text-foreground p-3 font-medium">Alamat</TableColumn>
                                             <TableColumn className="p-3">{balita.alamat}</TableColumn>
                                         </TableRow>
@@ -171,15 +194,68 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, detail,
                                                     </TableRow>
                                                 ))}
                                             {polamakan && (
-                                                <TableRow>
-                                                    <TableColumn className="text-foreground p-3 text-lg font-semibold">Rekomendasi Pola Makan</TableColumn>
-                                                    <TableColumn className="ql-editor p-3" dangerouslySetInnerHTML={{ __html: polamakan.rekomendasi }}></TableColumn>
-                                                </TableRow>
+                                                <>
+                                                    <TableRow>
+                                                        <TableColumn className="text-foreground w-1/3 font-normal">
+                                                            Alasan
+                                                        </TableColumn>
+                                                        <TableColumn
+                                                            className="ql-editor p-3"
+                                                            dangerouslySetInnerHTML={{ __html: pemeriksaan.alasan }}
+                                                        ></TableColumn>
+                                                    </TableRow>
+                                                    <TableRow>
+                                                        <TableColumn className="text-foreground p-3 text-lg font-semibold">
+                                                            Rekomendasi Pola Makan
+                                                        </TableColumn>
+                                                        <TableColumn
+                                                            className="ql-editor p-3"
+                                                            dangerouslySetInnerHTML={{ __html: polamakan.rekomendasi }}
+                                                        ></TableColumn>
+                                                    </TableRow>
+                                                </>
                                             )}
                                         </TableBody>
                                     </Table>
                                 </TableContainer>
                             </section>
+
+                             <section className="border px-4">
+                                <h3 className="text-foreground  p-4 text-left text-lg font-semibold md:text-xl dark:bg-gray-800">
+                                    Riwayat Perkembangan Gizi Balita
+                                </h3>
+                                <TableContainer className="relative">
+                                    <Table className="w-full">
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableTh className="w-10 bg-blue-100">No.</TableTh>
+                                                <TableTh className="px-0 bg-blue-100 whitespace-nowrap">Tanggal Pemeriksaan</TableTh>
+                                                {attribut.length > 0 && attribut.map((item) => <TableTh className='bg-blue-100 text-xs whitespace-nowrap' key={item.id}> {item.nama}</TableTh>)}
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {(dataPemeriksaanBalita ?? []).length > 0 &&
+                                                dataPemeriksaanBalita.map((item: any, index: number) => (
+                                                    <TableRow key={index}>
+                                                        <TableColumn>{index + 1}</TableColumn>
+                                                        <TableColumn> {item.tgl_pemeriksaan} </TableColumn>
+                                                        {attribut.length > 0 &&
+                                                            attribut.map((attributs: any) => (
+                                                                <TableColumn key={attributs.id}>
+                                                                    {searchById(attributs.id, item.detailpemeriksaan)}
+                                                                </TableColumn>
+                                                            ))}
+                                                    </TableRow>
+                                                ))}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </section>
+                             {dataPemeriksaanBalita.length > 1 && (
+                                <section className="my-4">
+                                    <GrowthChart url={defaultUrl + '/api/chart/balita/' + balita.id} title="perkembangan anak secara individual" />
+                                </section>
+                            )}
                         </div>
                     </div>
                 </div>

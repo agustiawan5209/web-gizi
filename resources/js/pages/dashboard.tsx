@@ -102,25 +102,25 @@ export default function Dashboard({
                 <div className="grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-4">
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border bg-sidebar relative overflow-hidden rounded-xl border dark:bg-[#493D9E]">
                         <CardHeader className="px-4 pt-1 pb-0 text-center">
-                            <CardTitle className="text-base text-white md:text-lg lg:text-xl">Data Orang Tua</CardTitle>
+                            <CardTitle className="text-base text-white md:text-lg lg:text-xl">Data Pengguna</CardTitle>
                             <CardDescription className="text-white">{orangtuacount}</CardDescription>
                         </CardHeader>
                     </Card>
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border bg-sidebar relative overflow-hidden rounded-xl border dark:bg-[#493D9E]">
                         <CardHeader className="px-4 pt-1 pb-0 text-center">
-                            <CardTitle className="text-base text-white md:text-lg lg:text-xl">Data Kriteria</CardTitle>
+                            <CardTitle className="text-base text-white md:text-base lg:text-lg">Data Kriteria Gizi Balita</CardTitle>
                             <CardDescription className="text-white">{attributcount}</CardDescription>
                         </CardHeader>
                     </Card>
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border bg-sidebar relative overflow-hidden rounded-xl border dark:bg-[#493D9E]">
                         <CardHeader className="px-4 pt-1 pb-0 text-center">
-                            <CardTitle className="text-base text-white md:text-lg lg:text-xl">Jumlah Dataset</CardTitle>
+                            <CardTitle className="text-base text-white md:text-base lg:text-base">Jumlah Dataset Gizi Balita</CardTitle>
                             <CardDescription className="text-white">{datasetcount}</CardDescription>
                         </CardHeader>
                     </Card>
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border bg-sidebar relative overflow-hidden rounded-xl border dark:bg-[#493D9E]">
                         <CardHeader className="px-4 pt-1 pb-0 text-center">
-                            <CardTitle className="text-base text-white md:text-lg lg:text-xl">Data Pemeriksaan</CardTitle>
+                            <CardTitle className="text-base text-white md:text-base lg:text-base">Data Pemeriksaan Gizi Balita</CardTitle>
                             <CardDescription className="text-white">{pemeriksaancount}</CardDescription>
                         </CardHeader>
                     </Card>

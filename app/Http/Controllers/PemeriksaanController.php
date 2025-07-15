@@ -176,9 +176,17 @@ class PemeriksaanController extends Controller
     {
         // dd($request->all());
         // Validate the request
+
         try {
             $balitaData = $request->except('attribut', 'tanggal_pemeriksaan');
-            $balita = Balita::create($balitaData);
+
+            $existingBalitaWithNama = Balita::where('nama', '=', $request->nama)->where('orang_tua_id', '=', $request->orang_tua_id)->first();
+            if ($existingBalitaWithNama) {
+                $balita = $existingBalitaWithNama;
+            } else {
+
+                $balita = Balita::create($balitaData);
+            }
 
             $pemeriksaanData = [
                 'balita_id' => $balita->id,

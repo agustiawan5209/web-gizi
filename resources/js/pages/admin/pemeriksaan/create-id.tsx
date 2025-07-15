@@ -48,7 +48,7 @@ type CreateForm = {
     alamat: string;
     tanggal_pemeriksaan: string;
     attribut: {
-        nilai: string;
+        nilai: string | null;
         attribut_id: string;
         name: string;
     }[];
@@ -59,10 +59,10 @@ type CreateForm = {
     detail: string[];
 };
 const alasan = [
-    {gizi: 'gizi buruk', alasan: "Anak termasuk gizi buruk karena berat badan dan tinggi badannya jauh di bawah standar usia menurut WHO (kurang dari -3 SD). Kondisi ini biasanya disebabkan oleh kurangnya asupan energi dan protein dalam jangka waktu lama."},
-    {gizi: 'gizikurang', alasan: "Anak termasuk gizi kurang karena berat badan dan tinggi badannya berada di bawah standar usia menurut WHO (-3 SD sampai < -2 SD). Kondisi ini umumnya disebabkan oleh kurangnya konsumsi makanan berprotein seperti telur, ikan, dan daging."},
-    {gizi: 'gizi baik', alasan: "Anak termasuk gizi baik karena berat badan dan tinggi badannya berada dalam standar usia menurut WHO (-2 SD sampai +2 SD). Hal ini menunjukkan asupan makanannya sudah cukup dan seimbang."},
-    {gizi: "gizi lebih", alasan:"Anak termasuk gizi lebih karena berat badan dan tinggi badannya melebihi standar usia menurut WHO (lebih dari +2 SD). Kondisi ini biasanya disebabkan oleh kelebihan konsumsi makanan berkalori tinggi seperti makanan manis dan berlemak."},
+    {gizi: 'gizi buruk', alasan: "Anak termasuk gizi buruk karena berat badan dan tinggi badan jauh di bawah standar usia menurut WHO (kurang dari -3 SD). Kondisi ini biasanya terjadi karena kurangnya asupan energi dan protein dalam waktu yang cukup lama."},
+    {gizi: 'gizi kurang', alasan: "Anak termasuk gizi kurang karena berat badan dan tinggi badan berada di bawah standar usia menurut WHO (-3 SD sampai kurang dari -2 SD). Kondisi ini biasanya disebabkan oleh kurangnya konsumsi makanan berprotein seperti telur, ikan, dan daging."},
+    {gizi: 'gizi baik', alasan: "Anak termasuk gizi baik karena berat badan dan tinggi badan sesuai dengan standar usia menurut WHO (-2 SD sampai +2 SD). Ini menunjukkan bahwa asupan makanannya sudah cukup dan seimbang."},
+    {gizi: "gizi lebih", alasan:"Anak termasuk gizi lebih karena berat badan dan tinggi badan melebihi standar usia menurut WHO (lebih dari +2 SD). Kondisi ini biasanya disebabkan oleh kelebihan konsumsi makanan berkalori tinggi seperti makanan manis dan berlemak."},
 ]
 
 export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangtua }: PemeriksaanCreateProps) {
@@ -81,7 +81,7 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
         jenis_kelamin: '',
         alamat: '',
         tanggal_pemeriksaan: day,
-        attribut: attribut.map((attr) => ({ nilai: '0', attribut_id: attr.id, name: attr.nama })),
+        attribut: attribut.map((attr) => ({ nilai: null, attribut_id: attr.id, name: attr.nama })),
         label: '',
         alasan: '',
         rekomendasi: '',
@@ -333,7 +333,7 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
                                             <TableRow>
                                                 <TableColumn>
                                                     <div className="grid gap-2">
-                                                        <Label htmlFor="nama">Nama</Label>
+                                                        <Label htmlFor="nama">Nama Balita</Label>
                                                         <Input
                                                             id="nama"
                                                             type="text"
@@ -453,12 +453,13 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
                                                             <Input
                                                                 type="text"
                                                                 id={`kriteria.${index}`}
-                                                                value={data.attribut[index].nilai}
+                                                                value={data.attribut[index].nilai ?? ''}
                                                                 disabled={isLoading}
                                                                 defaultValue={0}
                                                                 max={item.nama.toLowerCase() === 'lingkar kepala (cm)' ? 60 : 200}
                                                                 min={0}
                                                                 required
+                                                                placeholder={`masukkan ${item.nama}`}
                                                                 readOnly={item.nama.toLowerCase() === 'usia balita (bulan)'}
                                                                 onChange={(e) => HandleChangeInputValue(e, index, item)}
                                                             />
@@ -506,7 +507,7 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
                                     <span className="text-foreground/90 font-normal">{data.label}</span>
                                 </div>
                                 <div className="flex gap-3">
-                                    <span className="text-foreground font-semibold whitespace-nowrap">Alasan Gizi:</span>
+                                    <span className="text-foreground font-semibold whitespace-nowrap">Alasan:</span>
                                     <span className="text-foreground/90 font-normal">{data.alasan}</span>
                                 </div>
                                 <div className="flex gap-3">
