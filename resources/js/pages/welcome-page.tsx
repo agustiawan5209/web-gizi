@@ -10,7 +10,7 @@ export default function WelcomePage(){
     const pages = [
         { id: "home", title: "Home", component: <HomePage />, icon: <Home /> },
         { id: "about", title: "Tentang Kami", component: <AboutPage />, icon: <UserX/> },
-        { id: "fitur", title: "Fitur Website", component: <FiturPage />, icon: <LayoutGrid/> },
+        // { id: "fitur", title: "Fitur Website", component: <FiturPage />, icon: <LayoutGrid/> },
         { id: "naive-bayes", title: "Naive bayes", component: <NaiveBayesNutritionExplanation />, icon: <ChartBarIcon/> },
         { id: "Edukasi-gizi", title: "edukasi gizi", component: <EdukasiGiziAnak />, icon: <InfoIcon/> },
       ];

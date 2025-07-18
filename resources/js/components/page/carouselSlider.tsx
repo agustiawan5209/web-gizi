@@ -165,14 +165,6 @@ const CarouselSlider: React.FC<CarouselSliderProps> = ({
                         isMobileView ? 'w-full border-b border-gray-200' : ''
                     }`}
                 >
-                    {!isMobileView && (
-                        <div className="mb-6 hidden px-4 py-2 lg:block">
-                            <h2 className="text-xl font-bold text-gray-800">Navigasi</h2>
-                            <p className="text-sm text-gray-500">
-                                Pilih halaman ditampilkan
-                            </p>
-                        </div>
-                    )}
 
                     {pages.map((page) => (
                         <button

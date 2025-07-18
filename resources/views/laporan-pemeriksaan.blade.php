@@ -145,7 +145,7 @@
                 <tr>
                     @foreach ($attribut as $item)
                         @if ($item !== 'status' || $item !== 'jenis kelamin')
-                            <td style="font-size: 10px;">{{ $detail[$item] }}</td>
+                            <td style="font-size: 10px; white-space: nowrap;">{{ $detail[$item] }}</td>
                         @endif
                     @endforeach
                 </tr>
@@ -191,7 +191,6 @@
                         @endif
                     @endforeach
                     <th>Status</th>
-                    <th>Alasan</th>
                 </tr>
             </thead>
             <tbody>
@@ -207,7 +206,6 @@
                                 </td>
                             @endif
                         @endforeach
-                        <td style="font-size: 10px;">{{ $item->alasan }}</td>
                     @endforeach
                 </tr>
             </tbody>

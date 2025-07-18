@@ -35,4 +35,16 @@ class StorePemeriksaanBalitaIdRequest extends FormRequest
             'label'=> 'required|string',
         ];
     }
+
+    public function messages(): array
+    {
+        return  [
+            'attribut.required' => 'Nilai Tidak Valid!. Pastikan semua pengukuran (BB, TB, Lingkar Kepala, Lingkar Lengan) diisi dengan nilai yang benar dan tidak nol.',
+            'attribut.array' => 'Nilai Tidak Valid!. Pastikan semua pengukuran (BB, TB, Lingkar Kepala, Lingkar Lengan) diisi dengan nilai yang benar dan tidak nol.',
+            'attribut.*.nilai.required' => 'Nilai Tidak Valid!. Pastikan semua pengukuran (BB, TB, Lingkar Kepala, Lingkar Lengan) diisi dengan nilai yang benar dan tidak nol.',
+            'attribut.*.nilai.numeric' => 'ilai Tidak Valid!. Pastikan semua pengukuran (BB, TB, Lingkar Kepala, Lingkar Lengan) diisi dengan nilai yang benar dan tidak nol.',
+            'attribut.*.attribut_id.required' => 'ilai Tidak Valid!. Pastikan semua pengukuran (BB, TB, Lingkar Kepala, Lingkar Lengan) diisi dengan nilai yang benar dan tidak nol.',
+            'attribut.*.attribut_id.exists' => 'ilai Tidak Valid!. Pastikan semua pengukuran (BB, TB, Lingkar Kepala, Lingkar Lengan) diisi dengan nilai yang benar dan tidak nol.',
+        ];
+    }
 }

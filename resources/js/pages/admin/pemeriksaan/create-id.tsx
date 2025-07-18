@@ -59,11 +59,23 @@ type CreateForm = {
     detail: string[];
 };
 const alasan = [
-    {gizi: 'gizi buruk', alasan: "Anak termasuk gizi buruk karena berat badan dan tinggi badan jauh di bawah standar usia menurut WHO (kurang dari -3 SD). Kondisi ini biasanya terjadi karena kurangnya asupan energi dan protein dalam waktu yang cukup lama."},
-    {gizi: 'gizi kurang', alasan: "Anak termasuk gizi kurang karena berat badan dan tinggi badan berada di bawah standar usia menurut WHO (-3 SD sampai kurang dari -2 SD). Kondisi ini biasanya disebabkan oleh kurangnya konsumsi makanan berprotein seperti telur, ikan, dan daging."},
-    {gizi: 'gizi baik', alasan: "Anak termasuk gizi baik karena berat badan dan tinggi badan sesuai dengan standar usia menurut WHO (-2 SD sampai +2 SD). Ini menunjukkan bahwa asupan makanannya sudah cukup dan seimbang."},
-    {gizi: "gizi lebih", alasan:"Anak termasuk gizi lebih karena berat badan dan tinggi badan melebihi standar usia menurut WHO (lebih dari +2 SD). Kondisi ini biasanya disebabkan oleh kelebihan konsumsi makanan berkalori tinggi seperti makanan manis dan berlemak."},
-]
+    {
+        gizi: 'gizi buruk',
+        alasan: 'Anak termasuk gizi buruk karena berat badan dan tinggi badan jauh di bawah standar usia menurut WHO (kurang dari -3 SD). Kondisi ini biasanya terjadi karena kurangnya asupan energi dan protein dalam waktu yang cukup lama.',
+    },
+    {
+        gizi: 'gizi kurang',
+        alasan: 'Anak termasuk gizi kurang karena berat badan dan tinggi badan berada di bawah standar usia menurut WHO (-3 SD sampai kurang dari -2 SD). Kondisi ini biasanya disebabkan oleh kurangnya konsumsi makanan berprotein seperti telur, ikan, dan daging.',
+    },
+    {
+        gizi: 'gizi baik',
+        alasan: 'Anak termasuk gizi baik karena berat badan dan tinggi badan sesuai dengan standar usia menurut WHO (-2 SD sampai +2 SD). Ini menunjukkan bahwa asupan makanannya sudah cukup dan seimbang.',
+    },
+    {
+        gizi: 'gizi lebih',
+        alasan: 'Anak termasuk gizi lebih karena berat badan dan tinggi badan melebihi standar usia menurut WHO (lebih dari +2 SD). Kondisi ini biasanya disebabkan oleh kelebihan konsumsi makanan berkalori tinggi seperti makanan manis dan berlemak.',
+    },
+];
 
 export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangtua }: PemeriksaanCreateProps) {
     // Memoize breadcrumbs to prevent unnecessary recalculations
@@ -88,6 +100,8 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
         usia_balita: '',
         detail: [],
     });
+
+    const [attributError, setAttributError] = useState<string | null>(null);
     // State for selected parent
     const [selectedOrangtua, setSelectedOrangtua] = useState<OrangTua | null>(null);
     const [idOrangTua, setIdOrangTua] = useState('');
@@ -147,26 +161,34 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
     const [isLoading, setIsLoading] = useState(false);
     const submitClass = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsLoading(true);
-        await axios
-            .get(route('pemeriksaan.create-classification'), {
-                params: {
-                    attribut: data.attribut,
-                    jenis_kelamin: data.jenis_kelamin,
-                },
-            })
-            .then((response :any) => {
-                if (response.status === 200) {
-                    const { label, rekomendasi, detail } = response.data;
-                    setData('label', label);
-                    setData('alasan', alasan.find((item) => item.gizi === label)?.alasan || '');
-                    setData('rekomendasi', rekomendasi);
-                    setData('detail', detail);
-                    setOpenDialog(true);
-                }
-            })
-            .catch((err) => console.log(err))
-            .finally(() => setIsLoading(false));
+        if (data.attribut.some((item) => item.nilai === null) || data.attribut.some((item) => item.nilai === '0')) {
+            setAttributError(
+                'Nilai Tidak Valid!. Pastikan semua pengukuran (BB, TB, Lingkar Kepala, Lingkar Lengan) diisi dengan nilai yang benar dan tidak nol.',
+            );
+            return;
+        } else {
+            setIsLoading(true);
+            setAttributError(null)
+            await axios
+                .get(route('pemeriksaan.create-classification'), {
+                    params: {
+                        attribut: data.attribut,
+                        jenis_kelamin: data.jenis_kelamin,
+                    },
+                })
+                .then((response: any) => {
+                    if (response.status === 200) {
+                        const { label, rekomendasi, detail } = response.data;
+                        setData('label', label);
+                        setData('alasan', alasan.find((item) => item.gizi === label)?.alasan || '');
+                        setData('rekomendasi', rekomendasi);
+                        setData('detail', detail);
+                        setOpenDialog(true);
+                    }
+                })
+                .catch((err) => console.log(err))
+                .finally(() => setIsLoading(false));
+        }
     };
     function hitungUsia(tanggalLahir: string) {
         const birthDate = new Date(tanggalLahir);
@@ -239,13 +261,13 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
         if (!/^\d*\.?\d*$/.test(input)) {
             return;
         } else {
-            if(item.nama.toLowerCase() === 'lingkar kepala (cm)' ||  item.nama.toLowerCase() === 'lingkar lengan (cm)'){
-                if(Number(input) > 60){
+            if (item.nama.toLowerCase() === 'lingkar kepala (cm)' || item.nama.toLowerCase() === 'lingkar lengan (cm)') {
+                if (Number(input) > 60) {
                     input = '60';
                 }
             }
-            if(item.nama.toLowerCase() === 'tinggi badan (cm)'){
-                if(Number(input) > 200){
+            if (item.nama.toLowerCase() === 'tinggi badan (cm)') {
+                if (Number(input) > 200) {
                     input = '200';
                 }
             }
@@ -298,7 +320,9 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
                                     {selectedOrangtua && (
                                         <div className="block space-y-4 rounded-lg border p-2">
                                             <div className="flex gap-2">
-                                                <Label className="text-muted-foreground">Nama Orang Tua:</Label>
+                                                <Label className="text-muted-foreground">
+                                                    Nama Orang Tua/<i>Mewakili</i>:
+                                                </Label>
                                                 <Label className="font-normal">{selectedOrangtua.name}</Label>
                                             </div>
                                             <div className="flex gap-2">
@@ -441,6 +465,14 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
                                                 <TableTh colSpan={2} className="text-center">
                                                     Data Antropometri:
                                                 </TableTh>
+
+                                            </TableRow>
+                                            <TableRow>
+                                                {attributError && (
+                                                    <TableColumn colSpan={2} className="text-left bg-white text-red-500">
+                                                        {attributError}
+                                                    </TableColumn>
+                                                )}
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
