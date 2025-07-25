@@ -194,8 +194,8 @@
                 </tr>
             </thead>
             <tbody>
+                @foreach ($dataPemeriksaanBalita as $item)
                 <tr>
-                    @foreach ($dataPemeriksaanBalita as $item)
                         <td style="font-size: 10px;">{{ $loop->iteration }}</td>
                         <td style="font-size: 10px;">
                             {{ \Carbon\Carbon::parse($item->tgl_pemeriksaan)->format('d F Y') }}</td>
@@ -206,8 +206,8 @@
                                 </td>
                             @endif
                         @endforeach
+                    </tr>
                     @endforeach
-                </tr>
             </tbody>
         </table>
     </div>
