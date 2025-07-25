@@ -96,7 +96,7 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, detail,
         <GuestLayout head="title">
             <Head title="Detail Pemeriksaan" />
             <div className="dark:bg-elevation-1 flex h-full flex-1 flex-col gap-4 rounded-xl p-0 lg:p-4">
-                <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
+                <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl md:min-h-min">
                     <div className="mx-auto max-w-7xl rounded-lg bg-white p-1 shadow-lg lg:p-8 dark:bg-gray-900 dark:text-white">
                         <div className="flex w-full items-center justify-start pb-5">
                             <Link href={route('dashboard')}>

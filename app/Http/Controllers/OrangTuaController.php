@@ -86,12 +86,16 @@ class OrangTuaController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required'],
+            'alamat'=> 'required|max:200',
+            'nohp'=> 'required|numeric',
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'alamat' => $request->alamat,
+            'nohp' => $request->nohp,
         ]);
 
         $user->assignRole('orangtua');
@@ -140,11 +144,15 @@ class OrangTuaController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class.',email,'.$user->id,
             'password' => ['nullable'],
+            'alamat'=> 'required|max:200',
+            'nohp'=> 'required|numeric',
         ]);
 
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
+            'alamat' => $request->alamat,
+            'nohp' => $request->nohp,
         ]);
 
         if ($request->password) {

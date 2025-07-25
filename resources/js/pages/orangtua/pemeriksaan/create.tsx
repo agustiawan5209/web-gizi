@@ -1,12 +1,10 @@
 import ClassifyPemeriksaan from '@/components/classify-pemeriksaan';
-import InputError from '@/components/input-error';
 import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import AppLayout from '@/layouts/app-layout';
-import { SharedData, type BreadcrumbItem } from '@/types';
+import GuestLayout from '@/layouts/guest-layout';
+import { SharedData } from '@/types';
 import { Head, useForm, usePage } from '@inertiajs/react';
-import React, { FormEventHandler, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FormEventHandler, useCallback, useEffect, useState } from 'react';
 interface OrangTua {
     id: string;
     name: string;
@@ -76,12 +74,8 @@ const alasan = [
     },
 ];
 
-export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangtua }: PemeriksaanCreateProps) {
-    // Memoize breadcrumbs to prevent unnecessary recalculations
-    const breadcrumbs: BreadcrumbItem[] = useMemo(
-        () => (breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : []),
-        [breadcrumb],
-    );
+export default function PemeriksaanCreate({ balita, attribut, orangtua }: PemeriksaanCreateProps) {
+    // Memoize breadcrumbs to prevent unnecessary recalculation
     const { auth } = usePage<SharedData>().props;
     const today = new Date();
     const day = today.toISOString().split('T')[0];
@@ -91,7 +85,7 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
         tempat_lahir: '',
         tanggal_lahir: '',
         jenis_kelamin: '',
-        alamat: '',
+        alamat: auth.user.alamat,
         tanggal_pemeriksaan: day,
         attribut: attribut.map((attr) => ({ nilai: null, attribut_id: attr.id, name: attr.nama })),
         label: '',
@@ -153,62 +147,30 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
     }, [idOrangTua, searchById, setData]);
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Create" />
+        <GuestLayout head="Pemeriksaan">
+            <Head title="Pemeriksaan" />
 
             <div className="dark:bg-elevation-1 flex h-full flex-1 flex-col gap-4 rounded-xl p-1 lg:p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
                     <Card>
                         <CardContent>
                             <div className="grid gap-6">
-                                <div className="grid gap-2">
-                                    <Label htmlFor="orang_tua">Nama Orang Tua</Label>
-                                    <div className="relative w-full p-2">
-                                        <Input
-                                            type="search"
-                                            id="orang_tua"
-                                            placeholder="cari berdasarkan nama atau email yang terdaftar"
-                                            required
-                                            value={searchTerm}
-                                            onChange={(e) => handleSearchUser(e)}
-                                        />
-                                        {showlist && (
-                                            <div className="absolute top-10 rounded-xl bg-white p-2 shadow-lg">
-                                                <ul>
-                                                    {listOrangTua.map((orangtua) => (
-                                                        <li
-                                                            key={orangtua.id}
-                                                            onClick={() => setIdOrangTua(orangtua.id)}
-                                                            className="cursor-pointer p-2 hover:bg-gray-200"
-                                                        >
-                                                            {orangtua.name}
-                                                        </li>
-                                                    ))}
-                                                </ul>
-                                            </div>
-                                        )}
+                                <div className="block space-y-4 rounded-lg border p-2">
+                                    <div className="flex gap-2">
+                                        <Label className="text-muted-foreground">
+                                            Nama Orang Tua/<i>Mewakili</i>:
+                                        </Label>
+                                        <Label className="font-normal">{auth.user.name}</Label>
                                     </div>
-                                    <InputError message={errors.orang_tua_id} />
+                                    <div className="flex gap-2">
+                                        <Label className="text-muted-foreground">Email Orang Tua:</Label>
+                                        <Label className="font-normal">{auth.user.email}</Label>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <Label className="text-muted-foreground">Alamat Orang Tua:</Label>
+                                        <Label className="font-normal">{auth.user.alamat}</Label>
+                                    </div>
                                 </div>
-
-                                {selectedOrangtua && (
-                                    <div className="block space-y-4 rounded-lg border p-2">
-                                        <div className="flex gap-2">
-                                            <Label className="text-muted-foreground">
-                                                Nama Orang Tua/<i>Mewakili</i>:
-                                            </Label>
-                                            <Label className="font-normal">{selectedOrangtua.name}</Label>
-                                        </div>
-                                        <div className="flex gap-2">
-                                            <Label className="text-muted-foreground">Email Orang Tua:</Label>
-                                            <Label className="font-normal">{selectedOrangtua.email}</Label>
-                                        </div>
-                                        <div className="flex gap-2">
-                                            <Label className="text-muted-foreground">Alamat Orang Tua:</Label>
-                                            <Label className="font-normal">{selectedOrangtua.alamat}</Label>
-                                        </div>
-                                    </div>
-                                )}
                             </div>
                             <ClassifyPemeriksaan
                                 data={data}
@@ -219,12 +181,12 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
                                 attribut={attribut}
                                 orangtua={orangtua}
                                 balita={balita}
-                                canSubmit={true}
+                                canSubmit={false}
                             />
                         </CardContent>
                     </Card>
                 </div>
             </div>
-        </AppLayout>
+        </GuestLayout>
     );
 }

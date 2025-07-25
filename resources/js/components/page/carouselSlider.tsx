@@ -116,8 +116,8 @@ const CarouselSlider: React.FC<CarouselSliderProps> = ({ pages, initialPageId, c
         }
         return (
             <Link
-                href={route('dashboard')}
-                className="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
+                href={route('orangtua.dashboard')}
+                className="inline-block rounded-sm border bg-primary border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
             >
                 Dashboard
             </Link>
@@ -202,13 +202,13 @@ const CarouselSlider: React.FC<CarouselSliderProps> = ({ pages, initialPageId, c
                                             {auth.user ? (
                                                 <>
                                                     <Link
-                                                        href={route('dashboard')}
-                                                        className="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-base leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
+                                                        href={route('orangtua.dashboard')}
+                                                        className="inline-block bg-primary rounded-sm border border-[#19140035] px-5 py-1.5 text-base leading-normal hover:border-[#1915014a] dark:border-[#3E3E3A] text-[#EDEDEC] dark:hover:border-[#62605b]"
                                                     >
                                                         Dashboard
                                                     </Link>
                                                     <Link
-                                                        className="inline-flex rounded-sm border border-[#19140035] px-5 py-1.5 text-base leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
+                                                        className="inline-flex rounded-sm border bg-destructive border-[#19140035] px-5 py-1.5 text-base leading-normal hover:border-[#1915014a] dark:border-[#3E3E3A] text-[#EDEDEC] dark:hover:border-[#62605b]"
                                                         method="post"
                                                         href={route('logout')}
                                                         as="button"

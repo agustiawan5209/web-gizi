@@ -348,26 +348,6 @@ export default function ClassifyPemeriksaan({
                                         </div>
                                     </TableColumn>
                                 </TableRow>
-                                <TableRow>
-                                    <TableColumn>
-                                        <div className="grid gap-2">
-                                            <Label htmlFor="alamat">alamat</Label>
-                                            <Input
-                                                id="alamat"
-                                                type="text"
-                                                required
-                                                autoFocus
-                                                tabIndex={1}
-                                                autoComplete="alamat"
-                                                value={data.alamat}
-                                                onChange={(e) => setData('alamat', e.target.value)}
-                                                disabled={isLoading}
-                                                placeholder="alamat Balita"
-                                            />
-                                            <InputError message={errors.alamat} className="mt-2" />
-                                        </div>
-                                    </TableColumn>
-                                </TableRow>
                             </TableBody>
                         </Table>
                         <Table>
@@ -463,12 +443,17 @@ export default function ClassifyPemeriksaan({
                                     </div>
                                 </div>
                             </DialogDescription>
-                           {canSubmit && <DialogFooter>
+                           {canSubmit ? (<DialogFooter>
                                 <Button type="button" variant="default" size="sm" className="flex-1" disabled={processing} onClick={submit}>
                                     {processing && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
                                     Simpan
                                 </Button>
-                            </DialogFooter>}
+                            </DialogFooter>):(
+                                <Button type="button" variant="destructive" size="sm" className="flex-1" disabled={processing} onClick={()=> setOpenDialog(false)}>
+
+                                    Keluar
+                                </Button>
+                            )}
                             <DialogClose />
                         </DialogContent>
                     </Dialog>

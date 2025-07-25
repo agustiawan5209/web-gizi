@@ -33,8 +33,11 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        if (auth()->user()->hasRole('admin') || auth()->user()->hasRole('orangtua')) {
+        if (auth()->user()->hasRole('admin')) {
             return redirect()->intended(route('dashboard'));
+        }
+         if (auth()->user()->hasRole('orangtua')) {
+            return redirect()->intended(route('orangtua.dashboard'));
         }
 
         auth()->logout();

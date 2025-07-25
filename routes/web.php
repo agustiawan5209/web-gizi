@@ -12,19 +12,18 @@ use App\Http\Controllers\PolaMakanController;
 use App\Http\Controllers\NaiveBayesController;
 use App\Http\Controllers\PemeriksaanController;
 use App\Http\Controllers\Orangtua\BalitaController as OrangtuaBalitaController;
+use App\Http\Controllers\OrangTua\DashboardController as OrangtuaDashboardController;
+use App\Http\Controllers\OrangTua\PemeriksaanController as OrangTuaPemeriksaanController;
 
 Route::get('/', function () {
     return Inertia::render('welcome-page');
 })->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-});
-
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
 
 // role for admin
+Route::get('dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified', 'role:admin'])->name('dashboard');
 Route::prefix('admin')->as('admin.')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
 
     // Routes for managing orangtuas
@@ -139,7 +138,8 @@ Route::middleware(['auth', 'verified', 'role:admin,orangtua',])->group(function 
 });
 // Role For Orang Tua
 Route::prefix('orangtua')->as('orangtua.')->middleware(['auth', 'verified', 'role:orangtua'])->group(function () {
-
+    Route::get('dashboard', [OrangtuaDashboardController::class,'index'])->name('dashboard');
+    Route::get('naivebayes', [OrangtuaDashboardController::class,'naiveBayes'])->name('naiveBayes');
 
     Route::prefix('balita')->as('balita.')->group(function () {
         Route::controller(OrangtuaBalitaController::class)->group(function () {
@@ -153,6 +153,17 @@ Route::prefix('orangtua')->as('orangtua.')->middleware(['auth', 'verified', 'rol
             Route::delete('/destroy/{balita}', 'destroy')->name('destroy');
         });
     });
+
+     // Routes for managing pemeriksaans
+    Route::prefix('pemeriksaan')->as('pemeriksaan.')->group(function () {
+        // Dataset controller
+        Route::controller(OrangTuaPemeriksaanController::class)->group(function () {
+            // Create a pemeriksaan
+            Route::get('/', 'index')->name('index');
+            Route::get('/create-id', 'create')->name('create');
+        });
+    });
+
 });
 
 // create classify with naive bayes

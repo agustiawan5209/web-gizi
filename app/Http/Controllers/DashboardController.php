@@ -21,23 +21,7 @@ class DashboardController extends Controller
             'gizi baik',
         ];
 
-        if (auth()->user()->hasRole('orangtua')) {
-            $pemeriksaanQuery = Pemeriksaan::with([
-                'balita',
-                'balita.orangtua',
-                'detailpemeriksaan',
-                'detailpemeriksaan.attribut',
-                'polamakan'
-            ])->whereHas('balita', function ($query) {
-                $query->where('orang_tua_id', auth()->user()->id);
-            });
 
-
-            $pemeriksaan = $pemeriksaanQuery->get();
-            return Inertia::render('user-dashboard', [
-                'pemeriksaan' => $pemeriksaan,
-            ]);
-        }
         // Hitung jumlah pemeriksaan berdasarkan label gizi dalam bulan ini
         // Query pemeriksaan berdasarkan label gizi dalam bulan ini
         // 1. Pilih pemeriksaan yang memiliki label gizi dalam array $statusLabel

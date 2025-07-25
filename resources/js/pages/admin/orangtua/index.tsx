@@ -187,6 +187,8 @@ export default function OrangtuaIndex({ orangtua, breadcrumb, filter }: Orangtua
                                         <TableTh className="w-10">No.</TableTh>
                                         <TableTh>Nama Orang Tua</TableTh>
                                         <TableTh>Email</TableTh>
+                                        <TableTh>no. HP</TableTh>
+                                        <TableTh>Alamat</TableTh>
                                         <TableTh>Aksi</TableTh>
                                     </TableRow>
                                 </TableHead>
@@ -197,6 +199,8 @@ export default function OrangtuaIndex({ orangtua, breadcrumb, filter }: Orangtua
                                                 <TableColumn>{index + 1 + (orangtua?.current_page - 1) * orangtua?.per_page}</TableColumn>
                                                 <TableColumn> {item.name} </TableColumn>
                                                 <TableColumn> {item.email} </TableColumn>
+                                                <TableColumn> {item.nohp} </TableColumn>
+                                                <TableColumn> {item.alamat} </TableColumn>
                                                 <TableAction
                                                     className="w-32"
                                                     edit={route('admin.orangtua.edit', { user: item.id })}
