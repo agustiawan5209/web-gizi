@@ -17,7 +17,7 @@ class OrangTuaController extends Controller
             'href' => '/dashboard',
         ],
         [
-            'title' => 'data orangtua',
+            'title' => 'manajemen user',
             'href' => '/admin/orangtua/',
         ],
     ];

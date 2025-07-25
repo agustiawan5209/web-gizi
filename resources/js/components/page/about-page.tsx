@@ -27,8 +27,8 @@ const AboutPage = () => (
         />
       </div>
       <div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Misi Kami</h2>
-        <p className="text-lg text-gray-600 mb-6">
+        <h2 className="text-2xl font-bold text-white mb-4">Misi Kami</h2>
+        <p className="text-lg text-white mb-6">
           Kami berkomitmen untuk memberdayakan orang tua dan profesional kesehatan dengan alat digital
           yang membantu memantau perkembangan dan kesehatan balita secara real-time.
         </p>
@@ -42,7 +42,7 @@ const AboutPage = () => (
 
     {/* Features Section */}
     <div className="mb-16">
-      <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">
+      <h2 className="text-3xl font-bold text-center text-white mb-12">
         Fitur Utama
       </h2>
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -4,11 +4,12 @@ import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/ca
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
+import { ChartBarIcon, FolderEdit, LayoutGrid, User2, Users2, UsersIcon } from 'lucide-react';
 
 export interface DashboardProps {
     orangtuacount?: number | string;
     attributcount?: number | string;
-    datasetcount?: number | string;
+    pasienCount?: number | string;
     pemeriksaancount?: number | string;
     gizi?: number[];
     statusLabel?: string[];
@@ -21,7 +22,7 @@ export interface DashboardProps {
 export default function Dashboard({
     orangtuacount,
     attributcount,
-    datasetcount,
+    pasienCount,
     pemeriksaancount,
     gizi,
     chartPemeriksaan,
@@ -102,25 +103,45 @@ export default function Dashboard({
                 <div className="grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-4">
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border bg-sidebar relative overflow-hidden rounded-xl border dark:bg-[#493D9E]">
                         <CardHeader className="px-4 pt-1 pb-0 text-center">
-                            <CardTitle className="text-base text-white md:text-lg lg:text-xl">Data Pengguna</CardTitle>
+                            <CardTitle className="flex flex-col items-center justify-center text-base text-white md:text-lg lg:text-xl">
+                                <span className="rounded-2xl bg-white p-2">
+                                    <User2 className="text-[#493D9E]" />
+                                </span>
+                                <span>Total User</span>
+                            </CardTitle>
                             <CardDescription className="text-white">{orangtuacount}</CardDescription>
                         </CardHeader>
                     </Card>
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border bg-sidebar relative overflow-hidden rounded-xl border dark:bg-[#493D9E]">
                         <CardHeader className="px-4 pt-1 pb-0 text-center">
-                            <CardTitle className="text-base text-white md:text-base lg:text-lg">Data Kriteria Gizi Balita</CardTitle>
+                            <CardTitle className="flex flex-col items-center justify-center  text-base text-white md:text-base lg:text-lg">
+                                <span className="rounded-2xl bg-white p-2">
+                                    <UsersIcon className="text-[#493D9E]" />
+                                </span>
+                                <span>Total Pasien</span>
+                            </CardTitle>
+                            <CardDescription className="text-white">{pasienCount}</CardDescription>
+                        </CardHeader>
+                    </Card>
+                    <Card className="border-sidebar-border/70 dark:border-sidebar-border bg-sidebar relative overflow-hidden rounded-xl border dark:bg-[#493D9E]">
+                        <CardHeader className="px-4 pt-1 pb-0 text-center">
+                            <CardTitle className="flex flex-col items-center justify-center  text-base text-white md:text-base lg:text-base">
+                                <span className="rounded-2xl bg-white p-2">
+                                    <LayoutGrid className="text-[#493D9E]" />
+                                </span>
+                                <span>Total Kriteria</span>
+                            </CardTitle>
                             <CardDescription className="text-white">{attributcount}</CardDescription>
                         </CardHeader>
                     </Card>
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border bg-sidebar relative overflow-hidden rounded-xl border dark:bg-[#493D9E]">
                         <CardHeader className="px-4 pt-1 pb-0 text-center">
-                            <CardTitle className="text-base text-white md:text-base lg:text-base">Jumlah Dataset Gizi Balita</CardTitle>
-                            <CardDescription className="text-white">{datasetcount}</CardDescription>
-                        </CardHeader>
-                    </Card>
-                    <Card className="border-sidebar-border/70 dark:border-sidebar-border bg-sidebar relative overflow-hidden rounded-xl border dark:bg-[#493D9E]">
-                        <CardHeader className="px-4 pt-1 pb-0 text-center">
-                            <CardTitle className="text-base text-white md:text-base lg:text-base">Data Pemeriksaan Gizi Balita</CardTitle>
+                            <CardTitle className="flex flex-col items-center justify-center  text-base text-white md:text-base lg:text-base">
+                                <span className="rounded-2xl bg-white p-2">
+                                    <ChartBarIcon className="text-[#493D9E]" />
+                                </span>
+                                Total Pemeriksaan Gizi Balita
+                            </CardTitle>
                             <CardDescription className="text-white">{pemeriksaancount}</CardDescription>
                         </CardHeader>
                     </Card>

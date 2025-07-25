@@ -119,7 +119,6 @@ Route::middleware(['auth', 'verified', 'role:admin,orangtua',])->group(function 
             Route::get('/', 'index')->name('index');
             // Create a pemeriksaan
             Route::get('/create-id', 'createById')->name('create-id');
-            Route::get('/create-classfication', 'createClassification')->name('create-classification');
 
             // Edit a pemeriksaan
             Route::get('/edit/{pemeriksaan}', 'edit')->name('edit');
@@ -157,6 +156,8 @@ Route::prefix('orangtua')->as('orangtua.')->middleware(['auth', 'verified', 'rol
 });
 
 // create classify with naive bayes
+Route::get('/pemeriksaan/create-classfication',[PemeriksaanController::class, 'createClassification'] )->middleware(['auth', 'verified'])->name('pemeriksaan.create-classification');
+
 Route::get('classify/', [NaiveBayesController::class, 'generate'])->name('naive-bayes.generate');
 Route::get('classify-index/', [NaiveBayesController::class, 'index'])->name('naive-bayes.index');
 

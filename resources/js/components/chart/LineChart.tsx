@@ -1,10 +1,9 @@
-import { CategoryScale, Chart as ChartJs, Legend, LinearScale, LineElement, PointElement, Title, Tooltip } from 'chart.js';
+import { Chart as ChartJs, CategoryScale, Legend, LinearScale, BarElement, Title, Tooltip } from 'chart.js';
 import React from 'react';
-import { Line } from 'react-chartjs-2';
-ChartJs.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
-
+import { Bar } from 'react-chartjs-2';
+ChartJs.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 // Definisikan tipe untuk props
-interface LineChartProps {
+interface BarChartProps {
     data: {
         labels: string[];
         datasets: {
@@ -18,7 +17,7 @@ interface LineChartProps {
     title?: string; // Opsional: judul chart
 }
 
-const LineChart: React.FC<LineChartProps> = ({ data, title }) => {
+const LineChart: React.FC<BarChartProps> = ({ data, title }) => {
     const options = {
         responsive: true,
         plugins: {
@@ -33,6 +32,6 @@ const LineChart: React.FC<LineChartProps> = ({ data, title }) => {
         cutout: '50%',
     };
 
-    return <Line data={data} options={options} className="h-64 w-72" />;
+    return <Bar data={data} options={options} className="h-64 w-72" />;
 };
 export default LineChart;

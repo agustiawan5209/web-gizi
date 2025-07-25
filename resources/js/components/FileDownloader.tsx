@@ -1,10 +1,14 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import React, { useState } from 'react';
 import { Button } from './ui/button';
+import { cn } from '@/lib/utils';
+import { Loader, SplineIcon } from 'lucide-react';
 interface DownloadPdfProps {
     pdfUrl: string;
     fileName?: string;
     buttonText?: string;
+    className? : string;
+    icon? : React.ReactNode;
     onDownloadStart?: () => void;
     onDownloadSuccess?: () => void;
     onDownloadError?: (error: string) => void;
@@ -14,6 +18,8 @@ const DownloadPdf: React.FC<DownloadPdfProps> = ({
     pdfUrl,
     fileName = 'document.pdf',
     buttonText = 'Download PDF',
+    icon,
+    className,
     onDownloadStart,
     onDownloadSuccess,
     onDownloadError,
@@ -106,16 +112,16 @@ const DownloadPdf: React.FC<DownloadPdfProps> = ({
                 variant={'default'}
                 onClick={downloadPdf}
                 disabled={isLoading}
-                className={`pdf-download-button ${isLoading ? 'loading' : ''}`}
+                className={cn(`pdf-download-button`, className)}
                 aria-label="Download PDF document"
             >
                 {isLoading ? (
                     <>
                         <span className="spinner"></span>
-                        Downloading...
+                        <Loader className=' animate-spin' />
                     </>
                 ) : (
-                    buttonText
+                    icon ? icon : buttonText
                 )}
             </Button>
 

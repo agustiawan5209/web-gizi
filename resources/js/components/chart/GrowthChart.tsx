@@ -57,18 +57,22 @@ const GrowthChart: React.FC<GrowthProps> = ({ url, title }) => {
         if (Array.isArray(data.datasets)) {
             return data;
         }
-
         // Jika format data berbeda, lakukan transformasi
         return {
             labels: data.labels || [],
-            datasets: Object.values(data.datasets).map((item: any, key) => ({
-                label: item.label,
-                data: item.data,
-                borderColor: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
-                backgroundColor: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
-                tension: 0.1,
-                // yAxisID: 'y',
-            })),
+            datasets: Object.values(data.datasets).map((item: any, key) => {
+                const pattern = `${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}`
+                const color = `rgb(${pattern}, 0.8)`;
+                const color2 = `rgba(${pattern}, 0.2)`
+                return {
+                    label: item.label,
+                    data: item.data,
+                    borderColor: color,
+                    backgroundColor: color2,
+                    tension: 0.1,
+                    yAxisID: 'y',
+                };
+            }),
         };
     };
 

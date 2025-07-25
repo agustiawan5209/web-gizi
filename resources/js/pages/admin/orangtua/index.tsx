@@ -136,7 +136,7 @@ export default function OrangtuaIndex({ orangtua, breadcrumb, filter }: Orangtua
                         <div className="flex w-full flex-1 flex-col gap-7 px-1 py-1 lg:px-4 lg:py-2 md:flex-row md:items-center">
                             <Link href={route('admin.orangtua.create')} className="col-span-1 cursor-pointer">
                                 <Button variant="default" className="flex cursor-pointer items-center gap-2 bg-primary ">
-                                    Tambah Data
+                                    Tambah User
                                 </Button>
                             </Link>
                             <div className="col-span-2 flex items-center gap-2">

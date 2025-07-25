@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Inertia\Inertia;
 use App\Models\Attribut;
+use App\Models\Balita;
 use App\Models\Dataset;
 use App\Models\Pemeriksaan;
 use Illuminate\Http\Request;
@@ -62,7 +63,7 @@ class DashboardController extends Controller
             'orangtuacount' => User::count(),
             'attributcount' => Attribut::count(),
             'pemeriksaancount' => Pemeriksaan::count(),
-            'datasetcount' => Dataset::count(),
+            'pasienCount' => Balita::count(),
             'gizi' => $Gizi,
             'statusLabel' => $statusLabel,
             'chartPemeriksaan' => $chartPemeriksaan,

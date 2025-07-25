@@ -1,10 +1,12 @@
 import GrowthChart from '@/components/chart/GrowthChart';
 import FileDownloader from '@/components/FileDownloader';
+import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableColumn, TableContainer, TableHead, TableRow, TableTh } from '@/components/ui/table';
 
 import AppLayout from '@/layouts/app-layout';
 import { SharedData, type BreadcrumbItem } from '@/types';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
+import { File, LucideEye } from 'lucide-react';
 import { useMemo } from 'react';
 
 interface OrangTua {
@@ -169,7 +171,7 @@ export default function PemeriksaanShow({
                                             { attribut: 'Tanggal Lahir', nilai: balita.tanggal_lahir },
                                             { attribut: 'Jenis Kelamin', nilai: balita.jenis_kelamin },
                                         ].map((item) => (
-                                            <TableRow className="border-b">
+                                            <TableRow key={item.attribut} className="border-b">
                                                 <TableColumn className="text-foreground p-3 font-medium">{item.attribut}</TableColumn>
                                                 <TableColumn className="p-3">{item.nilai}</TableColumn>
                                             </TableRow>
@@ -196,9 +198,7 @@ export default function PemeriksaanShow({
                                             {polamakan && (
                                                 <>
                                                     <TableRow>
-                                                        <TableColumn className="text-foreground w-1/3 font-normal">
-                                                            Alasan
-                                                        </TableColumn>
+                                                        <TableColumn className="text-foreground w-1/3 font-normal">Alasan</TableColumn>
                                                         <TableColumn
                                                             className="ql-editor p-3"
                                                             dangerouslySetInnerHTML={{ __html: pemeriksaan.alasan }}
@@ -222,7 +222,7 @@ export default function PemeriksaanShow({
 
                             <br />
                             <section className="border px-4">
-                                <h3 className="text-foreground  p-4 text-left text-lg font-semibold md:text-xl dark:bg-gray-800">
+                                <h3 className="text-foreground p-4 text-left text-lg font-semibold md:text-xl dark:bg-gray-800">
                                     Riwayat Perkembangan Gizi Balita
                                 </h3>
                                 <TableContainer className="relative">
@@ -230,8 +230,15 @@ export default function PemeriksaanShow({
                                         <TableHead>
                                             <TableRow>
                                                 <TableTh className="w-10 bg-blue-100">No.</TableTh>
-                                                <TableTh className="px-0 bg-blue-100 whitespace-nowrap">Tanggal Pemeriksaan</TableTh>
-                                                {attribut.length > 0 && attribut.map((item) => <TableTh className='bg-blue-100 text-xs whitespace-nowrap' key={item.id}> {item.nama}</TableTh>)}
+                                                <TableTh className="bg-blue-100 px-0 whitespace-nowrap">Tanggal Pemeriksaan</TableTh>
+                                                {attribut.length > 0 &&
+                                                    attribut.map((item) => (
+                                                        <TableTh className="bg-blue-100 text-xs whitespace-nowrap" key={item.id}>
+                                                            {' '}
+                                                            {item.nama}
+                                                        </TableTh>
+                                                    ))}
+                                                <TableTh className="w-10 bg-blue-100">Aksi</TableTh>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
@@ -246,6 +253,33 @@ export default function PemeriksaanShow({
                                                                     {searchById(attributs.id, item.detailpemeriksaan)}
                                                                 </TableColumn>
                                                             ))}
+
+                                                        <TableColumn>
+                                                            <div className="item-center gap-2 flex flex-row">
+                                                                <FileDownloader
+                                                                    pdfUrl={route('laporan.pemeriksaan', {
+                                                                        balita: balita.id,
+                                                                        pemeriksaan: item.id,
+                                                                    })}
+                                                                    fileName="Laporan-Pemeriksaan.pdf"
+                                                                    icon={<File />}
+                                                                    onDownloadStart={handleDownloadStart}
+                                                                    onDownloadSuccess={handleDownloadSuccess}
+                                                                    onDownloadError={handleDownloadError}
+
+                                                                />
+                                                                <Link href={route('pemeriksaan.show', { pemeriksaan: item.id, balita: balita.id })}>
+                                                                    <Button
+                                                                        type="submit"
+                                                                        size={'xs'}
+                                                                        className=" bg-blue-400 hover:bg-blue-500 md:w-16"
+                                                                        tabIndex={4}
+                                                                    >
+                                                                        <LucideEye />
+                                                                    </Button>
+                                                                </Link>
+                                                            </div>
+                                                        </TableColumn>
                                                     </TableRow>
                                                 ))}
                                         </TableBody>

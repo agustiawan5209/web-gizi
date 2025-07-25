@@ -127,11 +127,11 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                     </form>
                 </div>
 
-                <div className="text-center text-sm text-muted-foreground">
+                <div className="text-center text-sm text-white">
                     Belum Punya Akun?{' '}
                     <TextLink
                         href={route('register')}
-                        className="font-medium text-primary hover:underline"
+                        className="font-medium text-white hover:underline"
                         tabIndex={5}
                     >
                         Buat Akun
