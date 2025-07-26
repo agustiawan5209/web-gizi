@@ -263,7 +263,7 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, detail,
                                                                     onDownloadError={handleDownloadError}
 
                                                                 />
-                                                                <Link href={route('pemeriksaan.show', { pemeriksaan: item.id, balita: balita.id })}>
+                                                                <Link href={route('orangtua.balita.show', { pemeriksaan: item.id, balita: balita.id })}>
                                                                     <Button
                                                                         type="submit"
                                                                         size={'xs'}
