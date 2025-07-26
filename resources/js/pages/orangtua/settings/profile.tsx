@@ -7,6 +7,7 @@ import DeleteUser from '@/components/delete-user';
 import HeadingSmall from '@/components/heading-small';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import GuestLayout from '@/layouts/guest-layout';
@@ -42,82 +43,88 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
         <GuestLayout head="Pengaturan Profile">
             <Head title="Pengaturan Profile" />
 
-            <div className="space-y-6">
-                <HeadingSmall title="Profile information" description="Update Nama dan email kamu" />
+           <section className='container mx-auto'>
+             <Card className='max-w-4xl'>
+                <CardContent>
+                    <div className="space-y-6">
+                        <HeadingSmall title="Profile information" description="Update Nama dan email kamu" />
 
-                <form onSubmit={submit} className="space-y-6">
-                    <div className="grid gap-2">
-                        <Label htmlFor="name">Nama</Label>
+                        <form onSubmit={submit} className="space-y-6">
+                            <div className="grid gap-2">
+                                <Label htmlFor="name">Nama</Label>
 
-                        <Input
-                            id="name"
-                            className="mt-1 block w-full"
-                            value={data.name}
-                            onChange={(e) => setData('name', e.target.value)}
-                            required
-                            autoComplete="name"
-                            placeholder="Full name"
-                        />
+                                <Input
+                                    id="name"
+                                    className="mt-1 block w-full"
+                                    value={data.name}
+                                    onChange={(e) => setData('name', e.target.value)}
+                                    required
+                                    autoComplete="name"
+                                    placeholder="Full name"
+                                />
 
-                        <InputError className="mt-2" message={errors.name} />
-                    </div>
+                                <InputError className="mt-2" message={errors.name} />
+                            </div>
 
-                    <div className="grid gap-2">
-                        <Label htmlFor="email">Alamat Email</Label>
+                            <div className="grid gap-2">
+                                <Label htmlFor="email">Alamat Email</Label>
 
-                        <Input
-                            id="email"
-                            type="email"
-                            className="mt-1 block w-full"
-                            value={data.email}
-                            onChange={(e) => setData('email', e.target.value)}
-                            required
-                            autoComplete="username"
-                            placeholder="Email address"
-                        />
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    className="mt-1 block w-full"
+                                    value={data.email}
+                                    onChange={(e) => setData('email', e.target.value)}
+                                    required
+                                    autoComplete="username"
+                                    placeholder="Email address"
+                                />
 
-                        <InputError className="mt-2" message={errors.email} />
-                    </div>
+                                <InputError className="mt-2" message={errors.email} />
+                            </div>
 
-                    {mustVerifyEmail && auth.user.email_verified_at === null && (
-                        <div>
-                            <p className="text-muted-foreground -mt-4 text-sm">
-                                Email kamu tidak terverifikasi.{' '}
-                                <Link
-                                    href={route('verification.send')}
-                                    method="post"
-                                    as="button"
-                                    className="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
-                                >
-                                    klik disini untuk mengirim verifikasi
-                                </Link>
-                            </p>
+                            {mustVerifyEmail && auth.user.email_verified_at === null && (
+                                <div>
+                                    <p className="text-muted-foreground -mt-4 text-sm">
+                                        Email kamu tidak terverifikasi.{' '}
+                                        <Link
+                                            href={route('verification.send')}
+                                            method="post"
+                                            as="button"
+                                            className="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
+                                        >
+                                            klik disini untuk mengirim verifikasi
+                                        </Link>
+                                    </p>
 
-                            {status === 'verification-link-sent' && (
-                                <div className="mt-2 text-sm font-medium text-green-600">
-                                    link verifikasi terbaru telah dikirim ke alamat email kamu.
+                                    {status === 'verification-link-sent' && (
+                                        <div className="mt-2 text-sm font-medium text-green-600">
+                                            link verifikasi terbaru telah dikirim ke alamat email kamu.
+                                        </div>
+                                    )}
                                 </div>
                             )}
-                        </div>
-                    )}
 
-                    <div className="flex items-center gap-4">
-                        <Button disabled={processing}>Simpan</Button>
+                            <div className="flex items-center gap-4">
+                                <Button disabled={processing}>Simpan</Button>
 
-                        <Transition
-                            show={recentlySuccessful}
-                            enter="transition ease-in-out"
-                            enterFrom="opacity-0"
-                            leave="transition ease-in-out"
-                            leaveTo="opacity-0"
-                        >
-                            <p className="text-sm text-neutral-600">Tesimpan</p>
-                        </Transition>
+                                <Transition
+                                    show={recentlySuccessful}
+                                    enter="transition ease-in-out"
+                                    enterFrom="opacity-0"
+                                    leave="transition ease-in-out"
+                                    leaveTo="opacity-0"
+                                >
+                                    <p className="text-sm text-neutral-600">Tesimpan</p>
+                                </Transition>
+                            </div>
+                        </form>
                     </div>
-                </form>
-            </div>
 
-            {role !== 'admin' && <DeleteUser />}
+                    {role !== 'admin' && <DeleteUser />}
+                </CardContent>
+            </Card>
+           </section>
         </GuestLayout>
     );
 }
