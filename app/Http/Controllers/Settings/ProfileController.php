@@ -18,6 +18,12 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
+        if (auth()->user()->hasRole('orangtua')) {
+            return Inertia::render('orangtua/settings/profile', [
+                'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
+                'status' => $request->session()->get('status'),
+            ]);
+        }
         return Inertia::render('settings/profile', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => $request->session()->get('status'),
