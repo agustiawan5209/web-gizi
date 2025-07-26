@@ -4,7 +4,6 @@ namespace App\Http\Controllers\OrangTua;
 
 use Inertia\Inertia;
 use App\Models\Pemeriksaan;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 class DashboardController extends Controller
@@ -21,8 +20,6 @@ class DashboardController extends Controller
         ])->whereHas('balita', function ($query) {
             $query->where('orang_tua_id', auth()->user()->id);
         });
-
-
         $pemeriksaan = $pemeriksaanQuery->get();
         return Inertia::render('user-dashboard', [
             'pemeriksaan' => $pemeriksaan,
