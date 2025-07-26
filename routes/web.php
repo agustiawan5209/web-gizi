@@ -11,7 +11,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PolaMakanController;
 use App\Http\Controllers\NaiveBayesController;
 use App\Http\Controllers\PemeriksaanController;
-use App\Http\Controllers\Orangtua\BalitaController as OrangtuaBalitaController;
+use App\Http\Controllers\OrangTua\BalitaController as OrangtuaBalitaController;
 use App\Http\Controllers\OrangTua\DashboardController as OrangtuaDashboardController;
 use App\Http\Controllers\OrangTua\PemeriksaanController as OrangTuaPemeriksaanController;
 
