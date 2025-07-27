@@ -88,7 +88,7 @@ export default function Register() {
                         <InputError message={errors.alamat} />
                     </div>
                     <div className="grid gap-2">
-                        <Label htmlFor="nohp">No. HP</Label>
+                        <Label htmlFor="nohp">No. Whatsapp</Label>
                         <Input
                             id="nohp"
                             type="number"

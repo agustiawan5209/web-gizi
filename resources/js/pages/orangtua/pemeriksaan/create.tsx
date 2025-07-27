@@ -80,7 +80,7 @@ export default function PemeriksaanCreate({ balita, attribut, orangtua }: Pemeri
     const today = new Date();
     const day = today.toISOString().split('T')[0];
     const { data, setData, get, post, processing, errors } = useForm<CreateForm>({
-        orang_tua_id: '',
+        orang_tua_id: auth.user.id.toLocaleString(),
         nama: '',
         tempat_lahir: '',
         tanggal_lahir: '',
@@ -181,7 +181,7 @@ export default function PemeriksaanCreate({ balita, attribut, orangtua }: Pemeri
                                 attribut={attribut}
                                 orangtua={orangtua}
                                 balita={balita}
-                                canSubmit={false}
+                                canSubmit={true}
                             />
                         </CardContent>
                     </Card>

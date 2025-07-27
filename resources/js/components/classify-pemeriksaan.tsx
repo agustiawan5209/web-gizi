@@ -293,6 +293,7 @@ export default function ClassifyPemeriksaan({
                                                     name="jenis_kelaim"
                                                     label="Laki-laki"
                                                     value="Laki-laki"
+                                                    required
                                                     onChange={(e) => setData('jenis_kelamin', e.target.value)}
                                                     className="border-red-500"
                                                     labelClassName="text-gray-800 dark:text-white"
@@ -301,6 +302,7 @@ export default function ClassifyPemeriksaan({
                                                     id="jenis2"
                                                     name="jenis_kelaim"
                                                     label="Perempuan"
+                                                    required
                                                     value="Perempuan"
                                                     onChange={(e) => setData('jenis_kelamin', e.target.value)}
                                                     className="border-red-500"

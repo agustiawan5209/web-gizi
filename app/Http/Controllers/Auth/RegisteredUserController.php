@@ -32,10 +32,12 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
+            'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'alamat'=> 'required|max:200',
-            'nohp'=> 'required|numeric',
+            'alamat' => 'required|max:200',
+            'nohp' => 'required|string|max:13',
+        ], [
+            'nohp.max' => 'Nomor whatsaap harus 13 karakter',
         ]);
 
         $user = User::create([

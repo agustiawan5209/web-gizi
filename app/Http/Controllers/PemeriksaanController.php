@@ -204,9 +204,16 @@ class PemeriksaanController extends Controller
                 'rekomendasi' => $request->input('rekomendasi'),
             ]);
 
-            return redirect()
+
+            if (auth()->user()->hasRole('admin')) {
+               return redirect()
                 ->route('pemeriksaan.show', ['pemeriksaan' => $pemeriksaan->id])
                 ->with('success', 'Data pemeriksaan berhasil ditambahkan!');
+            }
+            if (auth()->user()->hasRole('orangtua')) {
+                return redirect()->route('orangtua.pemeriksaan.index')->with('success', 'Data pemeriksaan berhasil ditambahkan!');
+            }
+
         } catch (\Exception $exception) {
             $pemeriksaan = Pemeriksaan::latest()->first();
             if ($pemeriksaan) {

@@ -87,8 +87,11 @@ class OrangTuaController extends Controller
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required'],
             'alamat'=> 'required|max:200',
-            'nohp'=> 'required|numeric',
+            'nohp'=> 'required|string|max:13',
+        ],[
+            'nohp.max' => 'Nomor whatsaap harus 13 karakter',
         ]);
+
 
         $user = User::create([
             'name' => $request->name,
@@ -145,7 +148,9 @@ class OrangTuaController extends Controller
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class.',email,'.$user->id,
             'password' => ['nullable'],
             'alamat'=> 'required|max:200',
-            'nohp'=> 'required|numeric',
+            'nohp'=> 'required|string|max:13',
+        ],[
+            'nohp.max' => 'Nomor whatsaap harus 13 karakter',
         ]);
 
         $user->update([
