@@ -43,7 +43,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
         <GuestLayout head="Pengaturan Profile">
             <Head title="Pengaturan Profile" />
 
-           <section className='container mx-auto'>
+           <section className='container mx-auto flex justify-center'>
              <Card className='max-w-4xl'>
                 <CardContent>
                     <div className="space-y-6">

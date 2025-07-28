@@ -99,7 +99,7 @@ export default function PemeriksaanShow({ pemeriksaan, balita, orangTua, detail,
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl md:min-h-min">
                     <div className="mx-auto max-w-7xl rounded-lg bg-white p-1 shadow-lg lg:p-8 dark:bg-gray-900 dark:text-white">
                         <div className="flex w-full items-center justify-start pb-5">
-                            <Link href={route('dashboard')}>
+                            <Link href={route('orangtua.pemeriksaan.index')}>
                                 <Button variant="secondary">Kembali</Button>
                             </Link>
                         </div>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
@@ -6,10 +7,13 @@ import { Input, InputRadio } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableColumn, TableContainer, TableHead, TableRow, TableTh } from '@/components/ui/table';
 import { SharedData } from '@/types';
+import { fetchNutritionData } from '@/utils/api';
+import { predictNutritionStatus } from '@/utils/naiveBayes/prediction';
+import { trainModel } from '@/utils/naiveBayes/training';
+import { NutritionData, NutritionStatus } from '@/utils/types';
 import { usePage } from '@inertiajs/react';
-import axios from 'axios';
 import { LoaderCircle, SquareCheck } from 'lucide-react';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 interface OrangTua {
     id: string;
     name: string;
@@ -59,36 +63,8 @@ type CreateForm = {
     usia_balita: string;
     detail: string[];
 };
-const alasan = [
-    {
-        gizi: 'gizi buruk',
-        alasan: 'Anak termasuk gizi buruk karena berat badan dan tinggi badan jauh di bawah standar usia menurut WHO (kurang dari -3 SD). Kondisi ini biasanya terjadi karena kurangnya asupan energi dan protein dalam waktu yang cukup lama.',
-    },
-    {
-        gizi: 'gizi kurang',
-        alasan: 'Anak termasuk gizi kurang karena berat badan dan tinggi badan berada di bawah standar usia menurut WHO (-3 SD sampai kurang dari -2 SD). Kondisi ini biasanya disebabkan oleh kurangnya konsumsi makanan berprotein seperti telur, ikan, dan daging.',
-    },
-    {
-        gizi: 'gizi baik',
-        alasan: 'Anak termasuk gizi baik karena berat badan dan tinggi badan sesuai dengan standar usia menurut WHO (-2 SD sampai +2 SD). Ini menunjukkan bahwa asupan makanannya sudah cukup dan seimbang.',
-    },
-    {
-        gizi: 'gizi lebih',
-        alasan: 'Anak termasuk gizi lebih karena berat badan dan tinggi badan melebihi standar usia menurut WHO (lebih dari +2 SD). Kondisi ini biasanya disebabkan oleh kelebihan konsumsi makanan berkalori tinggi seperti makanan manis dan berlemak.',
-    },
-];
 
-export default function ClassifyPemeriksaan({
-    data,
-    setData,
-    errors,
-    attribut,
-    processing,
-    balita,
-    orangtua,
-    submit,
-    canSubmit,
-}: {
+interface ClassifyPemeriksaanProps {
     data: any;
 
     setData: any;
@@ -102,53 +78,68 @@ export default function ClassifyPemeriksaan({
     orangtua: OrangTua[];
     submit: (e: any) => void;
     canSubmit?: boolean;
-}) {
+}
+export default function ClassifyPemeriksaan({ data, setData, errors, attribut, processing, submit, canSubmit }: ClassifyPemeriksaanProps) {
     const [openDialog, setOpenDialog] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-
-    const handleOpenDialog = () => {
-        setOpenDialog(true);
-    };
     const { auth } = usePage<SharedData>().props;
     const today = new Date();
-    const day = today.toISOString().split('T')[0];
-
     const [attributError, setAttributError] = useState<string | null>(null);
+    const [dataset, setDataset] = useState<NutritionData[]>([]);
+    const [model, setModel] = useState<any>(null);
+    const [error, setError] = useState<string | null>(null);
+    useEffect(() => {
+        const initializeModel = async () => {
+            try {
+                setIsLoading(true);
+                const data = await fetchNutritionData();
+                setDataset(data.dataset);
 
+                const trainedModel = await trainModel(data.dataset);
+                setModel(trainedModel);
+            } catch (err) {
+                setError('Gagal memuat data atau melatih model');
+                console.error(err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        initializeModel();
+    }, []);
     const submitClass = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        console.log(data)
-        setAttributError('');
-
-        if (auth.user && data.orang_tua_id === '') {
+setAttributError('');
+        if (!model) {
+            setError('Model belum siap');
+            return;
+        }
+        console.log(data.orang_tua_id)
+        if (data.orang_tua_id !== '') {
             if (data.attribut.some((item: any) => item.nilai === null) || data.attribut.some((item: any) => item.nilai === '0')) {
                 setAttributError(
                     'Nilai Tidak Valid!. Pastikan semua pengukuran (BB, TB, Lingkar Kepala, Lingkar Lengan) diisi dengan nilai yang benar dan tidak nol.',
                 );
                 return;
             } else {
-                setIsLoading(true);
+                setIsLoading(false);
                 setAttributError(null);
-                await axios
-                    .get(route('pemeriksaan.create-classification'), {
-                        params: {
-                            attribut: data.attribut,
-                            jenis_kelamin: data.jenis_kelamin,
-                        },
-                    })
-                    .then((response: any) => {
-                        if (response.status === 200) {
-                            const { label, rekomendasi, detail } = response.data;
-                            setData('label', label);
-                            setData('alasan', alasan.find((item) => item.gizi === label)?.alasan || '');
-                            setData('rekomendasi', rekomendasi);
-                            setData('detail', detail);
-                            setOpenDialog(true);
-                        }
-                    })
-                    .catch((err) => console.log(err))
-                    .finally(() => setIsLoading(false));
+                const datauji: any = [];
+                datauji.push({
+                    ['jenis kelamin']: data.jenis_kelamin,
+                });
+                data.attribut.map((item: any) => {
+                    datauji.push({
+                        [item.name.toLowerCase()]: item.nilai,
+                    });
+                });
+                const label = predictNutritionStatus(model, datauji);
+                setError(null);
+                setData('label', label);
+                setData('alasan', alasan.find((item) => item.gizi === label)?.alasan || '');
+                setData('rekomendasi', rekomendasi(label));
+                setData('detail', datauji);
+                setOpenDialog(true);
             }
         } else {
             setAttributError('Anda belum login, silahkan login terlebih dahulu');
@@ -181,8 +172,6 @@ export default function ClassifyPemeriksaan({
     const minDate = tahunLalu.toISOString().split('T')[0];
 
     const tanggalLahirRef = useRef<HTMLInputElement>(null);
-    const [usiaState, setUsiaState] = useState<number>(0);
-
     const handleChangeTanggalLahir = (e: React.ChangeEvent<HTMLInputElement>) => {
         const tgl = e.target.value;
         if (tgl <= minDate) {
@@ -209,7 +198,6 @@ export default function ClassifyPemeriksaan({
                     return val;
                 }),
             );
-            setUsiaState(usia);
         }
     };
     const HandleChangeInputValue = (
@@ -245,6 +233,11 @@ export default function ClassifyPemeriksaan({
     return (
         <>
             <form onSubmit={submitClass} className="flex flex-col gap-6">
+                {error && (
+                    <div className="mb-4 border-l-4 border-red-500 bg-red-100 p-4 text-red-700" role="alert">
+                        <p>{error}</p>
+                    </div>
+                )}
                 <div className="grid gap-6">
                     <div className="flex items-center gap-4 border-b">
                         <Label htmlFor="tanggal_pemeriksaan">Tanggal Pemeriksaan</Label>
@@ -475,4 +468,46 @@ export default function ClassifyPemeriksaan({
             </form>
         </>
     );
+}
+const alasan = [
+    {
+        gizi: 'gizi buruk',
+        alasan: 'Anak termasuk gizi buruk karena berat badan dan tinggi badan jauh di bawah standar usia menurut WHO (kurang dari -3 SD). Kondisi ini biasanya terjadi karena kurangnya asupan energi dan protein dalam waktu yang cukup lama.',
+    },
+    {
+        gizi: 'gizi kurang',
+        alasan: 'Anak termasuk gizi kurang karena berat badan dan tinggi badan berada di bawah standar usia menurut WHO (-3 SD sampai kurang dari -2 SD). Kondisi ini biasanya disebabkan oleh kurangnya konsumsi makanan berprotein seperti telur, ikan, dan daging.',
+    },
+    {
+        gizi: 'gizi baik',
+        alasan: 'Anak termasuk gizi baik karena berat badan dan tinggi badan sesuai dengan standar usia menurut WHO (-2 SD sampai +2 SD). Ini menunjukkan bahwa asupan makanannya sudah cukup dan seimbang.',
+    },
+    {
+        gizi: 'gizi lebih',
+        alasan: 'Anak termasuk gizi lebih karena berat badan dan tinggi badan melebihi standar usia menurut WHO (lebih dari +2 SD). Kondisi ini biasanya disebabkan oleh kelebihan konsumsi makanan berkalori tinggi seperti makanan manis dan berlemak.',
+    },
+];
+
+const rekomendasi = (label : string)=>{
+    let rekomendasi; // Declare rekomendasi before the switch statement
+
+switch (label) {
+    case "gizi buruk":
+        rekomendasi = "Tingkatkan asupan makanan bergizi tinggi, berikan makanan sumber protein seperti telur, ikan, dan daging, serta tambahkan susu, sayur, dan buah dalam porsi cukup.";
+        break; // Don't forget break to prevent fall-through
+    case "gizi kurang":
+        rekomendasi = "Perbanyak makanan yang mengandung kalori dan protein, seperti nasi, tahu, tempe, telur, serta sayuran hijau dan buah-buahan untuk menambah nutrisi.";
+        break;
+    case "gizi baik":
+        rekomendasi = "Pertahankan pola makan seimbang dengan kombinasi karbohidrat, protein, sayur, dan buah. Pastikan cukup minum air dan tetap aktif berolahraga.";
+        break;
+    case "gizi lebih":
+        rekomendasi = "Kurangi makanan berlemak dan tinggi gula, berikan lebih banyak sayur dan buah, serta atur porsi makanan agar tetap seimbang.";
+        break;
+    default:
+        rekomendasi = "Label gizi tidak dikenali.";
+        break;
+}
+
+return rekomendasi;
 }

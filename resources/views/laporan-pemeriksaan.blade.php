@@ -136,7 +136,7 @@
                 <tr>
                     @foreach ($attribut as $item)
                         @if ($item !== 'status' || $item !== 'jenis kelamin')
-                            <th style="font-size: 10px;">{{ $item }}</th>
+                            <th style="font-size: 10px;white-space: nowrap;">{{ $item }}</th>
                         @endif
                     @endforeach
                 </tr>

@@ -52,14 +52,13 @@ class NaiveBayesController extends Controller
             ]
             : ['success' => false, 'error' => $response->body(), 'status' => $response->status()];
     }
-    public function index()
+    public function setNaiveBayesData()
     {
         $attributes = array_filter(array_map('strtolower', array_column($this->attributes, 'nama')), fn($nama) => $nama !== 'status');
 
         return  [
             'attributes' => $attributes,
             'dataset' => $this->dataset,
-            'datauji' => [$this->datauji],
             'label' => $this->label,
             'target' => $this->target
         ];

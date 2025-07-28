@@ -32,7 +32,7 @@ class PemeriksaanController extends Controller
             });
 
 
-            $pemeriksaan = $pemeriksaanQuery->get();
+            $pemeriksaan = $pemeriksaanQuery->orderBy('id', 'desc')->get();
             return Inertia::render('orangtua/pemeriksaan/index', [
                 'pemeriksaan' => $pemeriksaan,
             ]);

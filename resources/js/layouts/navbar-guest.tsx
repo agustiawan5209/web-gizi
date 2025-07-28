@@ -15,12 +15,16 @@ interface NavItem {
 
 const StaticNavbar: React.FC = () => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const page = usePage<SharedData>();
+    const currentUrl = `${page.props.defaultUrl +page.url}`
+    console.log(route('orangtua.dashboard'))
+    console.log(currentUrl)
 
     const navigation: NavItem[] = [
-        { name: 'Home', href: route('orangtua.dashboard'), icon: <Home className="h-5 w-5" />, current: true },
-        { name: 'Lihat Hasil Pemeriksaan Gizi', href: route('orangtua.pemeriksaan.index'), icon: <ClipboardList className="h-5 w-5" /> },
-        { name: 'Periksa Gizi Balita', href: route('orangtua.pemeriksaan.create'), icon: <ClipboardList className="h-5 w-5" /> },
-        { name: 'Impelementasi Algortima', href: route('orangtua.naiveBayes'), icon: <Phone className="h-5 w-5" /> },
+        { name: 'Home', href: route('orangtua.dashboard'), icon: <Home className="h-5 w-5" />, current:   route('orangtua.dashboard') == currentUrl},
+        { name: 'Lihat Hasil Pemeriksaan Gizi', href: route('orangtua.pemeriksaan.index'), icon: <ClipboardList className="h-5 w-5" /> , current:   route('orangtua.pemeriksaan.index') == currentUrl},
+        { name: 'Periksa Gizi Balita', href: route('orangtua.pemeriksaan.create'), icon: <ClipboardList className="h-5 w-5" /> , current:   route('orangtua.pemeriksaan.create') == currentUrl},
+        { name: 'Impelementasi Algortima', href: route('orangtua.naiveBayes'), icon: <Phone className="h-5 w-5" /> , current:    route('orangtua.naiveBayes') == currentUrl},
     ];
     const { auth } = usePage<SharedData>().props;
     const isMobile = useIsMobile();
