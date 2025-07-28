@@ -1,3 +1,4 @@
+import PelayananPosyandu from "../pelayanan-posyandu";
 
 
 const AboutPage = () => (
@@ -40,6 +41,8 @@ const AboutPage = () => (
       </div>
     </div>
 
+
+<PelayananPosyandu />
     {/* Features Section */}
     <div className="mb-16">
       <h2 className="text-3xl font-bold text-center text-white mb-12">

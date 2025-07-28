@@ -4,7 +4,7 @@ import { Label } from '@/components/ui/label';
 import GuestLayout from '@/layouts/guest-layout';
 import { SharedData } from '@/types';
 import { Head, useForm, usePage } from '@inertiajs/react';
-import React, { FormEventHandler, useCallback, useEffect, useState } from 'react';
+import { FormEventHandler } from 'react';
 interface OrangTua {
     id: string;
     name: string;
@@ -55,31 +55,13 @@ type CreateForm = {
     usia_balita: string;
     detail: string[];
 };
-const alasan = [
-    {
-        gizi: 'gizi buruk',
-        alasan: 'Anak termasuk gizi buruk karena berat badan dan tinggi badan jauh di bawah standar usia menurut WHO (kurang dari -3 SD). Kondisi ini biasanya terjadi karena kurangnya asupan energi dan protein dalam waktu yang cukup lama.',
-    },
-    {
-        gizi: 'gizi kurang',
-        alasan: 'Anak termasuk gizi kurang karena berat badan dan tinggi badan berada di bawah standar usia menurut WHO (-3 SD sampai kurang dari -2 SD). Kondisi ini biasanya disebabkan oleh kurangnya konsumsi makanan berprotein seperti telur, ikan, dan daging.',
-    },
-    {
-        gizi: 'gizi baik',
-        alasan: 'Anak termasuk gizi baik karena berat badan dan tinggi badan sesuai dengan standar usia menurut WHO (-2 SD sampai +2 SD). Ini menunjukkan bahwa asupan makanannya sudah cukup dan seimbang.',
-    },
-    {
-        gizi: 'gizi lebih',
-        alasan: 'Anak termasuk gizi lebih karena berat badan dan tinggi badan melebihi standar usia menurut WHO (lebih dari +2 SD). Kondisi ini biasanya disebabkan oleh kelebihan konsumsi makanan berkalori tinggi seperti makanan manis dan berlemak.',
-    },
-];
 
 export default function PemeriksaanCreate({ balita, attribut, orangtua }: PemeriksaanCreateProps) {
     // Memoize breadcrumbs to prevent unnecessary recalculation
     const { auth } = usePage<SharedData>().props;
     const today = new Date();
     const day = today.toISOString().split('T')[0];
-    const { data, setData, get, post, processing, errors } = useForm<CreateForm>({
+    const { data, setData, post, processing, errors } = useForm<CreateForm>({
         orang_tua_id: auth.user.id.toLocaleString(),
         nama: '',
         tempat_lahir: '',
@@ -101,50 +83,6 @@ export default function PemeriksaanCreate({ balita, attribut, orangtua }: Pemeri
             onError: (err) => console.log(err),
         });
     };
-    // State for selected parent
-    const [selectedOrangtua, setSelectedOrangtua] = useState<OrangTua | null>(null);
-    const [idOrangTua, setIdOrangTua] = useState('');
-    // Optimized parent search function
-    const searchById = useCallback(
-        (search: string): OrangTua | null => {
-            if (!orangtua?.length || !search) return null;
-            return orangtua.find((element) => element.id === search) ?? null;
-        },
-        [orangtua],
-    );
-
-    const [searchTerm, setSearchTerm] = useState('');
-    const [listOrangTua, setListOrangTua] = useState<OrangTua[]>([]);
-    const [showlist, setShowList] = useState(false);
-    const handleSearchUser = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const input = e.target.value;
-        setSearchTerm(input);
-        if (input.length > 2) {
-            const filteredList = orangtua.filter(
-                (orangtua) => orangtua.name.toLowerCase().includes(input.toLowerCase()) || orangtua.email.toLowerCase().includes(input.toLowerCase()),
-            );
-            setListOrangTua(filteredList);
-            if (filteredList.length > 0) {
-                setShowList(true);
-            }
-        } else {
-            setListOrangTua([]);
-            setShowList(false);
-        }
-    };
-
-    // Effect for handling parent selection
-    useEffect(() => {
-        if (idOrangTua) {
-            const foundParent = searchById(idOrangTua);
-            setSelectedOrangtua(foundParent);
-            if (foundParent) {
-                setShowList(false);
-                setData('orang_tua_id', foundParent.id);
-                setData('alamat', foundParent.alamat);
-            }
-        }
-    }, [idOrangTua, searchById, setData]);
 
     return (
         <GuestLayout head="Pemeriksaan">

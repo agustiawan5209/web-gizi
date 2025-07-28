@@ -1,10 +1,10 @@
 import MainLayout from "@/layouts/main-layout"
 import HomePage from "@/components/page/home-page";
 import AboutPage from "@/components/page/about-page";
-import { FiturPage } from "@/components/page/fitur-page";
 import CarouselSlider from "@/components/page/carouselSlider";
-import { Home, UserX, LayoutGrid, ChartBarIcon, InfoIcon } from "lucide-react";
-import NaiveBayesNutritionExplanation from "@/pages/orangtua/naive-bayes";
+import NaiveBayesNutritionExplanation from "@/components/page/naive-bayes";
+import { Home, UserX, ChartBarIcon, InfoIcon } from "lucide-react";
+
 import EdukasiGiziAnak from "@/components/page/edukasi";
 
 export default function WelcomePage(){

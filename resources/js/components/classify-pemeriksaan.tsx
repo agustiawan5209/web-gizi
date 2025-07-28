@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -8,7 +9,7 @@ import { SharedData } from '@/types';
 import { usePage } from '@inertiajs/react';
 import axios from 'axios';
 import { LoaderCircle, SquareCheck } from 'lucide-react';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 interface OrangTua {
     id: string;
     name: string;
@@ -38,6 +39,7 @@ export interface PemeriksaanCreateProps {
     orangtua: OrangTua[];
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type CreateForm = {
     orang_tua_id: string;
     nama: string;
@@ -88,6 +90,7 @@ export default function ClassifyPemeriksaan({
     canSubmit,
 }: {
     data: any;
+
     setData: any;
     errors: any;
     processing: boolean;
@@ -98,7 +101,7 @@ export default function ClassifyPemeriksaan({
     }[];
     orangtua: OrangTua[];
     submit: (e: any) => void;
-     canSubmit? : boolean;
+    canSubmit?: boolean;
 }) {
     const [openDialog, setOpenDialog] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -112,13 +115,13 @@ export default function ClassifyPemeriksaan({
 
     const [attributError, setAttributError] = useState<string | null>(null);
 
-
     const submitClass = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        console.log(data)
         setAttributError('');
 
-        if (auth.user) {
+        if (auth.user && data.orang_tua_id === '') {
             if (data.attribut.some((item: any) => item.nilai === null) || data.attribut.some((item: any) => item.nilai === '0')) {
                 setAttributError(
                     'Nilai Tidak Valid!. Pastikan semua pengukuran (BB, TB, Lingkar Kepala, Lingkar Lengan) diisi dengan nilai yang benar dan tidak nol.',
@@ -182,7 +185,7 @@ export default function ClassifyPemeriksaan({
 
     const handleChangeTanggalLahir = (e: React.ChangeEvent<HTMLInputElement>) => {
         const tgl = e.target.value;
-        if (tgl < minDate) {
+        if (tgl <= minDate) {
             setData('tanggal_lahir', tgl);
             const birthDate = new Date(tgl);
             const today = new Date();
@@ -371,35 +374,36 @@ export default function ClassifyPemeriksaan({
                                 {attribut
                                     .filter((item) => !['jenis kelamin', 'status'].includes(item.nama.toLowerCase()))
                                     .map((item, index) => {
-                                        let ket : (string| null) = null
-                                        if(item.nama.includes('Lingkar Kepala')){
-                                            ket = "  Range normal usia 1-5 thn: 44-54 cm"
-                                        }else if(item.nama.includes('Lingkar Lengan')){
-                                            ket = "  Range normal usia 1-5 thn:12-21 cm"
-
+                                        let ket: string | null = null;
+                                        if (item.nama.includes('Lingkar Kepala')) {
+                                            ket = '  Range normal usia 1-5 thn: 44-54 cm';
+                                        } else if (item.nama.includes('Lingkar Lengan')) {
+                                            ket = '  Range normal usia 1-5 thn:12-21 cm';
                                         }
                                         return (
-                                        <TableRow key={item.id}>
-                                            <TableColumn>{item.nama} {ket && <span className='text-xs text-destructive'>{ket}</span>}</TableColumn>
-                                            <TableColumn>
-                                                <Input
-                                                    type="text"
-                                                    id={`kriteria.${index}`}
-                                                    value={data.attribut[index].nilai ?? ''}
-                                                    disabled={isLoading}
-                                                    defaultValue={0}
-                                                    max={item.nama.toLowerCase() === 'lingkar kepala (cm)' ? 60 : 200}
-                                                    min={0}
-                                                    required
-                                                    placeholder={`masukkan ${item.nama}`}
-                                                    readOnly={item.nama.toLowerCase() === 'usia balita (bulan)'}
-                                                    onChange={(e) => HandleChangeInputValue(e, index, item)}
-                                                />
-                                                <InputError message={(errors as any)[`attribut.${index}.nilai`]} />
-                                                <InputError message={(errors as any)[`attribut.${index}.attribut_id`]} />
-                                            </TableColumn>
-                                        </TableRow>
-                                    );
+                                            <TableRow key={item.id}>
+                                                <TableColumn>
+                                                    {item.nama} {ket && <span className="text-destructive text-xs">{ket}</span>}
+                                                </TableColumn>
+                                                <TableColumn>
+                                                    <Input
+                                                        type="text"
+                                                        id={`kriteria.${index}`}
+                                                        value={data.attribut[index].nilai ?? ''}
+                                                        disabled={isLoading}
+                                                        defaultValue={0}
+                                                        max={item.nama.toLowerCase() === 'lingkar kepala (cm)' ? 60 : 200}
+                                                        min={0}
+                                                        required
+                                                        placeholder={`masukkan ${item.nama}`}
+                                                        readOnly={item.nama.toLowerCase() === 'usia balita (bulan)'}
+                                                        onChange={(e) => HandleChangeInputValue(e, index, item)}
+                                                    />
+                                                    <InputError message={(errors as any)[`attribut.${index}.nilai`]} />
+                                                    <InputError message={(errors as any)[`attribut.${index}.attribut_id`]} />
+                                                </TableColumn>
+                                            </TableRow>
+                                        );
                                     })}
                             </TableBody>
                         </Table>
@@ -445,14 +449,22 @@ export default function ClassifyPemeriksaan({
                                     </div>
                                 </div>
                             </DialogDescription>
-                           {canSubmit ? (<DialogFooter>
-                                <Button type="button" variant="default" size="sm" className="flex-1" disabled={processing} onClick={submit}>
-                                    {processing && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
-                                    Simpan
-                                </Button>
-                            </DialogFooter>):(
-                                <Button type="button" variant="destructive" size="sm" className="flex-1" disabled={processing} onClick={()=> setOpenDialog(false)}>
-
+                            {canSubmit ? (
+                                <DialogFooter>
+                                    <Button type="button" variant="default" size="sm" className="flex-1" disabled={processing} onClick={submit}>
+                                        {processing && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
+                                        Simpan
+                                    </Button>
+                                </DialogFooter>
+                            ) : (
+                                <Button
+                                    type="button"
+                                    variant="destructive"
+                                    size="sm"
+                                    className="flex-1"
+                                    disabled={processing}
+                                    onClick={() => setOpenDialog(false)}
+                                >
                                     Keluar
                                 </Button>
                             )}
