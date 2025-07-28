@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth-layout';
+import { Card, CardContent } from '@/components/ui/card';
 
 type RegisterForm = {
     name: string;
@@ -38,7 +39,9 @@ export default function Register() {
     return (
         <AuthLayout title="Posyandu " description="Bungung Barana Selatan">
             <Head title="Register" />
-            <form className="flex flex-col gap-6" onSubmit={submit}>
+           <Card>
+            <CardContent>
+                 <form className="flex flex-col gap-6" onSubmit={submit}>
                 <div className="grid gap-6">
                     <div className="grid gap-2">
                         <Label htmlFor="name">Nama Orang Tua/Mewakili</Label>
@@ -141,13 +144,15 @@ export default function Register() {
                     </Button>
                 </div>
 
-                <div className="text-center text-white text-sm">
+                <div className="text-center text-black text-sm">
                     Already have an account?{' '}
                     <TextLink href={route('login')} tabIndex={6}>
                         Log in
                     </TextLink>
                 </div>
             </form>
+            </CardContent>
+           </Card>
         </AuthLayout>
     );
 }
