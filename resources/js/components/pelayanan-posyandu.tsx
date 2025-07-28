@@ -1,5 +1,6 @@
 import React from 'react';
 import { ClipboardList, UserPlus, LogIn, Ruler, ClipboardCheck } from 'lucide-react';
+import { Link } from '@inertiajs/react';
 
 interface ServiceStep {
   id: number;
@@ -22,21 +23,21 @@ const PelayananPosyandu: React.FC = () => {
       description: (
         <div>
           <p className="mb-2">Jika belum memiliki akun, silakan daftar terlebih dahulu:</p>
-          <a
-            href="#registrasi"
+          <Link
+            href="/register"
             className="inline-flex items-center px-3 py-1 mb-2 mr-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
           >
             <UserPlus className="w-4 h-4 mr-2" />
             Registrasi Akun Pasien
-          </a>
+          </Link>
           <p className="mt-2">Jika sudah memiliki akun, silakan login:</p>
-          <a
-            href="#login"
+          <Link
+            href="/login"
             className="inline-flex items-center px-3 py-1 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700"
           >
             <LogIn className="w-4 h-4 mr-2" />
             Login Akun Pasien
-          </a>
+          </Link>
         </div>
       ),
       icon: <UserPlus className="w-6 h-6" />,
