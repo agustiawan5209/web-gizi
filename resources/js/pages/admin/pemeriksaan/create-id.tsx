@@ -129,13 +129,18 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
             const filteredList = orangtua.filter(
                 (orangtua) => orangtua.name.toLowerCase().includes(input.toLowerCase()) || orangtua.email.toLowerCase().includes(input.toLowerCase()),
             );
-            setListOrangTua(filteredList);
             if (filteredList.length > 0) {
+                setListOrangTua(filteredList);
                 setShowList(true);
+                errors.orang_tua_id = ''
+            }else{
+            errors.orang_tua_id = "Nama Orang Tua/Wali Tidak Terdaftar"
+
             }
         } else {
             setListOrangTua([]);
             setShowList(false);
+            errors.orang_tua_id = "Nama Orang Tua/Wali Tidak Terdaftar"
         }
     };
 
@@ -148,6 +153,7 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
                 setShowList(false);
                 setData('orang_tua_id', foundParent.id);
                 setData('alamat', foundParent.alamat);
+
             }
         }
     }, [idOrangTua, searchById, setData]);
