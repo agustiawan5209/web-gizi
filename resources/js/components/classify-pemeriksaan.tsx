@@ -472,19 +472,19 @@ setAttributError('');
 const alasan = [
     {
         gizi: 'gizi buruk',
-        alasan: 'Anak termasuk gizi buruk karena berat badan dan tinggi badan jauh di bawah standar usia menurut WHO (kurang dari -3 SD). Kondisi ini biasanya terjadi karena kurangnya asupan energi dan protein dalam waktu yang cukup lama.',
+        alasan: 'Kondisi ini biasanya terjadi karena kurangnya asupan energi dan protein dalam waktu yang cukup lama dan disebabkan oleh faktor lingkungan dan pola asuh yang tidak baik',
     },
     {
         gizi: 'gizi kurang',
-        alasan: 'Anak termasuk gizi kurang karena berat badan dan tinggi badan berada di bawah standar usia menurut WHO (-3 SD sampai kurang dari -2 SD). Kondisi ini biasanya disebabkan oleh kurangnya konsumsi makanan berprotein seperti telur, ikan, dan daging.',
+        alasan: 'Kondisi ini biasanya disebabkan oleh kurangnya konsumsi makanan berprotein atau disebabkan oleh faktor lingkungan dan pola asuh yang kurang baik',
     },
     {
         gizi: 'gizi baik',
-        alasan: 'Anak termasuk gizi baik karena berat badan dan tinggi badan sesuai dengan standar usia menurut WHO (-2 SD sampai +2 SD). Ini menunjukkan bahwa asupan makanannya sudah cukup dan seimbang.',
+        alasan: 'Kondisi ini menunjukkan bahwa asupan makanannya sudah cukup atau seimbang serta lingkungan dan pola asuh yang baik.',
     },
     {
         gizi: 'gizi lebih',
-        alasan: 'Anak termasuk gizi lebih karena berat badan dan tinggi badan melebihi standar usia menurut WHO (lebih dari +2 SD). Kondisi ini biasanya disebabkan oleh kelebihan konsumsi makanan berkalori tinggi seperti makanan manis dan berlemak.',
+        alasan: 'Kondisi ini menunjukkan bahwa asupan makanannya sudah cukup atau seimbang serta lingkungan dan pola asuh yang baik.',
     },
 ];
 
@@ -493,16 +493,16 @@ const rekomendasi = (label : string)=>{
 
 switch (label) {
     case "gizi buruk":
-        rekomendasi = "Tingkatkan asupan makanan bergizi tinggi, berikan makanan sumber protein seperti telur, ikan, dan daging, serta tambahkan susu, sayur, dan buah dalam porsi cukup.";
+        rekomendasi = "Kondisi ini menunjukkan bahwa asupan makanannya sudah cukup atau seimbang serta lingkungan dan pola asuh yang baik.";
         break; // Don't forget break to prevent fall-through
     case "gizi kurang":
-        rekomendasi = "Perbanyak makanan yang mengandung kalori dan protein, seperti nasi, tahu, tempe, telur, serta sayuran hijau dan buah-buahan untuk menambah nutrisi.";
+        rekomendasi = "Berikan makanan bergizi seimbang yang mengandung protein, mineral, dan vitamin, sajikan makanan secara bervariasi dan teratur yang mudah dicerna oleh anak seperti bubur, serta tetap dilengkapi dengan pemberian ASI yang cukup untuk mendukung pertumbuhan optimal.";
         break;
     case "gizi baik":
-        rekomendasi = "Pertahankan pola makan seimbang dengan kombinasi karbohidrat, protein, sayur, dan buah. Pastikan cukup minum air dan tetap aktif berolahraga.";
+        rekomendasi = "Pertahankan pola makan seimbang dengan memberi makanan yang mengandung karbohidrat, protein, sayur, dan buah. Berikan 3x makan utama dan 2x selingan setiap hari. Sajikan makanan secara bervariasi, mudah dicerna, dan tetap lengkapi dengan ASI untuk mendukung pertumbuhan anak.";
         break;
     case "gizi lebih":
-        rekomendasi = "Kurangi makanan berlemak dan tinggi gula, berikan lebih banyak sayur dan buah, serta atur porsi makanan agar tetap seimbang.";
+        rekomendasi = "Kurangi makanan tinggi lemak, gula, dan olahan seperti camilan kemasan. Atur porsi makan secara bertahap, tetap berikan makanan bergizi seimbang dengan sayur, buah, dan protein tanpa lemak. Berikan ASI sesuai kebutuhan dan dorong anak untuk aktif bergerak agar keseimbangan energi terjaga.";
         break;
     default:
         rekomendasi = "Label gizi tidak dikenali.";
