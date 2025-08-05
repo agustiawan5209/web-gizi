@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import PaginationTable from '@/components/pagination-table';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -56,30 +57,13 @@ export default function DatasetIndex({ dataset, breadcrumb, filter, attribut, st
         [breadcrumb],
     );
 
-    const { data, setData, get, processing, errors, reset } = useForm<GetForm>({
+    const { get, processing, reset } = useForm<GetForm>({
         // q: '',
         // per_page: '',
         // order_by: '',
     });
 
-    /** START SEARCH */
-    // store search query in state
-    const [search, setSearch] = useState(filter?.q ?? '');
 
-    const submitSearch: FormEventHandler = (e) => {
-        e.preventDefault();
-        // clean search query
-        const cleanedSearch = search.trim();
-        if (cleanedSearch.length > 0) {
-            // if search query is not empty, make request to server
-            get(route('admin.dataset.index', { q: cleanedSearch, per_page: filter?.per_page, order_by: filter?.order_by, date: filter?.date }), {
-                preserveState: true,
-                preserveScroll: true,
-                onSuccess: () => {},
-            });
-        }
-    };
-    /** END SEARCH */
 
     /** Start Order BY (ASC, DESC) */
     const [orderBy, setOrderBy] = useState(filter?.order_by ?? '');
@@ -125,7 +109,6 @@ export default function DatasetIndex({ dataset, breadcrumb, filter, attribut, st
     // clear search query when form is submitted
     const clearSearch: FormEventHandler = (e) => {
         e.preventDefault();
-        setSearch('');
         reset();
         setPerPage('10');
         // make request to server when search query is cleared
@@ -242,6 +225,7 @@ export default function DatasetIndex({ dataset, breadcrumb, filter, attribut, st
                                                     delete="delete"
                                                     url={route('admin.dataset.destroy', { dataset: item.id })}
                                                     title={item.tgl}
+                                                    edit={route('admin.dataset.edit',{dataset: item.id})}
                                                     id={item.id}
                                                 />
                                             </TableRow>
@@ -262,6 +246,8 @@ export default function DatasetIndex({ dataset, breadcrumb, filter, attribut, st
                                                 <SelectItem value="20">20</SelectItem>
                                                 <SelectItem value="50">50</SelectItem>
                                                 <SelectItem value="100">100</SelectItem>
+                                                <SelectItem value="300">300</SelectItem>
+                                                <SelectItem value="500">500</SelectItem>
                                             </SelectGroup>
                                         </SelectContent>
                                     </Select>

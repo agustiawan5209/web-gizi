@@ -23,8 +23,8 @@ class UpdateDatasetRequest extends FormRequest
     {
         return [
             'attribut'=> 'required|array',
-            'attribut.*'=> 'required|integer',
-            'label'=> 'required|string|max:50',
+            'attribut.*.attribut_id'=> 'required|integer',
+            'label'=> 'required|string|max:50|in:gizi buruk,gizi kurang,gizi baik,gizi lebih,gizi normal',
         ];
     }
 }

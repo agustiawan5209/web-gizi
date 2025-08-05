@@ -55,7 +55,7 @@ class DatasetController extends Controller
         return Inertia::render('admin/dataset/index', [
             'dataset' => $dataset,
             'attribut' => Attribut::orderBy('id', 'asc')->get(),
-          'breadcrumb' => self::BASE_BREADCRUMB,
+            'breadcrumb' => self::BASE_BREADCRUMB,
             'statusLabel' => $statusLabel,
             'filter' => $request->only('search', 'order_by', 'date', 'q'),
         ]);
@@ -74,10 +74,10 @@ class DatasetController extends Controller
                 'gizi baik',
                 'gizi lebih',
             ],
-            'breadcrumb'=> array_merge(self::BASE_BREADCRUMB,[
+            'breadcrumb' => array_merge(self::BASE_BREADCRUMB, [
                 [
-                    'title'=> 'tambah data',
-                    'href'=> '/admin/dataset/create',
+                    'title' => 'tambah data',
+                    'href' => '/admin/dataset/create',
                 ],
             ])
         ]);
@@ -134,10 +134,10 @@ class DatasetController extends Controller
     {
         return Inertia::render('admin/dataset/show', [
             'dataset' => $dataset,
-            'breadcrumb'=> array_merge(self::BASE_BREADCRUMB,[
+            'breadcrumb' => array_merge(self::BASE_BREADCRUMB, [
                 [
-                    'title'=> 'detail data',
-                    'href'=> '/admin/dataset/show',
+                    'title' => 'detail data',
+                    'href' => '/admin/dataset/show',
                 ],
             ])
         ]);
@@ -148,19 +148,20 @@ class DatasetController extends Controller
      */
     public function edit(Dataset $dataset)
     {
+        $dataset->load(['fiturdataset']);
         return Inertia::render('admin/dataset/edit', [
-            'attribut' => Attribut::orderBy('id', 'asc')->get(),
-            'label' => [
-                ['nama' => 'gizi buruk'],
-                ['nama' => 'gizi kurang'],
-                ['nama' => 'gizi baik'],
-                ['nama' => 'gizi lebih'],
+            'attribut' => Attribut::orderBy('id', 'asc')->whereNotIn('nama', ['status', 'Status'])->get(),
+            'statusLabel' => [
+                'gizi buruk',
+                'gizi kurang',
+                'gizi baik',
+                'gizi lebih',
             ],
             'dataset' => $dataset,
-            'breadcrumb'=> array_merge(self::BASE_BREADCRUMB,[
+            'breadcrumb' => array_merge(self::BASE_BREADCRUMB, [
                 [
-                    'title'=> 'edit data',
-                    'href'=> '/admin/dataset/edit',
+                    'title' => 'edit data',
+                    'href' => '/admin/dataset/edit',
                 ],
             ])
         ]);
@@ -172,19 +173,30 @@ class DatasetController extends Controller
     public function update(UpdateDatasetRequest $request, Dataset $dataset)
     {
         $tgl = Carbon::now()->format('Y-m-d');
-        $attribut =  Attribut::orderBy('id', 'asc')->get();
-
+        $attribut = $request->input('attribut');
+        $label = $request->label;
         $dataset->update([
             'tgl' => $tgl,
             'label' => $request->input('label'),
         ]);
         FiturDataset::where('dataset_id', $dataset->id)->delete();
 
-        foreach ($attribut as $key => $value) {
+
+        foreach ($attribut as $item) {
             FiturDataset::create([
                 'dataset_id' => $dataset->id,
-                'attribut_id' => $value->id,
-                'nilai' => $request->attribut[$key],
+                'attribut_id' => $item['attribut_id'],
+                'nilai' => $item['nilai'],
+            ]);
+        }
+
+        $statusAttribut = Attribut::where('nama', 'like', '%status%')->first();
+
+        if ($statusAttribut) {
+            FiturDataset::create([
+                'dataset_id' => $dataset->id,
+                'attribut_id' => $statusAttribut->id,
+                'nilai' => $label,
             ]);
         }
 

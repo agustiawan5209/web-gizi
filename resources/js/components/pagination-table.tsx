@@ -35,6 +35,7 @@ const PaginationTable: React.FC<PaginationProps> = ({ links, data }) => {
                         <Link
                             href={links[0].url ?? ''}
                             data={data}
+                            preserveState={true}
                             dangerouslySetInnerHTML={{ __html: links[0].label }}
                             className="rounded border px-3 py-1 text-sm text-gray-700 hover:bg-gray-200"
                         />
@@ -46,6 +47,7 @@ const PaginationTable: React.FC<PaginationProps> = ({ links, data }) => {
                             key={index}
                             href={link.url ?? ''}
                             data={data}
+                            preserveState={true}
                             dangerouslySetInnerHTML={{ __html: link.label }}
                             className={`rounded border px-3 py-1 text-sm ${
                                 link.active
@@ -62,6 +64,7 @@ const PaginationTable: React.FC<PaginationProps> = ({ links, data }) => {
                         <Link
                             href={links[links.length - 1].url ?? ''}
                             data={data}
+                            preserveState={true}
                             dangerouslySetInnerHTML={{ __html: links[links.length - 1].label }}
                             className="rounded border px-3 py-1 text-sm text-gray-700 hover:bg-gray-200"
                         />
@@ -74,6 +77,7 @@ const PaginationTable: React.FC<PaginationProps> = ({ links, data }) => {
                             key={index}
                             href={link.url ?? ''}
                             data={data}
+                            preserveState={true}
                             dangerouslySetInnerHTML={{ __html: link.label }}
                             className={`rounded border px-3 py-1 text-sm ${
                                 link.active
