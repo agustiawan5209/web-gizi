@@ -10,7 +10,7 @@ import { SharedData } from '@/types';
 import { fetchNutritionData } from '@/utils/api';
 import { predictNutritionStatus } from '@/utils/naiveBayes/prediction';
 import { trainModel } from '@/utils/naiveBayes/training';
-import { NutritionData, NutritionStatus } from '@/utils/types';
+import { NutritionData } from '@/utils/types';
 import { usePage } from '@inertiajs/react';
 import { LoaderCircle, SquareCheck } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
@@ -109,12 +109,12 @@ export default function ClassifyPemeriksaan({ data, setData, errors, attribut, p
     }, []);
     const submitClass = async (e: React.FormEvent) => {
         e.preventDefault();
-setAttributError('');
+        setAttributError('');
         if (!model) {
             setError('Model belum siap');
             return;
         }
-        console.log(data.orang_tua_id)
+        console.log(data.orang_tua_id);
         if (data.orang_tua_id !== '') {
             if (data.attribut.some((item: any) => item.nilai === null) || data.attribut.some((item: any) => item.nilai === '0')) {
                 setAttributError(
@@ -484,30 +484,33 @@ const alasan = [
     },
     {
         gizi: 'gizi lebih',
-        alasan: 'Kondisi ini menunjukkan bahwa asupan makanannya sudah cukup atau seimbang serta lingkungan dan pola asuh yang baik.',
+        alasan: 'Kondisi ini biasanya disebabkan oleh asupan makanan berlebihan seperti makanan tinggi kalori, lemak, dan gula atau pola makan yang tidak sehat.',
     },
 ];
 
-const rekomendasi = (label : string)=>{
+const rekomendasi = (label: string) => {
     let rekomendasi; // Declare rekomendasi before the switch statement
 
-switch (label) {
-    case "gizi buruk":
-        rekomendasi = "Kondisi ini menunjukkan bahwa asupan makanannya sudah cukup atau seimbang serta lingkungan dan pola asuh yang baik.";
-        break; // Don't forget break to prevent fall-through
-    case "gizi kurang":
-        rekomendasi = "Berikan makanan bergizi seimbang yang mengandung protein, mineral, dan vitamin, sajikan makanan secara bervariasi dan teratur yang mudah dicerna oleh anak seperti bubur, serta tetap dilengkapi dengan pemberian ASI yang cukup untuk mendukung pertumbuhan optimal.";
-        break;
-    case "gizi baik":
-        rekomendasi = "Pertahankan pola makan seimbang dengan memberi makanan yang mengandung karbohidrat, protein, sayur, dan buah. Berikan 3x makan utama dan 2x selingan setiap hari. Sajikan makanan secara bervariasi, mudah dicerna, dan tetap lengkapi dengan ASI untuk mendukung pertumbuhan anak.";
-        break;
-    case "gizi lebih":
-        rekomendasi = "Kurangi makanan tinggi lemak, gula, dan olahan seperti camilan kemasan. Atur porsi makan secara bertahap, tetap berikan makanan bergizi seimbang dengan sayur, buah, dan protein tanpa lemak. Berikan ASI sesuai kebutuhan dan dorong anak untuk aktif bergerak agar keseimbangan energi terjaga.";
-        break;
-    default:
-        rekomendasi = "Label gizi tidak dikenali.";
-        break;
-}
+    switch (label) {
+        case 'gizi buruk':
+            rekomendasi = 'Kondisi ini menunjukkan bahwa asupan makanannya sudah cukup atau seimbang serta lingkungan dan pola asuh yang baik.';
+            break; // Don't forget break to prevent fall-through
+        case 'gizi kurang':
+            rekomendasi =
+                'Berikan makanan bergizi seimbang yang mengandung protein, mineral, dan vitamin, sajikan makanan secara bervariasi dan teratur yang mudah dicerna oleh anak seperti bubur, serta tetap dilengkapi dengan pemberian ASI yang cukup untuk mendukung pertumbuhan optimal.';
+            break;
+        case 'gizi baik':
+            rekomendasi =
+                'Pertahankan pola makan seimbang dengan memberi makanan yang mengandung karbohidrat, protein, sayur, dan buah. Berikan 3x makan utama dan 2x selingan setiap hari. Sajikan makanan secara bervariasi, mudah dicerna, dan tetap lengkapi dengan ASI untuk mendukung pertumbuhan anak.';
+            break;
+        case 'gizi lebih':
+            rekomendasi =
+                'Kurangi makanan tinggi lemak, gula, dan olahan seperti camilan kemasan. Atur porsi makan secara bertahap, tetap berikan makanan bergizi seimbang dengan sayur, buah, dan protein tanpa lemak. Berikan ASI sesuai kebutuhan dan dorong anak untuk aktif bergerak agar keseimbangan energi terjaga.';
+            break;
+        default:
+            rekomendasi = 'Label gizi tidak dikenali.';
+            break;
+    }
 
-return rekomendasi;
-}
+    return rekomendasi;
+};

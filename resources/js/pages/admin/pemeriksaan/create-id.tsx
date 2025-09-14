@@ -57,24 +57,6 @@ type CreateForm = {
     usia_balita: string;
     detail: string[];
 };
-const alasan = [
-    {
-        gizi: 'gizi buruk',
-        alasan: 'Anak termasuk gizi buruk karena berat badan dan tinggi badan jauh di bawah standar usia menurut WHO (kurang dari -3 SD). Kondisi ini biasanya terjadi karena kurangnya asupan energi dan protein dalam waktu yang cukup lama.',
-    },
-    {
-        gizi: 'gizi kurang',
-        alasan: 'Anak termasuk gizi kurang karena berat badan dan tinggi badan berada di bawah standar usia menurut WHO (-3 SD sampai kurang dari -2 SD). Kondisi ini biasanya disebabkan oleh kurangnya konsumsi makanan berprotein seperti telur, ikan, dan daging.',
-    },
-    {
-        gizi: 'gizi baik',
-        alasan: 'Anak termasuk gizi baik karena berat badan dan tinggi badan sesuai dengan standar usia menurut WHO (-2 SD sampai +2 SD). Ini menunjukkan bahwa asupan makanannya sudah cukup dan seimbang.',
-    },
-    {
-        gizi: 'gizi lebih',
-        alasan: 'Anak termasuk gizi lebih karena berat badan dan tinggi badan melebihi standar usia menurut WHO (lebih dari +2 SD). Kondisi ini biasanya disebabkan oleh kelebihan konsumsi makanan berkalori tinggi seperti makanan manis dan berlemak.',
-    },
-];
 
 export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangtua }: PemeriksaanCreateProps) {
     // Memoize breadcrumbs to prevent unnecessary recalculations
@@ -132,15 +114,14 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
             if (filteredList.length > 0) {
                 setListOrangTua(filteredList);
                 setShowList(true);
-                errors.orang_tua_id = ''
-            }else{
-            errors.orang_tua_id = "Nama Orang Tua/Wali Tidak Terdaftar"
-
+                errors.orang_tua_id = '';
+            } else {
+                errors.orang_tua_id = 'Nama Orang Tua/Wali Tidak Terdaftar';
             }
         } else {
             setListOrangTua([]);
             setShowList(false);
-            errors.orang_tua_id = "Nama Orang Tua/Wali Tidak Terdaftar"
+            errors.orang_tua_id = 'Nama Orang Tua/Wali Tidak Terdaftar';
         }
     };
 
@@ -153,7 +134,6 @@ export default function PemeriksaanCreate({ breadcrumb, balita, attribut, orangt
                 setShowList(false);
                 setData('orang_tua_id', foundParent.id);
                 setData('alamat', foundParent.alamat);
-
             }
         }
     }, [idOrangTua, searchById, setData]);
