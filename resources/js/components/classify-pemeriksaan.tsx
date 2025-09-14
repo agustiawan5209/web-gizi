@@ -136,8 +136,10 @@ export default function ClassifyPemeriksaan({ data, setData, errors, attribut, p
                 const label = predictNutritionStatus(model, datauji);
                 setError(null);
                 setData('label', label);
+                const usia = hitungBulanUsia(data.tanggal_lahir);
+                console.log(usia);
                 setData('alasan', alasan.find((item) => item.gizi === label)?.alasan || '');
-                setData('rekomendasi', rekomendasi(label));
+                setData('rekomendasi', rekomendasi(label, Number(usia)));
                 setData('detail', datauji);
                 setOpenDialog(true);
             }
@@ -146,26 +148,6 @@ export default function ClassifyPemeriksaan({ data, setData, errors, attribut, p
         }
     };
 
-    function hitungUsia(tanggalLahir: string) {
-        const birthDate = new Date(tanggalLahir);
-        const today = new Date();
-
-        let tahun = today.getFullYear() - birthDate.getFullYear();
-        let bulan = today.getMonth() - birthDate.getMonth();
-        let hari = today.getDate() - birthDate.getDate();
-
-        if (hari < 0) {
-            bulan--;
-            hari += new Date(today.getFullYear(), today.getMonth(), 0).getDate(); // total hari bulan sebelumnya
-        }
-
-        if (bulan < 0) {
-            tahun--;
-            bulan += 12;
-        }
-
-        return `${tahun} tahun, ${bulan} bulan, ${hari} hari`;
-    }
     // Hitung tanggal minimum: 1 tahun lalu dari hari ini
     const tahunLalu = new Date(today);
     tahunLalu.setFullYear(today.getFullYear() - 1);
@@ -487,29 +469,135 @@ const alasan = [
         alasan: 'Kondisi ini biasanya disebabkan oleh asupan makanan berlebihan seperti makanan tinggi kalori, lemak, dan gula atau pola makan yang tidak sehat.',
     },
 ];
+function hitungUsia(tanggalLahir: string) {
+    const birthDate = new Date(tanggalLahir);
+    const today = new Date();
 
-const rekomendasi = (label: string) => {
+    let tahun = today.getFullYear() - birthDate.getFullYear();
+    let bulan = today.getMonth() - birthDate.getMonth();
+    let hari = today.getDate() - birthDate.getDate();
+
+    if (hari < 0) {
+        bulan--;
+        hari += new Date(today.getFullYear(), today.getMonth(), 0).getDate(); // total hari bulan sebelumnya
+    }
+
+    if (bulan < 0) {
+        tahun--;
+        bulan += 12;
+    }
+
+    return `${tahun} tahun, ${bulan} bulan, ${hari} hari`;
+}
+
+function hitungBulanUsia(tanggalLahir: string) {
+    const birthDate = new Date(tanggalLahir);
+    const today = new Date();
+    let usia = today.getFullYear() - birthDate.getFullYear();
+    let bulan = today.getMonth() - birthDate.getMonth();
+
+    if (bulan < 0) {
+        usia--;
+        bulan += 12;
+    }
+    if (usia > 0) {
+        usia *= 12;
+        usia += bulan;
+    }
+    return usia;
+}
+
+const rekomendasi = (label: string, usia: number) => {
     let rekomendasi; // Declare rekomendasi before the switch statement
 
-    switch (label) {
-        case 'gizi buruk':
-            rekomendasi = 'Kondisi ini menunjukkan bahwa asupan makanannya sudah cukup atau seimbang serta lingkungan dan pola asuh yang baik.';
-            break; // Don't forget break to prevent fall-through
-        case 'gizi kurang':
-            rekomendasi =
-                'Berikan makanan bergizi seimbang yang mengandung protein, mineral, dan vitamin, sajikan makanan secara bervariasi dan teratur yang mudah dicerna oleh anak seperti bubur, serta tetap dilengkapi dengan pemberian ASI yang cukup untuk mendukung pertumbuhan optimal.';
-            break;
-        case 'gizi baik':
-            rekomendasi =
-                'Pertahankan pola makan seimbang dengan memberi makanan yang mengandung karbohidrat, protein, sayur, dan buah. Berikan 3x makan utama dan 2x selingan setiap hari. Sajikan makanan secara bervariasi, mudah dicerna, dan tetap lengkapi dengan ASI untuk mendukung pertumbuhan anak.';
-            break;
-        case 'gizi lebih':
-            rekomendasi =
-                'Kurangi makanan tinggi lemak, gula, dan olahan seperti camilan kemasan. Atur porsi makan secara bertahap, tetap berikan makanan bergizi seimbang dengan sayur, buah, dan protein tanpa lemak. Berikan ASI sesuai kebutuhan dan dorong anak untuk aktif bergerak agar keseimbangan energi terjaga.';
-            break;
-        default:
-            rekomendasi = 'Label gizi tidak dikenali.';
-            break;
+    if (usia >= 11 && usia <= 23) {
+        switch (label) {
+            case 'gizi buruk':
+                rekomendasi =
+                    'Berikan makanan yang kaya akan protein, mineral, dan vitamin, sajikan makanan secara bervariasi dan mudah dicerna seperti bubur bergizi yang dicampur dengan lauk hewani atau nabati. Tetap berikan ASI yang cukup untuk mendukung pemulihan gizi anak.';
+                break; // Don't forget break to prevent fall-through
+            case 'gizi kurang':
+                rekomendasi =
+                    'Berikan makanan bergizi seimbang yang mengandung protein, mineral, dan vitamin, sajikan makanan secara bervariasi dan teratur yang mudah dicerna oleh anak seperti bubur, serta tetap dilengkapi dengan pemberian ASI yang cukup untuk mendukung pertumbuhan optimal.';
+                break;
+            case 'gizi baik':
+                rekomendasi =
+                    'Pertahankan pola makan seimbang dengan memberi makanan yang mengandung karbohidrat, protein, sayur, dan buah. Berikan 3x makan utama dan 2x selingan setiap hari. Sajikan makanan secara bervariasi, mudah dicerna, dan tetap lengkapi dengan ASI untuk mendukung pertumbuhan anak.';
+                break;
+            case 'gizi lebih':
+                rekomendasi =
+                    'Kurangi makanan tinggi lemak, gula, dan olahan seperti camilan kemasan. Atur porsi makan secara bertahap, tetap berikan makanan bergizi seimbang dengan sayur, buah, dan protein tanpa lemak. Berikan ASI sesuai kebutuhan dan dorong anak untuk aktif bergerak agar keseimbangan energi terjaga.';
+                break;
+            default:
+                rekomendasi = 'Label gizi tidak dikenali.';
+                break;
+        }
+    } else if (usia >= 24 && usia <= 35) {
+        switch (label) {
+            case 'gizi buruk':
+                rekomendasi =
+                    'Berikan makanan yang tinggi kalori dan protein seperti nasi dengan lauk hewani (ikan, ayam, telur), ditambah sayur dan buah segar dan camilan bergizi seperti pisang atau biskuit bayi untuk meningkatkan asupan energi. Tetap berikan ASI yang cukup untuk mendukung pemulihan gizi anak.';
+                break; // Don't forget break to prevent fall-through
+            case 'gizi kurang':
+                rekomendasi =
+                    'Berikan makanan bergizi seimbang seperti nasi, lauk hewani atau nabati (seperti ikan, ayam, telur), sayur, dan buah segar. Sajikan 3x makan utama dan 2x camilan sehat setiap hari. Jika masih menyusui, tetap berikan ASI untuk mendukung pertumbuhan dan perbaikan gizi anak.';
+                break;
+            case 'gizi baik':
+                rekomendasi =
+                    'Pertahankan pola makan seimbang dengan nasi, lauk hewani atau nabati, sayur, dan buah. Sajikan 3x makan utama dan 2x camilan bergizi setiap hari. Pilih makanan yang bervariasi, mudah dikunyah, dan disukai anak. Jika masih menyusui, tetap berikan ASI untuk mendukung pertumbuhan anak';
+                break;
+            case 'gizi lebih':
+                rekomendasi =
+                    'Kurangi makanan tinggi lemak, gula, dan olahan seperti camilan kemasan. Atur porsi makan secara bertahap, tetap berikan makanan bergizi seimbang dengan sayur, buah, dan protein tanpa lemak. berikann ASI sesuai kebutuhan dan dorong anak untuk aktif bergerak agar keseimbangan energi terjaga.';
+                break;
+            default:
+                rekomendasi = 'Label gizi tidak dikenali.';
+                break;
+        }
+    } else if (usia >= 36 && usia >= 60) {
+        switch (label) {
+            case 'gizi buruk':
+                rekomendasi =
+                    'Berikan makanan yang tinggi kalori dan protein seperti nasi dengan lauk hewani (ikan, ayam, telur), sayur dan buah segar. Berikan camilan bergizi seperti pisang, roti, atau biskuit sehat 2x sehari dan susu yang bernutrisi untuk mendukung pemulihan gizi anak.';
+                break; // Don't forget break to prevent fall-through
+            case 'gizi kurang':
+                rekomendasi =
+                    'Berikan makanan bergizi seimbang seperti nasi, lauk hewani atau nabati (seperti ikan, ayam, tahu, atau tempe), sayur dan buah segar. Sajikan 3x makan utama dan 2x camilan sehat setiap hari. Berikan susu yang bernutrisi untuk mendukung pertumbuhan dan perbaikan gizi anak.';
+                break;
+            case 'gizi baik':
+                rekomendasi =
+                    'Pertahankan pola makan seimbang dengan memberikan nasi, lauk hewani atau nabati seperti (ayam, ikan, tahu, atau tempe), sayur, dan buah segar setiap hari. Sajikan 3x makan utama dan 2x kali camilan sehat secara teratur. Berikan susu yang bernutrisi untuk mendukung pertumbuhan anak.';
+                break;
+            case 'gizi lebih':
+                rekomendasi =
+                    'Kurangi makanan tinggi lemak, gula, dan olahan seperti camilan kemasan. Atur porsi makan secara bertahap, tetap berikan makanan bergizi seimbang dengan sayur, buah, dan protein tanpa lemak. ';
+                break;
+            default:
+                rekomendasi = 'Label gizi tidak dikenali.';
+                break;
+        }
+    } else {
+        switch (label) {
+            case 'gizi buruk':
+                rekomendasi =
+                    'Berikan makanan yang kaya akan protein, mineral, dan vitamin, sajikan makanan secara bervariasi dan mudah dicerna seperti bubur bergizi yang dicampur dengan lauk hewani atau nabati. Tetap berikan ASI yang cukup untuk mendukung pemulihan gizi anak.';
+                break; // Don't forget break to prevent fall-through
+            case 'gizi kurang':
+                rekomendasi =
+                    'Berikan makanan bergizi seimbang yang mengandung protein, mineral, dan vitamin, sajikan makanan secara bervariasi dan teratur yang mudah dicerna oleh anak seperti bubur, serta tetap dilengkapi dengan pemberian ASI yang cukup untuk mendukung pertumbuhan optimal.';
+                break;
+            case 'gizi baik':
+                rekomendasi =
+                    'Pertahankan pola makan seimbang dengan memberi makanan yang mengandung karbohidrat, protein, sayur, dan buah. Berikan 3x makan utama dan 2x selingan setiap hari. Sajikan makanan secara bervariasi, mudah dicerna, dan tetap lengkapi dengan ASI untuk mendukung pertumbuhan anak.';
+                break;
+            case 'gizi lebih':
+                rekomendasi =
+                    'Kurangi makanan tinggi lemak, gula, dan olahan seperti camilan kemasan. Atur porsi makan secara bertahap, tetap berikan makanan bergizi seimbang dengan sayur, buah, dan protein tanpa lemak. Berikan ASI sesuai kebutuhan dan dorong anak untuk aktif bergerak agar keseimbangan energi terjaga.';
+                break;
+            default:
+                rekomendasi = 'Label gizi tidak dikenali.';
+                break;
+        }
     }
 
     return rekomendasi;
