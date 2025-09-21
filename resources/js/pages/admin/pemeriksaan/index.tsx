@@ -2,7 +2,6 @@ import CollapsibleRow from '@/components/collapsible-table';
 import DetailPemeriksaan from '@/components/detail-pemeriksaan';
 import PaginationTable from '@/components/pagination-table';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableContainer, TableHead, TableRow, TableTh } from '@/components/ui/table';
@@ -202,17 +201,16 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
             <Head title="Pemeriksaan" />
             <div className="dark:bg-elevation-1 flex h-full flex-1 flex-col gap-4 rounded-xl p-1 lg:p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
-                    <div className="flex w-full flex-1 flex-col items-start justify-start gap-4 md:gap-7 lg:px-4 lg:py-2 lg:flex-row lg:items-center lg:justify-between">
-                        <div className="flex w-full flex-1 flex-wrap gap-7 lg:px-4 lg:py-2 md:items-start lg:flex-row">
+                    <div className="flex w-full flex-1 flex-col items-start justify-start gap-4 md:gap-7 lg:flex-row lg:items-center lg:justify-between lg:px-4 lg:py-2">
+                        <div className="flex w-full flex-1 flex-wrap gap-7 md:items-start lg:flex-row lg:px-4 lg:py-2">
                             {can.add && (
                                 <Link href={route('pemeriksaan.create-id')}>
-                                        <Button type="button" size="lg" tabIndex={4} className="bg-primary flex cursor-pointer items-center gap-2">
-                                            Pemeriksaan Gizi
-                                        </Button>
-
+                                    <Button type="button" size="lg" tabIndex={4} className="bg-primary flex cursor-pointer items-center gap-2">
+                                        Pemeriksaan Gizi
+                                    </Button>
                                 </Link>
                             )}
-                            <div className="col-span-full lg:col-span-2 flex flex-wrap items-center gap-2">
+                            <div className="col-span-full flex flex-wrap items-center gap-2 lg:col-span-2">
                                 <label htmlFor="search" className="sr-only">
                                     Cari
                                 </label>
@@ -220,7 +218,7 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
                                     type="text"
                                     id="search-text"
                                     value={search}
-                                    className='max-w-max'
+                                    className="max-w-max"
                                     onChange={(e) => setSearch(e.target.value)}
                                     placeholder="Cari berdasarkan nama atau keterangan"
                                 />
@@ -263,7 +261,7 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
                                         <SelectItem value="A-Z">A-Z</SelectItem>
                                         <SelectItem value="Z-A">Z-A</SelectItem>
                                         <SelectItem value="desc">Terbaru</SelectItem>
-                                        <SelectItem value="asc">sTerlama</SelectItem>
+                                        <SelectItem value="asc">Terlama</SelectItem>
                                     </SelectGroup>
                                     <SelectGroup>
                                         <SelectLabel>berdasarkan Gizi</SelectLabel>
@@ -284,59 +282,58 @@ export default function PemeriksaanIndex({ pemeriksaan, breadcrumb, filter, stat
                         </div>
                     </div>
                     <div className="overflow-hidden lg:w-full">
-                        <TableContainer >
+                        <TableContainer>
                             <div className="max-w-[300px] md:max-w-[768px] lg:max-w-full">
-                            <Table className="w-full">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableTh className="w-10">No.</TableTh>
-                                        <TableTh>Tanggal Pemeriksaan</TableTh>
-                                        <TableTh>Nama Balita</TableTh>
-                                        <TableTh>Nama Orang Tua</TableTh>
-                                        <TableTh>Tempat/Tanggal Lahir</TableTh>
-                                        <TableTh>Hasil Pemeriksaan Gizi</TableTh>
-                                        <TableTh>Aksi</TableTh>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody className={processing ? 'opacity-50' : ''}>{tableRows}</TableBody>
-                            </Table>
+                                <Table className="w-full">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableTh className="w-10">No.</TableTh>
+                                            <TableTh>Tanggal Pemeriksaan</TableTh>
+                                            <TableTh>Nama Balita</TableTh>
+                                            <TableTh>Nama Orang Tua</TableTh>
+                                            <TableTh>Tempat/Tanggal Lahir</TableTh>
+                                            <TableTh>Hasil Pemeriksaan Gizi</TableTh>
+                                            <TableTh>Aksi</TableTh>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody className={processing ? 'opacity-50' : ''}>{tableRows}</TableBody>
+                                </Table>
                             </div>
-
                         </TableContainer>
-                            <section className="w-full">
-                                <div className="flex flex-col items-center justify-between gap-7 border-x-2 border-b-2 p-2 md:flex-row">
-                                    <div className="flex items-center gap-7 lg:px-4 lg:py-2">
-                                        <div className="flex flex-row gap-2">
-                                            <Select value={perPage} onValueChange={setPerPage}>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Jumlah Data" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectGroup>
-                                                        <SelectItem value="10">10</SelectItem>
-                                                        <SelectItem value="20">20</SelectItem>
-                                                        <SelectItem value="50">50</SelectItem>
-                                                        <SelectItem value="100">100</SelectItem>
-                                                    </SelectGroup>
-                                                </SelectContent>
-                                            </Select>
-                                            <Button
-                                                variant="outline"
-                                                type="button"
-                                                onClick={submitPerPage}
-                                                className="flex items-center gap-2 text-xs"
-                                                disabled={processing}
-                                            >
-                                                Tampilkan
-                                            </Button>
-                                        </div>
-                                        <div className="text-xs text-gray-600">
-                                            halaman {pemeriksaan?.from} ke {pemeriksaan?.to} dari {pemeriksaan?.total} total
-                                        </div>
+                        <section className="w-full">
+                            <div className="flex flex-col items-center justify-between gap-7 border-x-2 border-b-2 p-2 md:flex-row">
+                                <div className="flex items-center gap-7 lg:px-4 lg:py-2">
+                                    <div className="flex flex-row gap-2">
+                                        <Select value={perPage} onValueChange={setPerPage}>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Jumlah Data" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    <SelectItem value="10">10</SelectItem>
+                                                    <SelectItem value="20">20</SelectItem>
+                                                    <SelectItem value="50">50</SelectItem>
+                                                    <SelectItem value="100">100</SelectItem>
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
+                                        <Button
+                                            variant="outline"
+                                            type="button"
+                                            onClick={submitPerPage}
+                                            className="flex items-center gap-2 text-xs"
+                                            disabled={processing}
+                                        >
+                                            Tampilkan
+                                        </Button>
                                     </div>
-                                    <PaginationTable links={pemeriksaan?.links ?? []} data={filter} />
+                                    <div className="text-xs text-gray-600">
+                                        halaman {pemeriksaan?.from} ke {pemeriksaan?.to} dari {pemeriksaan?.total} total
+                                    </div>
                                 </div>
-                            </section>
+                                <PaginationTable links={pemeriksaan?.links ?? []} data={filter} />
+                            </div>
+                        </section>
                     </div>
                 </div>
             </div>

@@ -22,9 +22,10 @@ class UpdateDatasetRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'attribut'=> 'required|array',
-            'attribut.*.attribut_id'=> 'required|integer',
-            'label'=> 'required|string|max:50|in:gizi buruk,gizi kurang,gizi baik,gizi lebih,gizi normal',
+            'attribut' => 'required|array',
+            'attribut.*.attribut_id' => 'required|integer',
+            'label' => 'required|string|max:50|in:gizi buruk,gizi kurang,gizi baik,gizi lebih,gizi normal',
+            'tgl' => 'required|date'
         ];
     }
 }

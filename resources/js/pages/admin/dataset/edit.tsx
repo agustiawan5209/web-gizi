@@ -30,6 +30,7 @@ interface DatasetEditProps {
     statusLabel: string[];
     dataset: {
         id: string;
+        tgl: string;
         label: string;
         jenis_kelamin: string;
         fiturdataset: Array<{
@@ -41,6 +42,7 @@ interface DatasetEditProps {
 
 interface EditForm {
     [key: string]: any;
+    tgl: string;
     label: string;
     jenis_kelamin: string;
     attribut: {
@@ -55,6 +57,7 @@ export default function DatasetEdit({ breadcrumb, attribut, statusLabel, dataset
     // Initialize form data with existing dataset values
     const initialFormData: EditForm = useMemo(
         () => ({
+            tgl: dataset.tgl,
             label: dataset.label,
             jenis_kelamin: dataset.jenis_kelamin,
             attribut: attribut.map((attr) => {
@@ -78,7 +81,6 @@ export default function DatasetEdit({ breadcrumb, attribut, statusLabel, dataset
             e.preventDefault();
             put(route('admin.dataset.update', { dataset: dataset.id }), {
                 onError: (err) => console.log(err),
-
             });
         },
         [put, dataset.id],
@@ -101,6 +103,22 @@ export default function DatasetEdit({ breadcrumb, attribut, statusLabel, dataset
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
                     <div className="p-4 md:p-6">
                         <form className="flex flex-col gap-6" onSubmit={submit}>
+                            <div className="space-y-2">
+                                <Label htmlFor="tgl">Tanggal</Label>
+                                <Input
+                                    id="tgl"
+                                    type="date"
+                                    required
+                                    autoFocus
+                                    tabIndex={1}
+                                    autoComplete="tgl"
+                                    value={data.tgl}
+                                    onChange={(e) => setData('tgl', e.target.value)}
+                                    placeholder="yyyy-mm-dd"
+                                    className="h-10"
+                                />
+                                <InputError message={errors.tgl} />
+                            </div>
                             <div className="grid gap-6">
                                 <div>
                                     <Label htmlFor="label">Label</Label>

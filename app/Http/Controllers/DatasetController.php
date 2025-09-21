@@ -143,7 +143,7 @@ class DatasetController extends Controller
             $attribut = $request->input('attribut');
             $label = $request->label;
             $dataset = Dataset::create([
-                'tgl' => Carbon::now()->format('y-m-d'),
+                'tgl' => $request->tgl,
                 'label' => $label,
             ]);
 
@@ -223,7 +223,7 @@ class DatasetController extends Controller
      */
     public function update(UpdateDatasetRequest $request, Dataset $dataset)
     {
-        $tgl = Carbon::now()->format('Y-m-d');
+        $tgl = $request->tgl;
         $attribut = $request->input('attribut');
         $label = $request->label;
         $dataset->update([

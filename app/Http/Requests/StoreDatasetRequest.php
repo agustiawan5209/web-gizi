@@ -22,10 +22,11 @@ class StoreDatasetRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "jenis_kelamin"=> "required|string|in:Laki-laki,Perempuan",
-            'attribut'=> 'required|array',
-            'attribut.*.attribut_id'=> 'required|integer',
-            'label'=> 'required|string|max:50|in:gizi buruk,gizi kurang,gizi baik,gizi lebih,gizi normal',
+            "jenis_kelamin" => "required|string|in:Laki-laki,Perempuan",
+            'attribut' => 'required|array',
+            'attribut.*.attribut_id' => 'required|integer',
+            'label' => 'required|string|max:50|in:gizi buruk,gizi kurang,gizi baik,gizi lebih,gizi normal',
+            'tgl' => 'required|date'
         ];
     }
 }

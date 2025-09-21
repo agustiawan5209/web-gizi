@@ -2,7 +2,7 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input, InputRadio } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectGroup, SelectTrigger, SelectItem, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableColumn, TableContainer, TableHead, TableRow, TableTh } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
@@ -36,57 +36,59 @@ interface AttributeValue {
 
 interface CreateForm {
     [key: string]: any;
+    tgl: string;
     label: string;
     dataset_id: string;
     jenis_kelamin: string;
     attribut: {
-      nilai: string;
-      attribut_id: string;
+        nilai: string;
+        attribut_id: string;
     }[];
 }
 
 export default function DatasetCreate({ breadcrumb, orangtua, attribut, statusLabel }: DatasetCreateProps) {
     // Memoize breadcrumbs to prevent unnecessary recalculations
-    const breadcrumbs: BreadcrumbItem[] = useMemo(
-        () => breadcrumb?.map((item) => ({ title: item.title, href: item.href })) ?? [],
-        [breadcrumb]
-    );
+    const breadcrumbs: BreadcrumbItem[] = useMemo(() => breadcrumb?.map((item) => ({ title: item.title, href: item.href })) ?? [], [breadcrumb]);
 
     // Initialize form data with proper types
-    const initialFormData: CreateForm = useMemo(() => ({
-        label: '',
-        dataset_id: '',
-        jenis_kelamin: '',
-        attribut: attribut.map((attr) => ({
-            nilai: '',
-            attribut_id: attr.id
-        })),
-    }), [attribut]);
+    const initialFormData: CreateForm = useMemo(
+        () => ({
+            tgl: '',
+            label: '',
+            dataset_id: '',
+            jenis_kelamin: '',
+            attribut: attribut.map((attr) => ({
+                nilai: '',
+                attribut_id: attr.id,
+            })),
+        }),
+        [attribut],
+    );
 
     const { data, setData, post, processing, errors } = useForm<CreateForm>(initialFormData);
 
     // Memoize filtered attributes to avoid recalculating on every render
-    const filteredAttributes = useMemo(() =>
-        attribut.filter(item =>
-            !['jenis kelamin', 'status'].includes(item.nama.toLowerCase())
-        ),
-        [attribut]
-    );
+    const filteredAttributes = useMemo(() => attribut.filter((item) => !['jenis kelamin', 'status'].includes(item.nama.toLowerCase())), [attribut]);
 
     // Optimized form submission handler
-    const submit: FormEventHandler = useCallback((e) => {
-        e.preventDefault();
-        post(route('admin.dataset.store'));
-    }, [post]);
+    const submit: FormEventHandler = useCallback(
+        (e) => {
+            e.preventDefault();
+            post(route('admin.dataset.store'));
+        },
+        [post],
+    );
 
     // Optimized handler for attribute changes
-    const handleAttributeChange = useCallback((index: number, value: string) => {
-        setData('attribut',
-            data.attribut.map((val, i) =>
-                i === index ? { ...val, nilai: value } : val
-            )
-        );
-    }, [data.attribut, setData]);
+    const handleAttributeChange = useCallback(
+        (index: number, value: string) => {
+            setData(
+                'attribut',
+                data.attribut.map((val, i) => (i === index ? { ...val, nilai: value } : val)),
+            );
+        },
+        [data.attribut, setData],
+    );
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -95,13 +97,26 @@ export default function DatasetCreate({ breadcrumb, orangtua, attribut, statusLa
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
                     <div className="p-4 md:p-6">
                         <form className="flex flex-col gap-6" onSubmit={submit}>
+                            <div className="space-y-2">
+                                <Label htmlFor="tgl">Tanggal</Label>
+                                <Input
+                                    id="tgl"
+                                    type="date"
+                                    required
+                                    autoFocus
+                                    tabIndex={1}
+                                    autoComplete="tgl"
+                                    value={data.tgl}
+                                    onChange={(e) => setData('tgl', e.target.value)}
+                                    placeholder="yyyy-mm-dd"
+                                    className="h-10"
+                                />
+                                <InputError message={errors.tgl} />
+                            </div>
                             <div className="grid gap-6">
                                 <div>
                                     <Label htmlFor="label">Label</Label>
-                                    <Select
-                                        value={data.label}
-                                        onValueChange={(value) => setData('label', value)}
-                                    >
+                                    <Select value={data.label} onValueChange={(value) => setData('label', value)}>
                                         <SelectTrigger className="text-foreground">
                                             <SelectValue placeholder="Data Status" />
                                         </SelectTrigger>
@@ -177,16 +192,8 @@ export default function DatasetCreate({ breadcrumb, orangtua, attribut, statusLa
                                     </TableContainer>
                                 </div>
 
-                                <Button
-                                    type="submit"
-                                    variant="secondary"
-                                    className="mt-2 w-full"
-                                    tabIndex={5}
-                                    disabled={processing}
-                                >
-                                    {processing && (
-                                        <LoaderCircle className="h-4 w-4 animate-spin mr-2" />
-                                    )}
+                                <Button type="submit" variant="secondary" className="mt-2 w-full" tabIndex={5} disabled={processing}>
+                                    {processing && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
                                     Simpan
                                 </Button>
                             </div>

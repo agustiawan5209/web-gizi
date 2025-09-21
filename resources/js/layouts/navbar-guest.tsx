@@ -4,7 +4,7 @@ import { UserMenuContent } from '@/components/user-menu-content';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { ChevronsUpDown, ClipboardList, Home, Menu, Phone, User2Icon, X } from 'lucide-react';
+import { ChevronsUpDown, ClipboardList, Home, Menu, User2Icon, X } from 'lucide-react';
 import React, { useState } from 'react';
 interface NavItem {
     name: string;
@@ -16,21 +16,31 @@ interface NavItem {
 const StaticNavbar: React.FC = () => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const page = usePage<SharedData>();
-    const currentUrl = `${page.props.defaultUrl +page.url}`
-    console.log(route('orangtua.dashboard'))
-    console.log(currentUrl)
+    const currentUrl = `${page.props.defaultUrl + page.url}`;
+    console.log(route('orangtua.dashboard'));
+    console.log(currentUrl);
 
     const navigation: NavItem[] = [
-        { name: 'Home', href: route('orangtua.dashboard'), icon: <Home className="h-5 w-5" />, current:   route('orangtua.dashboard') == currentUrl},
-        { name: 'Lihat Hasil Pemeriksaan Gizi', href: route('orangtua.pemeriksaan.index'), icon: <ClipboardList className="h-5 w-5" /> , current:   route('orangtua.pemeriksaan.index') == currentUrl},
-        { name: 'Periksa Gizi Balita', href: route('orangtua.pemeriksaan.create'), icon: <ClipboardList className="h-5 w-5" /> , current:   route('orangtua.pemeriksaan.create') == currentUrl},
-        { name: 'Impelementasi Algortima', href: route('orangtua.naiveBayes'), icon: <Phone className="h-5 w-5" /> , current:    route('orangtua.naiveBayes') == currentUrl},
+        { name: 'Home', href: route('orangtua.dashboard'), icon: <Home className="h-5 w-5" />, current: route('orangtua.dashboard') == currentUrl },
+        {
+            name: 'Lihat Hasil Pemeriksaan Gizi',
+            href: route('orangtua.pemeriksaan.index'),
+            icon: <ClipboardList className="h-5 w-5" />,
+            current: route('orangtua.pemeriksaan.index') == currentUrl,
+        },
+        {
+            name: 'Periksa Gizi Balita',
+            href: route('orangtua.pemeriksaan.create'),
+            icon: <ClipboardList className="h-5 w-5" />,
+            current: route('orangtua.pemeriksaan.create') == currentUrl,
+        },
+        // { name: 'Impelementasi Algortima', href: route('orangtua.naiveBayes'), icon: <Phone className="h-5 w-5" /> , current:    route('orangtua.naiveBayes') == currentUrl},
     ];
     const { auth } = usePage<SharedData>().props;
     const isMobile = useIsMobile();
     return (
-        <nav className="static w-full border-b bg-primary border-blue-500/20 mb-4 backdrop-blur-sm">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 ">
+        <nav className="bg-primary static mb-4 w-full border-b border-blue-500/20 backdrop-blur-sm">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div className="flex h-16 items-center justify-between">
                     {/* Logo and desktop navigation */}
                     <div className="flex items-center">
@@ -60,7 +70,7 @@ const StaticNavbar: React.FC = () => {
                         <div className="flex items-center space-x-4">
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <div className="flex flex-row p-2 gap-2  rounded-md items-center text-sidebar-accent-foreground data-[state=open]:bg-sidebar-accent group">
+                                    <div className="text-sidebar-accent-foreground data-[state=open]:bg-sidebar-accent group flex flex-row items-center gap-2 rounded-md p-2">
                                         <UserInfo user={auth.user} />
                                         <User2Icon className="ml-auto size-4" />
                                     </div>
@@ -107,7 +117,7 @@ const StaticNavbar: React.FC = () => {
                     <div className="border-t border-blue-100 pt-4">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <div className="flex text-sidebar-accent-foreground data-[state=open]:bg-sidebar-accent group">
+                                <div className="text-sidebar-accent-foreground data-[state=open]:bg-sidebar-accent group flex">
                                     <UserInfo user={auth.user} />
                                     <ChevronsUpDown className="ml-auto size-4" />
                                 </div>

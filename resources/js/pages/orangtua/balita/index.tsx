@@ -1,12 +1,10 @@
-import PaginationTable from '@/components/pagination-table';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableAction, TableBody, TableColumn, TableContainer, TableHead, TableRow, TableTh } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { FormEventHandler, useEffect, useState, useMemo } from 'react';
+import { FormEventHandler, useEffect, useMemo, useState } from 'react';
 export interface BalitaProps {
     balita: string[];
     breadcrumb?: { title: string; href: string }[];
@@ -24,12 +22,11 @@ type GetForm = {
 };
 
 export default function BalitaIndex({ balita, breadcrumb, filter }: BalitaProps) {
-     // Memoize breadcrumbs to prevent unnecessary recalculations
+    // Memoize breadcrumbs to prevent unnecessary recalculations
     const breadcrumbs: BreadcrumbItem[] = useMemo(
         () => (breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : []),
-        [breadcrumb]
+        [breadcrumb],
     );
-
 
     const { data, setData, get, processing, errors, reset } = useForm<GetForm>({
         // q: '',
@@ -114,10 +111,10 @@ export default function BalitaIndex({ balita, breadcrumb, filter }: BalitaProps)
             <Head title="Balita" />
             <div className="dark:bg-elevation-1 flex h-full flex-1 flex-col gap-4 rounded-xl p-1 lg:p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
-                    <div className="flex w-full flex-1 flex-col items-start justify-end md:gap-7 md:flex-row px-1 py-1 lg:px-4 lg:py-2 md:items-center md:justify-between">
-                        <div className="flex w-full flex-1 flex-col gap-7 px-1 py-1 lg:px-4 lg:py-2 md:flex-row md:items-center">
+                    <div className="flex w-full flex-1 flex-col items-start justify-end px-1 py-1 md:flex-row md:items-center md:justify-between md:gap-7 lg:px-4 lg:py-2">
+                        <div className="flex w-full flex-1 flex-col gap-7 px-1 py-1 md:flex-row md:items-center lg:px-4 lg:py-2">
                             <Link href={route('orangtua.balita.create')} className="col-span-1 cursor-pointer">
-                                <Button variant="default" className="flex cursor-pointer items-center gap-2 bg-primary ">
+                                <Button variant="default" className="bg-primary flex cursor-pointer items-center gap-2">
                                     Tambah Data
                                 </Button>
                             </Link>
@@ -133,7 +130,7 @@ export default function BalitaIndex({ balita, breadcrumb, filter }: BalitaProps)
                                         <SelectItem value="A-Z">A-Z</SelectItem>
                                         <SelectItem value="Z-A">Z-A</SelectItem>
                                         <SelectItem value="desc">Terbaru</SelectItem>
-                                        <SelectItem value="asc">sTerlama</SelectItem>
+                                        <SelectItem value="asc">Terlama</SelectItem>
                                     </SelectGroup>
                                     <SelectSeparator />
                                     <SelectGroup>
@@ -146,7 +143,7 @@ export default function BalitaIndex({ balita, breadcrumb, filter }: BalitaProps)
                             </Select>
                         </div>
                     </div>
-                    <div className="lg:w-full overflow-hidden">
+                    <div className="overflow-hidden lg:w-full">
                         <TableContainer className="max-w-[400px] md:max-w-[768px] lg:max-w-full">
                             <Table className="w-full">
                                 <TableHead>
@@ -163,10 +160,13 @@ export default function BalitaIndex({ balita, breadcrumb, filter }: BalitaProps)
                                     {balita.length > 0 &&
                                         balita.map((item: any, index: number) => (
                                             <TableRow key={index}>
-                                                <TableColumn>{index + 1 }</TableColumn>
+                                                <TableColumn>{index + 1}</TableColumn>
                                                 <TableColumn> {item.orangtua.name} </TableColumn>
                                                 <TableColumn> {item.nama} </TableColumn>
-                                                <TableColumn> {item.tempat_lahir}/ {item.tanggal_lahir} </TableColumn>
+                                                <TableColumn>
+                                                    {' '}
+                                                    {item.tempat_lahir}/ {item.tanggal_lahir}{' '}
+                                                </TableColumn>
                                                 <TableColumn> {item.jenis_kelamin} </TableColumn>
                                                 <TableAction
                                                     className="w-32"
@@ -181,9 +181,7 @@ export default function BalitaIndex({ balita, breadcrumb, filter }: BalitaProps)
                                         ))}
                                 </TableBody>
                             </Table>
-
                         </TableContainer>
-
                     </div>
                 </div>
             </div>

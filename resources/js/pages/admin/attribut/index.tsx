@@ -1,11 +1,7 @@
-import PaginationTable from '@/components/pagination-table';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableAction, TableBody, TableColumn, TableContainer, TableHead, TableRow, TableTh } from '@/components/ui/table';
+import { Table, TableBody, TableColumn, TableContainer, TableHead, TableRow, TableTh } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import { FormEventHandler, useEffect, useMemo, useState } from 'react';
 export interface AttributProps {
     attribut?: {
@@ -132,7 +128,7 @@ export default function AttributIndex({ attribut, breadcrumb, filter }: Attribut
             <div className="dark:bg-elevation-1 flex h-full flex-1 flex-col gap-4 rounded-xl p-1 lg:p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
                     <div className="flex w-full flex-1 flex-col items-start justify-end gap-2 px-1 py-1 md:flex-row md:items-center md:justify-between md:gap-7 lg:px-4 lg:py-2">
-                        <div className="flex w-full flex-1 flex-col gap-7 px-1 py-1 lg:px-4 lg:py-2 md:flex-row md:items-center">
+                        <div className="flex w-full flex-1 flex-col gap-7 px-1 py-1 md:flex-row md:items-center lg:px-4 lg:py-2">
                             {/* <Link href={route('admin.attribut.create')} className="col-span-1 cursor-pointer">
                                 <Button variant="default" className="flex cursor-pointer items-center gap-2 bg-primary ">
                                     Tambah Data
@@ -173,13 +169,13 @@ export default function AttributIndex({ attribut, breadcrumb, filter }: Attribut
                                         <SelectItem value="A-Z">A-Z</SelectItem>
                                         <SelectItem value="Z-A">Z-A</SelectItem>
                                         <SelectItem value="desc">Terbaru</SelectItem>
-                                        <SelectItem value="asc">sTerlama</SelectItem>
+                                        <SelectItem value="asc">Terlama</SelectItem>
                                     </SelectGroup>
                                 </SelectContent>
                             </Select>
                         </div> */}
                     </div>
-                    <div className="lg:w-full overflow-hidden">
+                    <div className="overflow-hidden lg:w-full">
                         <TableContainer className="max-w-[400px] md:max-w-[768px] lg:max-w-full">
                             <Table className="w-full">
                                 <TableHead>
@@ -209,9 +205,8 @@ export default function AttributIndex({ attribut, breadcrumb, filter }: Attribut
                                         ))}
                                 </TableBody>
                             </Table>
-
                         </TableContainer>
-                            {/* <div className="flex flex-col md:flex-row items-center justify-between gap-7 border-x-2 border-b-2 p-2 w-full">
+                        {/* <div className="flex flex-col md:flex-row items-center justify-between gap-7 border-x-2 border-b-2 p-2 w-full">
                                 <div className="flex items-center gap-7 px-1 py-1 lg:px-4 lg:py-2">
                                     <div className="flex flex-row gap-2">
                                         <Select defaultValue="10" value={perPage} onValueChange={(e) => setPerPage(e.toString())}>
