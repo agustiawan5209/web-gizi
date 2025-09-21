@@ -34,7 +34,7 @@ const adminNavItems: NavItem[] = [
         icon: PlaySquare,
     },
     {
-        title: 'Implementasi Naive Bayes',
+        title: 'Dataset',
         href: '/admin/dataset/',
         icon: Table2Icon,
     },

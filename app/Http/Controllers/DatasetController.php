@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Inertia\Inertia;
 use App\Models\Dataset;
-use App\Http\Requests\StoreDatasetRequest;
-use App\Http\Requests\UpdateDatasetRequest;
 use App\Models\Attribut;
 use App\Models\FiturDataset;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Requests\StoreDatasetRequest;
+use App\Http\Requests\UpdateDatasetRequest;
 
 class DatasetController extends Controller
 {
@@ -23,6 +24,56 @@ class DatasetController extends Controller
             'href' => '/admin/dataset/',
         ],
     ];
+
+    public function getNutrisiDataByYear()
+    {
+        // Get data grouped by year and label
+        $data = Dataset::select(
+            DB::raw('YEAR(tgl) as tahun'),
+            'label',
+            DB::raw('COUNT(*) as jumlah')
+        )
+            ->groupBy('tahun', 'label')
+            ->orderBy('tahun')
+            ->get();
+        // Format the data by year
+        $formattedData = [];
+
+        foreach ($data as $item) {
+            $tahun = $item->tahun;
+
+            if (!isset($formattedData[$tahun])) {
+                $formattedData[$tahun] = [
+                    'tahun' => $tahun,
+                    'gizi_buruk' => 0,
+                    'gizi_kurang' => 0,
+                    'gizi_baik' => 0,
+                    'gizi_lebih' => 0
+                ];
+            }
+
+            // Map labels to the correct fields
+            switch ($item->label) {
+                case 'gizi buruk':
+                    $formattedData[$tahun]['gizi_buruk'] = $item->jumlah;
+                    break;
+                case 'gizi kurang':
+                    $formattedData[$tahun]['gizi_kurang'] = $item->jumlah;
+                    break;
+                case 'gizi baik':
+                    $formattedData[$tahun]['gizi_baik'] = $item->jumlah;
+                    break;
+                case 'gizi lebih':
+                    $formattedData[$tahun]['gizi_lebih'] = $item->jumlah;
+                    break;
+            }
+        }
+
+        // Convert to simple array
+        $result = array_values($formattedData);
+
+        return response()->json($result);
+    }
 
     /**
      * Display a listing of the resource.

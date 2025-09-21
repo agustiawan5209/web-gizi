@@ -14,6 +14,7 @@ import { NutritionData } from '@/utils/types';
 import { usePage } from '@inertiajs/react';
 import { LoaderCircle, SquareCheck } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
+import { Toast } from './ui/toast';
 interface OrangTua {
     id: string;
     name: string;
@@ -88,6 +89,17 @@ export default function ClassifyPemeriksaan({ data, setData, errors, attribut, p
     const [dataset, setDataset] = useState<NutritionData[]>([]);
     const [model, setModel] = useState<any>(null);
     const [error, setError] = useState<string | null>(null);
+    const [toast, setToast] = useState<{
+        title: string;
+        show: boolean;
+        message: string;
+        type: 'success' | 'default' | 'error';
+    }>({
+        title: '',
+        show: false,
+        message: '',
+        type: 'success',
+    });
     useEffect(() => {
         const initializeModel = async () => {
             try {
@@ -157,7 +169,6 @@ export default function ClassifyPemeriksaan({ data, setData, errors, attribut, p
     const handleChangeTanggalLahir = (e: React.ChangeEvent<HTMLInputElement>) => {
         const tgl = e.target.value;
         if (tgl <= minDate) {
-            setData('tanggal_lahir', tgl);
             const birthDate = new Date(tgl);
             const today = new Date();
             let usia = today.getFullYear() - birthDate.getFullYear();
@@ -171,15 +182,26 @@ export default function ClassifyPemeriksaan({ data, setData, errors, attribut, p
                 usia *= 12;
                 usia += bulan;
             }
-            setData(
-                'attribut',
-                data.attribut.map((val: any) => {
-                    if (val.name === 'Usia Balita (bulan)') {
-                        return { ...val, nilai: usia.toString() };
-                    }
-                    return val;
-                }),
-            );
+            if (usia > 60) {
+                setToast({
+                    title: 'Informasi',
+                    show: true,
+                    message: 'Usia Anak hanya untuk usia 12-60 bulan',
+                    type: 'error',
+                });
+            } else {
+                setData('tanggal_lahir', tgl);
+
+                setData(
+                    'attribut',
+                    data.attribut.map((val: any) => {
+                        if (val.name === 'Usia Balita (bulan)') {
+                            return { ...val, nilai: usia.toString() };
+                        }
+                        return val;
+                    }),
+                );
+            }
         }
     };
     const HandleChangeInputValue = (
@@ -214,6 +236,15 @@ export default function ClassifyPemeriksaan({ data, setData, errors, attribut, p
     };
     return (
         <>
+            <Toast
+                open={toast.show}
+                onOpenChange={() => setToast((prev) => ({ ...prev, show: false }))}
+                title={toast.title}
+                description={toast.message}
+                duration={10000}
+                variant={toast.type}
+            />
+
             <form onSubmit={submitClass} className="flex flex-col gap-6">
                 {error && (
                     <div className="mb-4 border-l-4 border-red-500 bg-red-100 p-4 text-red-700" role="alert">

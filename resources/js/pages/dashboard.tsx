@@ -1,10 +1,11 @@
 import LineChart from '@/components/chart/LineChart';
 import PieChart from '@/components/chart/PieChart';
+import GrafikGizi from '@/components/grafik-gizi';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
-import { ChartBarIcon, FolderEdit, LayoutGrid, User2, Users2, UsersIcon } from 'lucide-react';
+import { ChartBarIcon, LayoutGrid, User2, UsersIcon } from 'lucide-react';
 
 export interface DashboardProps {
     orangtuacount?: number | string;
@@ -114,7 +115,7 @@ export default function Dashboard({
                     </Card>
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border bg-sidebar relative overflow-hidden rounded-xl border dark:bg-[#493D9E]">
                         <CardHeader className="px-4 pt-1 pb-0 text-center">
-                            <CardTitle className="flex flex-col items-center justify-center  text-base text-white md:text-base lg:text-lg">
+                            <CardTitle className="flex flex-col items-center justify-center text-base text-white md:text-base lg:text-lg">
                                 <span className="rounded-2xl bg-white p-2">
                                     <UsersIcon className="text-[#493D9E]" />
                                 </span>
@@ -125,7 +126,7 @@ export default function Dashboard({
                     </Card>
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border bg-sidebar relative overflow-hidden rounded-xl border dark:bg-[#493D9E]">
                         <CardHeader className="px-4 pt-1 pb-0 text-center">
-                            <CardTitle className="flex flex-col items-center justify-center  text-base text-white md:text-base lg:text-base">
+                            <CardTitle className="flex flex-col items-center justify-center text-base text-white md:text-base lg:text-base">
                                 <span className="rounded-2xl bg-white p-2">
                                     <LayoutGrid className="text-[#493D9E]" />
                                 </span>
@@ -136,7 +137,7 @@ export default function Dashboard({
                     </Card>
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border bg-sidebar relative overflow-hidden rounded-xl border dark:bg-[#493D9E]">
                         <CardHeader className="px-4 pt-1 pb-0 text-center">
-                            <CardTitle className="flex flex-col items-center justify-center  text-base text-white md:text-base lg:text-base">
+                            <CardTitle className="flex flex-col items-center justify-center text-base text-white md:text-base lg:text-base">
                                 <span className="rounded-2xl bg-white p-2">
                                     <ChartBarIcon className="text-[#493D9E]" />
                                 </span>
@@ -149,26 +150,7 @@ export default function Dashboard({
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
                     <div className="grid h-full grid-cols-1 gap-4 align-middle md:grid-cols-12">
                         <div className="col-span-full w-full p-4 md:col-span-12 lg:col-span-8 dark:bg-white">
-                            <table className="w-full table-fixed border-collapse border border-gray-300 dark:border-gray-700">
-                                <thead>
-                                    <tr>
-                                        <th className="w-20 text-xs">Kategori Gizi</th>
-                                        <th className="text-xs">Attribut yang Mempengaruhi</th>
-                                        <th className="text-xs">Kondisi Data Balita </th>
-                                        <th className="text-xs">Keterangan</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {keteranganGizi.map((item, index) => (
-                                        <tr key={index}>
-                                            <td className="border p-1.5 text-justify text-xs">{item.kategori}</td>
-                                            <td className="border p-1.5 text-justify text-xs">{item.attribut}</td>
-                                            <td className="border p-1.5 text-justify text-xs">{item.kondisi}</td>
-                                            <td className="border p-1.5 text-justify text-xs">{item.keterangan}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                            <GrafikGizi />
                         </div>
                         <div className="col-span-full max-h-full w-full border p-4 md:col-span-12 lg:col-span-4 dark:bg-white">
                             <h4 className="text-center font-semibold">Pemeriksaan Gizi Bulan {currentMonth} </h4>

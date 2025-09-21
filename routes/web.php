@@ -138,8 +138,8 @@ Route::middleware(['auth', 'verified', 'role:admin,orangtua',])->group(function 
 });
 // Role For Orang Tua
 Route::prefix('orangtua')->as('orangtua.')->middleware(['auth', 'verified', 'role:orangtua'])->group(function () {
-    Route::get('dashboard', [OrangtuaDashboardController::class,'index'])->name('dashboard');
-    Route::get('naivebayes', [OrangtuaDashboardController::class,'naiveBayes'])->name('naiveBayes');
+    Route::get('dashboard', [OrangtuaDashboardController::class, 'index'])->name('dashboard');
+    Route::get('naivebayes', [OrangtuaDashboardController::class, 'naiveBayes'])->name('naiveBayes');
 
     Route::prefix('balita')->as('balita.')->group(function () {
         Route::controller(OrangtuaBalitaController::class)->group(function () {
@@ -154,7 +154,7 @@ Route::prefix('orangtua')->as('orangtua.')->middleware(['auth', 'verified', 'rol
         });
     });
 
-     // Routes for managing pemeriksaans
+    // Routes for managing pemeriksaans
     Route::prefix('pemeriksaan')->as('pemeriksaan.')->group(function () {
         // Dataset controller
         Route::controller(OrangTuaPemeriksaanController::class)->group(function () {
@@ -163,11 +163,10 @@ Route::prefix('orangtua')->as('orangtua.')->middleware(['auth', 'verified', 'rol
             Route::get('/create-id', 'create')->name('create');
         });
     });
-
 });
 
 // create classify with naive bayes
-Route::get('/pemeriksaan/create-classfication',[PemeriksaanController::class, 'createClassification'] )->middleware(['auth', 'verified'])->name('pemeriksaan.create-classification');
+Route::get('/pemeriksaan/create-classfication', [PemeriksaanController::class, 'createClassification'])->middleware(['auth', 'verified'])->name('pemeriksaan.create-classification');
 
 Route::get('classify/', [NaiveBayesController::class, 'generate'])->name('naive-bayes.generate');
 Route::get('classify-index/', [NaiveBayesController::class, 'index'])->name('naive-bayes.index');
@@ -179,3 +178,7 @@ require __DIR__ . '/api.php';
 
 Route::get('laporan/{balita}', [LaporanController::class, 'index'])->name('laporan.index');
 Route::get('laporan-pemeriksaan/{balita}', [LaporanController::class, 'pemeriksaan'])->name('laporan.pemeriksaan');
+
+
+// dataset
+Route::get('api/get-dataset-data', [DatasetController::class, 'getNutrisiDataByYear'])->name('api.get-dataset-data');
