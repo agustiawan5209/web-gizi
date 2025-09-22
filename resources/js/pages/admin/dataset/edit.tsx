@@ -61,7 +61,7 @@ export default function DatasetEdit({ breadcrumb, attribut, statusLabel, dataset
             label: dataset.label,
             jenis_kelamin: dataset.jenis_kelamin,
             attribut: attribut.map((attr) => {
-                const existingValue = dataset.fiturdataset.find((av) => av.attribut_id === attr.id);
+                const existingValue = dataset.fiturdataset.find((av) => Number(av.attribut_id) === Number(attr.id));
 
                 return {
                     nilai: existingValue ? existingValue.nilai : '',

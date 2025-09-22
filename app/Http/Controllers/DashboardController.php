@@ -88,7 +88,7 @@ class DashboardController extends Controller
         foreach ($pemeriksaan as $item) {
             $status = $item->balita->status_gizi;
             if (array_key_exists($status, $gizi)) {
-                $gizi[$status]++;
+                $gizi[$status] += intval($gizi[$status]);
             }
         }
 

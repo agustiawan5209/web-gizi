@@ -127,31 +127,42 @@ export default function ClassifyPemeriksaan({ data, setData, errors, attribut, p
             return;
         }
         if (data.orang_tua_id !== '') {
-            if (data.attribut.some((item: any) => item.nilai === null) || data.attribut.some((item: any) => item.nilai === '0')) {
-                setAttributError(
-                    'Nilai Tidak Valid!. Pastikan semua pengukuran (BB, TB, Lingkar Kepala, Lingkar Lengan) diisi dengan nilai yang benar dan tidak nol.',
-                );
-                return;
+            const usia = hitungBulanUsia(data.tanggal_lahir);
+            console.log(usia);
+            if (usia < 12 || usia > 60) {
+                setToast({
+                    title: 'Informasi',
+                    show: true,
+                    message:
+                        'Klasifikasi tidak dapat dilakukan karena sistem ini hanya berlaku untuk balita dengan rentang usia 1–5 tahun (12–60 bulan)',
+                    type: 'error',
+                });
             } else {
-                setIsLoading(false);
-                setAttributError(null);
-                const datauji: any = [];
-                datauji.push({
-                    ['jenis kelamin']: data.jenis_kelamin,
-                });
-                data.attribut.map((item: any) => {
+                if (data.attribut.some((item: any) => item.nilai === null) || data.attribut.some((item: any) => item.nilai === '0')) {
+                    setAttributError(
+                        'Nilai Tidak Valid!. Pastikan semua pengukuran (BB, TB, Lingkar Kepala, Lingkar Lengan) diisi dengan nilai yang benar dan tidak nol.',
+                    );
+                    return;
+                } else {
+                    setIsLoading(false);
+                    setAttributError(null);
+                    const datauji: any = [];
                     datauji.push({
-                        [item.name.toLowerCase()]: item.nilai,
+                        ['jenis kelamin']: data.jenis_kelamin,
                     });
-                });
-                const label = predictNutritionStatus(model, datauji);
-                setError(null);
-                setData('label', label);
-                const usia = hitungBulanUsia(data.tanggal_lahir);
-                setData('alasan', alasan.find((item) => item.gizi === label)?.alasan || '');
-                setData('rekomendasi', rekomendasi(label, Number(usia), data.jenis_kelamin));
-                setData('detail', datauji);
-                setOpenDialog(true);
+                    data.attribut.map((item: any) => {
+                        datauji.push({
+                            [item.name.toLowerCase()]: item.nilai,
+                        });
+                    });
+                    const label = predictNutritionStatus(model, datauji);
+                    setError(null);
+                    setData('label', label);
+                    setData('alasan', alasan.find((item) => item.gizi === label)?.alasan || '');
+                    setData('rekomendasi', rekomendasi(label, Number(usia), data.jenis_kelamin));
+                    setData('detail', datauji);
+                    setOpenDialog(true);
+                }
             }
         } else {
             setAttributError('Anda belum login, silahkan login terlebih dahulu');
@@ -180,26 +191,18 @@ export default function ClassifyPemeriksaan({ data, setData, errors, attribut, p
                 usia *= 12;
                 usia += bulan;
             }
-            if (usia > 60) {
-                setToast({
-                    title: 'Informasi',
-                    show: true,
-                    message: 'Usia Anak hanya untuk usia 12-60 bulan',
-                    type: 'error',
-                });
-            } else {
-                setData('tanggal_lahir', tgl);
 
-                setData(
-                    'attribut',
-                    data.attribut.map((val: any) => {
-                        if (val.name === 'Usia Balita (bulan)') {
-                            return { ...val, nilai: usia.toString() };
-                        }
-                        return val;
-                    }),
-                );
-            }
+            setData('tanggal_lahir', tgl);
+
+            setData(
+                'attribut',
+                data.attribut.map((val: any) => {
+                    if (val.name === 'Usia Balita (bulan)') {
+                        return { ...val, nilai: usia.toString() };
+                    }
+                    return val;
+                }),
+            );
         }
     };
     const HandleChangeInputValue = (
@@ -539,25 +542,24 @@ function hitungBulanUsia(tanggalLahir: string) {
 const rekomendasi = (label: string, usia: number, jenis_kelamin: string) => {
     let rekomendasi; // Declare rekomendasi before the switch statement
 
-    console.log(label, usia, jenis_kelamin);
     if (jenis_kelamin === 'Laki-laki') {
         if (usia >= 11 && usia <= 23) {
             switch (label) {
                 case 'gizi buruk':
                     rekomendasi =
-                        'Berikan makanan yang kaya akan protein, mineral, dan vitamin, sajikan makanan secara bervariasi dan mudah dicerna seperti bubur bergizi yang dicampur dengan lauk hewani atau nabati. Berikan 3x makan utama dan 2x selingan setiap hari.  Tetap berikan ASI yang cukup untuk mendukung pemulihan gizi anak, dengan kebutuhan energi totalnya sekitar 850 – 1.050 kcal/hari';
+                        'Berikan makanan yang kaya akan protein, mineral, dan vitamin, sajikan makanan secara bervariasi dan mudah dicerna seperti bubur bergizi yang dicampur dengan lauk hewani atau nabati. Berikan 3x makan utama dan 2x selingan setiap hari.  Tetap berikan ASI yang cukup untuk mendukung pemulihan gizi anak, dengan kebutuhan energi totalnya sekitar 950–1.150 kkal/hari.';
                     break; // Don't forget break to prevent fall-through
                 case 'gizi kurang':
                     rekomendasi =
-                        'Berikan makanan bergizi seimbang yang mengandung protein, mineral, dan vitamin, sajikan makanan secara bervariasi dan teratur yang mudah dicerna oleh anak seperti bubur. Berikan 3x makan utama dan 2x selingan setiap hari., serta tetap dilengkapi dengan pemberian ASI yang cukup untuk mendukung pertumbuhan optimal, dengan kebutuhan energi totalnya sekitar 850 – 1.050 kcal/hari.';
+                        'Berikan makanan bergizi seimbang yang mengandung protein, mineral, dan vitamin, sajikan makanan secara bervariasi dan teratur yang mudah dicerna oleh anak seperti bubur. Berikan 3x makan utama dan 2x selingan setiap hari., serta tetap dilengkapi dengan pemberian ASI yang cukup untuk mendukung pertumbuhan optimal, dengan kebutuhan energi totalnya sekitar 950–1.150 kkal/hari.';
                     break;
                 case 'gizi baik':
                     rekomendasi =
-                        'Pertahankan pola makan seimbang dengan memberi makanan yang mengandung karbohidrat, protein, sayur, dan buah. Berikan 3x makan utama dan 2x selingan setiap hari. Sajikan makanan secara bervariasi, mudah dicerna, dan tetap lengkapi dengan ASI untuk mendukung pertumbuhan anak, dengan kebutuhan energi totalnya sekitar 850 – 1.050 kcal/hari.';
+                        'Pertahankan pola makan seimbang dengan memberi makanan yang mengandung karbohidrat, protein, sayur, dan buah. Berikan 3x makan utama dan 2x selingan setiap hari. Sajikan makanan secara bervariasi, mudah dicerna, dan tetap lengkapi dengan ASI untuk mendukung pertumbuhan anak, dengan kebutuhan energi totalnya sekitar 950–1.150 kkal/hari.';
                     break;
                 case 'gizi lebih':
                     rekomendasi =
-                        'Kurangi makanan tinggi lemak, gula, dan olahan seperti camilan kemasan. Atur porsi makan secara bertahap, tetap berikan makanan bergizi seimbang dengan sayur, buah, dan protein tanpa lemak. Berikan 3x makan utama dan 2x selingan setiap hari. Berikan ASI sesuai kebutuhan dan dorong anak untuk aktif bergerak agar keseimbangan energi terjaga, dengan kebutuhan kalori/hari sekitar 850 – 1.050 kcal/hari';
+                        'Kurangi makanan tinggi lemak, gula, dan olahan seperti camilan kemasan. Atur porsi makan secara bertahap, tetap berikan makanan bergizi seimbang dengan sayur, buah, dan protein tanpa lemak. Berikan 3x makan utama dan 2x selingan setiap hari. Berikan ASI sesuai kebutuhan dan dorong anak untuk aktif bergerak agar keseimbangan energi terjaga, dengan kebutuhan kalori/hari sekitar 950–1.150 kkal/hari.';
                     break;
                 default:
                     rekomendasi = 'Label gizi tidak dikenali.';
@@ -567,19 +569,19 @@ const rekomendasi = (label: string, usia: number, jenis_kelamin: string) => {
             switch (label) {
                 case 'gizi buruk':
                     rekomendasi =
-                        'Berikan makanan yang tinggi kalori dan protein seperti nasi dengan lauk hewani (ikan, ayam, telur), ditambah sayur dan buah segar dan camilan bergizi seperti pisang atau biskuit bayi untuk meningkatkan asupan energi. Berikan 3x makan utama dan 2x selingan setiap hari. Tetap berikan ASI yang cukup untuk mendukung pemulihan gizi anak, dengan kebutuhan energi totalnya sekitar 950 – 1.150 kcal/hari';
+                        'Berikan makanan yang tinggi kalori dan protein seperti nasi dengan lauk hewani (ikan, ayam, telur), ditambah sayur dan buah segar dan camilan bergizi seperti pisang atau biskuit bayi untuk meningkatkan asupan energi. Berikan 3x makan utama dan 2x selingan setiap hari. Tetap berikan ASI yang cukup untuk mendukung pemulihan gizi anak, dengan kebutuhan energi totalnya sekitar 1.050 – 1.250 kcal/hari';
                     break; // Don't forget break to prevent fall-through
                 case 'gizi kurang':
                     rekomendasi =
-                        'Berikan makanan bergizi seimbang seperti nasi, lauk hewani atau nabati (seperti ikan, ayam, telur), sayur, dan buah segar. Berikan 3x makan utama dan 2x camilan sehat setiap hari. Jika masih menyusui, tetap berikan ASI untuk mendukung pertumbuhan dan perbaikan gizi anak, dengan kebutuhan energi totalnya sekitar 950 – 1.150 kcal/hari';
+                        'Berikan makanan bergizi seimbang seperti nasi, lauk hewani atau nabati (seperti ikan, ayam, telur), sayur, dan buah segar. Berikan 3x makan utama dan 2x camilan sehat setiap hari. Jika masih menyusui, tetap berikan ASI untuk mendukung pertumbuhan dan perbaikan gizi anak, dengan kebutuhan energi totalnya sekitar 1.050 – 1.250 kcal/hari';
                     break;
                 case 'gizi baik':
                     rekomendasi =
-                        'Pertahankan pola makan seimbang dengan nasi, lauk hewani atau nabati, sayur, dan buah. Berikan 3x makan utama dan 2x camilan bergizi setiap hari. Berikan makanan yang bervariasi, mudah dikunyah, dan disukai anak. Jika masih menyusui, tetap berikan ASI untuk mendukung pertumbuhan anak, dengan kebutuhan energi totalnya sekitar 950 – 1.150 kcal/hari.';
+                        'Pertahankan pola makan seimbang dengan nasi, lauk hewani atau nabati, sayur, dan buah. Berikan 3x makan utama dan 2x camilan bergizi setiap hari. Berikan makanan yang bervariasi, mudah dikunyah, dan disukai anak. Jika masih menyusui, tetap berikan ASI untuk mendukung pertumbuhan anak, dengan kebutuhan energi totalnya sekitar 1.050 – 1.250 kcal/hari';
                     break;
                 case 'gizi lebih':
                     rekomendasi =
-                        'Kurangi makanan tinggi lemak, gula, dan olahan seperti camilan kemasan. Atur porsi makan secara bertahap, tetap berikan makanan bergizi seimbang dengan sayur, buah, dan protein tanpa lemak. Berikan 3x makan utama dan 2x camilan bergizi setiap hari. Berikann ASI sesuai kebutuhan dan dorong anak untuk aktif bergerak agar keseimbangan energi terjaga, dengan kebutuhan kalori/hari sekitar 950 – 1.150 kcal/hari.';
+                        'Kurangi makanan tinggi lemak, gula, dan olahan seperti camilan kemasan. Atur porsi makan secara bertahap, tetap berikan makanan bergizi seimbang dengan sayur, buah, dan protein tanpa lemak. Berikan 3x makan utama dan 2x camilan bergizi setiap hari. Berikann ASI sesuai kebutuhan dan dorong anak untuk aktif bergerak agar keseimbangan energi terjaga, dengan kebutuhan kalori/hari sekitar 1.050 – 1.250 kcal/hari.';
                     break;
                 default:
                     rekomendasi = 'Label gizi tidak dikenali.';
@@ -590,19 +592,19 @@ const rekomendasi = (label: string, usia: number, jenis_kelamin: string) => {
             switch (label) {
                 case 'gizi buruk':
                     rekomendasi =
-                        'Berikan makanan yang tinggi kalori dan protein seperti nasi dengan lauk hewani (ikan, ayam, telur), sayur dan buah segar. Berikan 3x makan utama dan 2x cemilan bergizi setiap hari. Berikan cemilan bergizi seperti pisang, roti, atau biskuit sehat dan susu yang bernutrisi untuk mendukung pemulihan gizi anak, dengan kebutuhan energi totalnya sekitar 1.050 – 1.250 kcal/hari';
+                        'Berikan makanan yang tinggi kalori dan protein seperti nasi dengan lauk hewani (ikan, ayam, telur), sayur dan buah segar. Berikan camilan bergizi seperti pisang, roti, atau biskuit sehat dan susu yang bernutrisi untuk mendukung pemulihan gizi anak, berikan 3x makan utama dan 2x camilan sehat setiap hari, dengan kebutuhan energi totalnya sekitar 1.150 – 1.350 kcal/hari.';
                     break; // Don't forget break to prevent fall-through
                 case 'gizi kurang':
                     rekomendasi =
-                        'Berikan makanan yang tinggi kalori dan protein seperti nasi dengan lauk hewani (ikan, ayam, telur), sayur dan buah segar. Berikan 3x makan utama dan 2x cemilan bergizi setiap hari. Berikan cemilan bergizi seperti pisang, roti, atau biskuit sehat dan susu yang bernutrisi untuk mendukung pemulihan gizi anak, dengan kebutuhan energi totalnya sekitar 1.050 – 1.250 kcal/hari';
+                        'Berikan makanan bergizi seimbang seperti nasi, lauk hewani atau nabati (seperti ikan, ayam, tahu, atau tempe), sayur dan buah segar. Berikan 3x makan utama dan 2x camilan sehat setiap hari. Berikan susu yang bernutrisi untuk mendukung pertumbuhan dan perbaikan gizi anak, dengan kebutuhan energi totalnya sekitar 1.150 – 1.350 kcal/hari.';
                     break;
                 case 'gizi baik':
                     rekomendasi =
-                        'Pertahankan pola makan seimbang dengan memberikan nasi, lauk hewani atau nabati seperti (ayam, ikan, tahu, atau tempe), sayur, dan buah segar setiap hari. Sajikan 3x makan utama dan 2x kali cemilan sehat secara teratur. Berikan susu yang bernutrisi untuk mendukung pertumbuhan anak, dengan kebutuhan energi totalnya sekitar 1.050 – 1.250 kcal/hari.';
+                        'Pertahankan pola makan seimbang dengan memberikan nasi, lauk hewani atau nabati seperti (ayam, ikan, tahu, atau tempe), sayur, dan buah segar setiap hari. Berikan 3x makan utama dan 2x kali cemilan sehat secara teratur. Berikan susu yang bernutrisi untuk mendukung pertumbuhan anak, dengan kebutuhan energi totalnya sekitar 1.150 – 1.350 kcal/hari.';
                     break;
                 case 'gizi lebih':
                     rekomendasi =
-                        'Kurangi makanan tinggi lemak, gula, dan olahan seperti camilan kemasan. Atur porsi makan secara bertahap, tetap berikan makanan bergizi seimbang dengan sayur, buah, dan protein tanpa lemak. Berikan susu yang bernutrisi untuk mendukung pertumbuhan anak, dengan kebutuhan energi totalnya sekitar 1.050 – 1.250 kcal/hari. ';
+                        'Kurangi makanan tinggi lemak, gula, dan olahan seperti camilan kemasan. Atur porsi makan secara bertahap, tetap berikan makanan bergizi seimbang dengan sayur, buah, dan protein tanpa lemak. Berikan 3x makan utama dan 2x camilan bergizi setiap hari dan Berikan susu yang bernutrisi untuk mendukung pertumbuhan anak, dengan kebutuhan energi totalnya sekitar 1.150 – 1.350 kcal/hari.';
                     break;
                 default:
                     rekomendasi = 'Label gizi tidak dikenali.';
@@ -612,19 +614,19 @@ const rekomendasi = (label: string, usia: number, jenis_kelamin: string) => {
             switch (label) {
                 case 'gizi buruk':
                     rekomendasi =
-                        'Berikan makanan yang tinggi kalori dan protein seperti nasi dengan lauk hewani (ikan, ayam, telur), sayur dan buah segar. Berikan 3x makan utama dan 2x cemilan bergizi setiap hari. Berikan cemilan bergizi seperti pisang, roti, atau biskuit sehat dan susu yang bernutrisi untuk mendukung pemulihan gizi anak, dengan kebutuhan energi totalnya sekitar 1.150 – 1.350 kcal/hari.';
+                        'Berikan makanan yang tinggi kalori dan protein seperti nasi dengan lauk hewani (ikan, ayam, telur), sayur dan buah segar. Berikan camilan bergizi seperti pisang, roti, atau biskuit sehat dan susu yang bernutrisi untuk mendukung pemulihan gizi anak, Berikan 3x makan utama dan 2x camilan sehat setiap hari, dengan kebutuhan energi totalnya sekitar 1.240 – 1.450 kcal/hari.';
                     break; // Don't forget break to prevent fall-through
                 case 'gizi kurang':
                     rekomendasi =
-                        'Berikan makanan bergizi seimbang seperti nasi, lauk hewani atau nabati (seperti ikan, ayam, tahu, atau tempe), sayur dan buah segar. Berikan 3x makan utama dan 2x camilan sehat setiap hari. Berikan susu yang bernutrisi untuk mendukung pertumbuhan dan perbaikan gizi anak, dengan kebutuhan energi totalnya sekitar 1.150 – 1.350 kcal/hari.';
+                        'Berikan makanan bergizi seimbang seperti nasi, lauk hewani atau nabati (seperti ikan, ayam, tahu, atau tempe), sayur dan buah segar. Berikan 3x makan utama dan 2x camilan sehat setiap hari. Berikan susu yang bernutrisi untuk mendukung pertumbuhan dan perbaikan gizi anak, dengan kebutuhan energi totalnya sekitar 1.240 – 1.450 kcal/hari.';
                     break;
                 case 'gizi baik':
                     rekomendasi =
-                        'Pertahankan pola makan seimbang dengan memberikan nasi, lauk hewani atau nabati seperti (ayam, ikan, tahu, atau tempe), sayur, dan buah segar setiap hari. Sajikan 3x makan utama dan 2x kali cemilan sehat secara teratur. Berikan susu yang bernutrisi untuk mendukung pertumbuhan anak, dengan kebutuhan energi totalnya sekitar 1.150 – 1.350 kcal/hari.';
+                        'Pertahankan pola makan seimbang dengan memberikan nasi, lauk hewani atau nabati seperti (ayam, ikan, tahu, atau tempe), sayur, dan buah segar setiap hari. Sajikan 3x makan utama dan 2x kali cemilan sehat secara teratur. Berikan susu yang bernutrisi untuk mendukung pertumbuhan anak, dengan kebutuhan energi totalnya sekitar 1.240 – 1.450 kcal/hari.';
                     break;
                 case 'gizi lebih':
                     rekomendasi =
-                        'Kurangi makanan tinggi lemak, gula, dan olahan seperti camilan kemasan. Atur porsi makan secara bertahap, tetap berikan makanan bergizi seimbang dengan sayur, buah, dan protein tanpa lemak. Berikan 3x makan utama dan 2x camilan bergizi setiap hari. Berikan susu yang bernutrisi untuk mendukung pertumbuhan anak, dengan kebutuhan energi totalnya sekitar 1.150 – 1.350 kcal/hari. ';
+                        'Kurangi makanan tinggi lemak, gula, dan olahan seperti camilan kemasan. Atur porsi makan secara bertahap, tetap berikan makanan bergizi seimbang dengan sayur, buah, dan protein tanpa lemak. Berikan 3x makan utama dan 2x cemilan bergizi setiap hari. Berikan susu yang bernutrisi untuk mendukung pertumbuhan anak, dengan kebutuhan energi totalnya sekitar 1.240 – 1.450 kcal/hari.';
                     break;
                 default:
                     rekomendasi = 'Label gizi tidak dikenali.';

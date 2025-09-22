@@ -38,7 +38,6 @@ export const predictNutritionStatus = (
         }
     });
 
-    console.log(features);
 
     return model.predict(features);
 };

@@ -138,7 +138,7 @@ const GrafikGizi = () => {
                             <th className="border-b px-4 py-3 text-right font-semibold">Gizi Kurang</th>
                             <th className="border-b px-4 py-3 text-right font-semibold">Gizi Baik</th>
                             <th className="border-b px-4 py-3 text-right font-semibold">Gizi Lebih</th>
-                            <th className="border-b px-4 py-3 text-right font-semibold">Total</th>
+                            <th className="border-b px-4 py-3 text-right font-semibold">Total Pemeriksaan</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -156,7 +156,7 @@ const GrafikGizi = () => {
                                 <td className="border-b px-4 py-3 text-right">{item.gizi_baik}</td>
                                 <td className="border-b px-4 py-3 text-right">{item.gizi_lebih}</td>
                                 <td className="border-b px-4 py-3 text-right font-medium">
-                                    {item.gizi_buruk + item.gizi_kurang + item.gizi_baik + item.gizi_lebih}
+                                    {Number(item.gizi_buruk) + Number(item.gizi_kurang) + Number(item.gizi_baik) + Number(item.gizi_lebih)}
                                 </td>
                             </motion.tr>
                         ))}
