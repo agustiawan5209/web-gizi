@@ -12,9 +12,9 @@ const variantIcons = {
 };
 
 const variantStyles: Record<ToastVariant, string> = {
-  default: "bg-white border-blue-100 text-blue-800",
-  success: "bg-white border-green-100 text-green-800",
-  error: "bg-white border-red-100 text-red-800",
+  default: "bg-blue-500 border-blue-100 text-blue-800",
+  success: "bg-green-500 border-green-100 text-green-800",
+  error: "bg-red-500 border-red-100 text-red-800",
 };
 
 interface ToastProps {
@@ -53,23 +53,20 @@ export const Toast = React.forwardRef<HTMLLIElement, ToastProps>(
             "data-[state=open]:animate-in data-[state=open]:fade-in-90",
             "data-[state=open]:slide-in-from-top-full data-[state=closed]:animate-out",
             "data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full",
+            
             variantStyles[variant],
             className
           )}
         >
           <div className="flex items-start gap-3 p-4">
-            <Icon className={`h-5 w-5 flex-shrink-0 ${
-              variant === "success" ? "text-green-500" :
-              variant === "error" ? "text-red-500" :
-              "text-blue-500"
-            }`} />
+            <Icon className={`h-5 w-5 flex-shrink-0 text-white`} />
 
             <div className="flex-1 space-y-1">
-              <ToastPrimitive.Title className="text-sm font-medium">
+              <ToastPrimitive.Title className="text-base text-white font-medium">
                 {title}
               </ToastPrimitive.Title>
               {description && (
-                <ToastPrimitive.Description className="text-sm text-muted-foreground">
+                <ToastPrimitive.Description className="text-sm text-white">
                   {description}
                 </ToastPrimitive.Description>
               )}
@@ -77,7 +74,7 @@ export const Toast = React.forwardRef<HTMLLIElement, ToastProps>(
 
             <ToastPrimitive.Close
               aria-label="Close"
-              className="rounded-md p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-500 focus:outline-none"
+              className="rounded-md p-1 text-gray-100 transition-colors hover:bg-gray-100 hover:text-gray-500 focus:outline-none"
             >
               <span className="sr-only">Close</span>
               <svg

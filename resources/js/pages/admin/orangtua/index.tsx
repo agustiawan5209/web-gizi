@@ -2,7 +2,7 @@ import PaginationTable from '@/components/pagination-table';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableAction, TableBody, TableColumn, TableContainer, TableHead, TableRow, TableTh } from '@/components/ui/table';
+import { Table, TableBody, TableColumn, TableContainer, TableHead, TableRow, TableTh } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
@@ -188,7 +188,7 @@ export default function OrangtuaIndex({ orangtua, breadcrumb, filter }: Orangtua
                                         <TableTh>Email</TableTh>
                                         <TableTh>No. Whatsapp</TableTh>
                                         <TableTh>Alamat</TableTh>
-                                        <TableTh>Aksi</TableTh>
+                                        {/* <TableTh>Aksi</TableTh> */}
                                     </TableRow>
                                 </TableHead>
                                 <TableBody className={processing ? 'opacity-50' : ''}>
@@ -200,14 +200,14 @@ export default function OrangtuaIndex({ orangtua, breadcrumb, filter }: Orangtua
                                                 <TableColumn> {item.email} </TableColumn>
                                                 <TableColumn> {item.nohp} </TableColumn>
                                                 <TableColumn> {item.alamat} </TableColumn>
-                                                <TableAction
+                                                {/* <TableAction
                                                     className="w-32"
                                                     edit={route('admin.orangtua.edit', { user: item.id })}
                                                     delete="delete"
                                                     url={route('admin.orangtua.destroy', { user: item.id })}
                                                     title={item.name}
                                                     id={item.id}
-                                                />
+                                                /> */}
                                             </TableRow>
                                         ))}
                                 </TableBody>

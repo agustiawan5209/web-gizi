@@ -172,12 +172,13 @@ export default function ClassifyPemeriksaan({ data, setData, errors, attribut, p
     // Hitung tanggal minimum: 1 tahun lalu dari hari ini
     const tahunLalu = new Date(today);
     tahunLalu.setFullYear(today.getFullYear() - 1);
-    const minDate = tahunLalu.toISOString().split('T')[0];
+    const maxDate = tahunLalu.toISOString().split('T')[0];
+    const minDate = new Date(today.getFullYear() - 5, today.getMonth(), today.getDate()).toISOString().split('T')[0];
 
     const tanggalLahirRef = useRef<HTMLInputElement>(null);
     const handleChangeTanggalLahir = (e: React.ChangeEvent<HTMLInputElement>) => {
         const tgl = e.target.value;
-        if (tgl <= minDate) {
+        if (tgl <= maxDate) {
             const birthDate = new Date(tgl);
             const today = new Date();
             let usia = today.getFullYear() - birthDate.getFullYear();
@@ -351,7 +352,8 @@ export default function ClassifyPemeriksaan({ data, setData, errors, attribut, p
                                                         autoComplete="tanggal_lahir"
                                                         value={data.tanggal_lahir}
                                                         disabled={isLoading}
-                                                        max={minDate}
+                                                        max={maxDate}
+                                                        min={minDate}
                                                         onChange={(e) => handleChangeTanggalLahir(e)}
                                                     />
                                                     <InputError message={errors.tanggal_lahir} />
