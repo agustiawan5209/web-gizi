@@ -353,7 +353,6 @@ export default function ClassifyPemeriksaan({ data, setData, errors, attribut, p
                                                         value={data.tanggal_lahir}
                                                         disabled={isLoading}
                                                         max={maxDate}
-                                                        min={minDate}
                                                         onChange={(e) => handleChangeTanggalLahir(e)}
                                                     />
                                                     <InputError message={errors.tanggal_lahir} />

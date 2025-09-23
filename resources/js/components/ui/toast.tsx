@@ -49,7 +49,7 @@ export const Toast = React.forwardRef<HTMLLIElement, ToastProps>(
           open={open}
           onOpenChange={onOpenChange}
           className={cn(
-            "fixed right-4 top-4 z-[100] w-full max-w-2xl rounded-lg border shadow-lg",
+            "fixed right-4 transform translate-x-[-50%] top-4 z-[100] w-full max-w-2xl rounded-lg border shadow-lg",
             "data-[state=open]:animate-in data-[state=open]:fade-in-90",
             "data-[state=open]:slide-in-from-top-full data-[state=closed]:animate-out",
             "data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full",
