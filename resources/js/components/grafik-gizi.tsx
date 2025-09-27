@@ -134,10 +134,10 @@ const GrafikGizi = () => {
                     <thead>
                         <tr className="bg-gray-100">
                             <th className="border-b px-4 py-3 text-left font-semibold">Tahun</th>
-                            <th className="border-b px-4 py-3 text-right font-semibold">Gizi Buruk</th>
-                            <th className="border-b px-4 py-3 text-right font-semibold">Gizi Kurang</th>
-                            <th className="border-b px-4 py-3 text-right font-semibold">Gizi Baik</th>
-                            <th className="border-b px-4 py-3 text-right font-semibold">Gizi Lebih</th>
+                            <th className="border-b px-4 py-3 text-right font-semibold">Gizi Buruk (orang)</th>
+                            <th className="border-b px-4 py-3 text-right font-semibold">Gizi Kurang (orang)</th>
+                            <th className="border-b px-4 py-3 text-right font-semibold">Gizi Baik (orang)</th>
+                            <th className="border-b px-4 py-3 text-right font-semibold">Gizi Lebih (orang)</th>
                             <th className="border-b px-4 py-3 text-right font-semibold">Total Pemeriksaan</th>
                         </tr>
                     </thead>
